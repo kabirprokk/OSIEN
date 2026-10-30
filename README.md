@@ -2,7 +2,7 @@
 
 # OSIEN
 
-<img src="assets/osien-logo.png" alt="OSIEN Logo" width="200"/>
+<img src="assets/osien-logo-official.png" alt="OSIEN Logo" width="200"/>
 
 > A parent company and monorepo housing a diverse ecosystem of AI tooling, web applications, games, browser extensions, and experimental projects.
 
