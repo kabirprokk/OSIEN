@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>
+/* Resolve the theme BEFORE first paint so there is no flash of the wrong
+   mode. Same key as index.html, so the choice follows across both pages. */
+(function () {
+  var m = null;
+  try { m = localStorage.getItem('osien-mode'); } catch (e) {}
+  if (m !== 'light' && m !== 'dark') {
+    m = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.dataset.mode = m;
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Osien-Stack - Tool Explorer</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<meta name="description" content="Browse the current Osien Stack MCP tool catalog with live descriptions, categories, and search.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+    /* ocean palette - shared with index.html */
+    --hue: 216; --sat: 88%; --light: 50%;
+    --bg: #EDF4FD;
+    --fg: #16234B;
+    --muted: #5B6E93;
+    --accent: #2240DC;
+    --accent2: #2FAFD0;
+    --card: #FFFFFF;
+    --card2: #F5FAFE;
+    --border: hsla(224, 72%, 52%, .16);
+    --glow: hsla(190, 78%, 55%, .30);
+    --code-bg: #16234B;
+    --code-fg: #E6EFFC;
+    --radius: 14px;
+    --radius-sm: 9px;
+    --shadow: 0 18px 44px -26px hsla(224, 70%, 40%, .40);
+    --shadow-sm: 0 10px 26px -18px hsla(224, 60%, 35%, .30);
+    --on-accent: #FFFFFF;
+    --nav: rgba(255,255,255,.88);
+    --wash3: hsla(214, 60%, 92%, .70);
+    --bgimg: none;
+    --scan: .022;
+  }
+
+  /* dark mode: same ocean, deep water. Shares the osien-mode key with index. */
+  :root[data-mode="dark"] {
+    --bg: #070E1F;
+    --fg: #DCEAFC;
+    --muted: #8397BD;
+    --accent: #4C7DFF;
+    --accent2: #4FD1E5;
+    /* Solid, not translucent: a card over a moving background is not a
+       measurable contrast target, and .07 alpha put text at 2.66:1. */
+    --card: #101C36;
+    --card2: #172545;
+    --border: hsla(210, 70%, 70%, .18);
+    --glow: hsla(214, 90%, 60%, .26);
+    --code-bg: #0C1730;
+    --code-fg: #CFE2FB;
+    --shadow: 0 18px 44px -26px hsla(214, 90%, 30%, .70);
+    --shadow-sm: 0 10px 26px -18px hsla(222, 70%, 4%, .80);
+    --on-accent: #04102B;
+    --panel: #0B1428;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: auto; }
+  body { font-family: 'Space Grotesk', system-ui, sans-serif; background: var(--bg); color: var(--fg); min-height: 100vh; }
+  
+  .cursor { position: fixed; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--accent); pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); }
+  /* mix-blend-mode removed: a blend on a per-frame-transformed element forces
+     the compositor to re-blend every frame. A solid accent ring reads the same
+     here and costs nothing. */
+  .glow { position: fixed; width: 400px; height: 400px; border-radius: 50%; pointer-events: none; z-index: -1; background: radial-gradient(circle, var(--glow), transparent 70%); transform: translate(-50%,-50%); opacity: .5; }
+  nav { position: sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; padding:16px 28px;  background: hsla(var(--hue),25%,8%,.55); border-bottom:1px solid var(--border); }
+  nav .logo { font-weight:800; font-size:1.2rem; font-family:'JetBrains Mono',monospace; display:flex; align-items:center; gap:8px; color: var(--fg); text-decoration:none; } nav .logo:hover { opacity:.78; } nav .logo:focus-visible { outline:2px solid var(--accent); outline-offset:4px; border-radius:6px; } nav .logo span { color: var(--accent); } nav .logo-img { height:28px; width:auto; border-radius:6px; }
+  .modeBtn { background:none; border:0; color: var(--fg); opacity:.78; cursor:pointer; font:inherit; font-size:.9rem; padding:8px 13px; border-radius:9px; text-decoration:none; }
+  .modeBtn:hover { opacity:1; } .modeBtn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  nav a { color: var(--fg); text-decoration:none; margin-left:20px; opacity:.8; font-size:.9rem; } nav a:hover { opacity:1; color: var(--accent); }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 { font-size: clamp(2rem,5vw,3.4rem); font-weight:900; letter-spacing:-1.5px; margin-bottom: 8px; background: linear-gradient(120deg, var(--fg), var(--accent), var(--accent2)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .sub { color: var(--muted); margin-bottom: 28px; font-size:1.05rem; }
+  .toolbar { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom: 24px; }
+  .search { flex:1; min-width: 220px; padding: 12px 16px; border-radius: 12px; border:1px solid var(--border); background: var(--card); color: var(--fg); font-size:.95rem; outline:none; transition: border-color .2s, box-shadow .2s; }
+  .search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--glow); }
+  .filters { display:flex; gap:8px; flex-wrap:wrap; }
+  .chip { padding: 8px 14px; border-radius:999px; border:1px solid var(--border); background: var(--card); color: var(--muted); font: inherit; font-size:.85rem; cursor:pointer; transition: all .2s; user-select:none; }
+  .chip:hover { color: var(--fg); border-color: var(--accent); }
+  .chip.active { background: var(--accent); color:var(--on-accent); border-color:transparent; font-weight:600; }
+  .chip:focus-visible, .tool .name .copy:focus-visible, .mclose:focus-visible, #mCopy:focus-visible { outline: 3px solid var(--accent2); outline-offset: 3px; }
+  .meta { display:flex; gap:16px; margin-bottom: 20px; color: var(--muted); font-size:.9rem; }
+  .meta strong { color: var(--accent); }
+  .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .tool { background: var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; transition: transform .42s cubic-bezier(.22,1,.36,1), box-shadow .3s ease, border-color .3s ease, opacity .42s ease-out; position:relative; overflow:hidden; opacity:0; transform: translateY(16px); display:flex; flex-direction:column; align-items:stretch; }
+  .tool.in { opacity:1; transform: translateY(0); }
+  .tool:hover { transform: translateY(-4px); box-shadow: 0 16px 40px var(--glow); border-color: var(--accent); }
+  .tool .name { font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace; font-size:.95rem; color: var(--accent); font-weight:600; margin-bottom:6px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .tool .name .copy { font-size:.7rem; padding:3px 8px; border-radius:6px; border:1px solid var(--border); background:transparent; color: var(--muted); cursor:pointer; font-family:inherit; transition: all .2s; }
+  .tool .name .copy:hover { color: var(--fg); border-color: var(--accent); }
+  .tool .desc { color: var(--muted); font-size:.88rem; line-height:1.5; }
+  .tool .cat { position:static; align-self:flex-start; margin-bottom:10px; font-size:.65rem; padding:3px 8px; border-radius:999px; background: var(--card2); color: var(--muted); text-transform:uppercase; letter-spacing:.5px; }
+  .empty { text-align:center; padding:60px 20px; color: var(--muted); }
+  .back { display:inline-flex; align-items:center; gap:6px; color: var(--accent); text-decoration:none; font-size:.9rem; margin-bottom:20px; }
+  .back:hover { text-decoration:underline; }
+  footer { text-align:center; padding:40px 24px; color: var(--muted); border-top:1px solid var(--border); font-size:.85rem; }
+  footer a { color: var(--accent); text-decoration:none; }
+  @media (max-width:600px){ .grid { grid-template-columns:1fr; } body { cursor: auto; } .cursor, .glow { display:none; } }
+  .modal { position: fixed; inset: 0; z-index: 120; display: none; align-items: center; justify-content: center; background: rgba(4,4,10,.86); }
+  .modal.open { display: flex; }
+  .modal-box { width: min(520px, 92vw); background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 28px; box-shadow: 0 40px 100px rgba(0,0,0,.6); }
+  .modal-box .mname { font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; color: var(--accent); margin-bottom: 10px; }
+  .modal-box .mdesc { color: var(--muted); margin-bottom: 16px; font-size: .95rem; }
+  .modal-box .mclose { float: right; background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+  .modal-box .mclose:hover { color: var(--fg); border-color: var(--accent); }
+  .modal-box .mcat { display: inline-block; font-size: .68rem; padding: 3px 9px; border-radius: 999px; background: hsla(var(--hue),40%,25%,.5); color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; animation-duration: .01ms !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
+    .cursor, .glow { display: none !important; }
+    nav::after, nav a::after, .tool::before, .tool::after, .chip::after, .modal.open .modal-box::after { display: none !important; }
+  }
+
+  /* ===== minimalist high-motion layer: CSS only, no canvas / no deps ===== */
+  @keyframes os-drift { from { transform: translate3d(0,0,0); } to { transform: translate3d(46px,46px,0); } }
+  @keyframes os-breathe { 0%,100% { opacity: .7; } 50% { opacity: 1; } }
+  @keyframes os-flicker { 0%,100% { opacity: .2; } 50% { opacity: .34; } }
+  @keyframes os-sheen { 0%,70% { background-position: 230% 0; } 90%,100% { background-position: -130% 0; } }
+  @keyframes os-line { from { transform: translateX(-115%); } to { transform: translateX(330%); } }
+  @keyframes os-scan { from { transform: translateY(-110%); } to { transform: translateY(320%); } }
+  @keyframes os-rise { from { opacity: 0; transform: translateY(20px) scale(.97); } to { opacity: 1; transform: none; } }
+  @keyframes os-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes os-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); } 50% { box-shadow: 0 0 18px 2px hsla(224,72%,52%,.22); } }
+  @keyframes os-focus { 0%,100% { box-shadow: 0 0 0 3px hsla(224,72%,52%,.14); } 50% { box-shadow: 0 0 0 6px hsla(224,72%,52%,.20); } }
+  .glow { animation: os-breathe 6s ease-in-out infinite; }
+
+  /* nav shimmer */
+  nav::after { content: ""; position: absolute; left: 0; bottom: -1px; height: 1px; width: 32%; pointer-events: none;
+    background: linear-gradient(90deg, transparent, var(--accent), hsla(185,100%,55%,.9), transparent);
+    animation: os-line 6s cubic-bezier(.4,0,.2,1) infinite; }
+  nav a { position: relative; }
+  nav a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -5px; height: 1px; background: var(--accent);
+    transform: scaleX(0); transform-origin: left; transition: transform .32s cubic-bezier(.22,1,.36,1); }
+  nav a:hover::after, nav a:focus-visible::after { transform: scaleX(1); }
+
+  /* card: animated sheen accent + hover edge, per-card stagger via nth-child */
+  .tool::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(112deg, transparent 38%, hsla(190,78%,55%,.12) 46%, hsla(224,72%,52%,.14) 50%, hsla(190,78%,55%,.12) 54%, transparent 62%);
+    background-size: 260% 100%; background-position: 230% 0; animation: os-sheen 11s ease-in-out infinite; }
+  .tool:nth-child(3n+1)::after { animation-delay: -2.5s; }
+  .tool:nth-child(3n+2)::after { animation-delay: -6s; }
+  .tool:nth-child(3n)::after { animation-delay: -9s; }
+  .tool::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; z-index: 1; pointer-events: none;
+    background: linear-gradient(180deg, var(--accent), var(--accent2));
+    transform: scaleY(0); transform-origin: top; transition: transform .38s cubic-bezier(.22,1,.36,1); }
+  .tool:hover::before, .tool:focus-within::before { transform: scaleY(1); }
+  .tool:hover .desc { color: var(--fg); }
+  .tool .name .copy:active { transform: scale(.94); }
+
+  /* chips + search microinteractions */
+  .chip { position: relative; overflow: hidden; }
+  .chip::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .25s;
+    background: linear-gradient(100deg, transparent 40%, hsla(224,72%,52%,.16) 50%, transparent 60%);
+    background-size: 250% 100%; background-position: 230% 0; }
+  .chip:hover::after { opacity: 1; animation: os-sheen 1.4s ease-out forwards; }
+  .chip:hover { transform: translateY(-1px); }
+  .chip:active { transform: translateY(0) scale(.96); }
+  .chip.active { animation: os-pulse 2.6s ease-in-out infinite; }
+  .search:focus { animation: os-focus 1.7s ease-in-out infinite; }
+
+  /* modal entrance: fade + rise + single scan pass */
+  .modal-box { position: relative; overflow: hidden; }
+  .modal.open { animation: os-fade .22s ease-out both; }
+  .modal.open .modal-box { animation: os-rise .38s cubic-bezier(.22,1,.36,1) both; }
+  .modal.open .modal-box::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 40%; pointer-events: none;
+    background: linear-gradient(180deg, transparent, hsla(190,78%,55%,.12), transparent);
+    animation: os-scan .7s cubic-bezier(.4,0,.2,1) both; }
+</style>
+</head>
+<body>
+  <div class="cursor" id="cursor"></div>
+  <div class="glow" id="glow"></div>
+  <nav>
+    <a class="logo" href="index.html" aria-label="osien - back to home"><img src="logo.png" width="512" height="512" alt="" class="logo-img"><span>osien_stack / tools</span></a>
+    <div>
+      <a href="index.html">Home</a>
+      <button id="modeBtn" class="modeBtn" aria-label="Toggle dark mode">theme</button>
+      <a href="https://github.com/kabirprokk/Osien-Stack" target="_blank">GitHub</a>
+    </div>
+  </nav>
+  <div class="wrap">
+    <a class="back" href="index.html">Back to home</a>
+    <h1>Tool Explorer</h1>
+    <p class="sub">Browse the current Osien Stack MCP tools. Search, filter, and copy a tool name for your AI.</p>
+    <div class="toolbar">
+      <input class="search" id="search" type="search" placeholder="Search tools or descriptions..." autocomplete="off">
+      <div class="filters" id="filters"></div>
+    </div>
+    <div class="meta" id="meta"></div>
+    <div class="meta" id="catalogStatus" role="status" aria-live="polite">Showing the built-in catalog snapshot while checking GitHub for updates.</div>
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty" style="display:none">No tools match your search.</div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <button class="mclose" id="mClose">close</button>
+      <div class="mcat" id="mCat"></div>
+      <div class="mname" id="mName"></div>
+      <div class="mdesc" id="mDesc"></div>
+      <button class="btn primary" id="mCopy" style="padding:10px 18px;font-size:.85rem">Copy tool name</button>
+    </div>
+  </div>
+  <footer>Osien-Stack - MIT licensed - <a href="https://github.com/kabirprokk/Osien-Stack">GitHub</a></footer>
+
+<script src="live-data.js"></script>
+<script>
+  let tools =   [
+    {
+      "name": "ctx_recall",
+      "desc": "Load project memory by role/part/grep.",
+      "cat": "Memory"
+    },
+    {
+      "name": "ctx_save",
+      "desc": "Persist memory: architecture/decisions/failures/state/performance.",
+      "cat": "Memory"
+    },
+    {
+      "name": "soul_read",
+      "desc": "Read SOUL one-line notes.",
+      "cat": "Memory"
+    },
+    {
+      "name": "soul_write",
+      "desc": "Append a SOUL flowchart line.",
+      "cat": "Memory"
+    },
+    {
+      "name": "fast_note",
+      "desc": "Append a timestamped note.",
+      "cat": "Memory"
+    },
+    {
+      "name": "task_state",
+      "desc": "Read/write task state.",
+      "cat": "Memory"
+    },
+    {
+      "name": "state_reset",
+      "desc": "Clear task state.",
+      "cat": "Memory"
+    },
+    {
+      "name": "smart_grep",
+      "desc": "Grep with file:line output, bounded.",
+      "cat": "Search"
+    },
+    {
+      "name": "read_slice",
+      "desc": "Read file lines [start,end].",
+      "cat": "Search"
+    },
+    {
+      "name": "machine_state",
+      "desc": "OS/CPU/mem/cwd snapshot.",
+      "cat": "State"
+    },
+    {
+      "name": "repo_health",
+      "desc": "Git status + errors + memory.",
+      "cat": "State"
+    },
+    {
+      "name": "project_map",
+      "desc": "Dirs, git, scripts, agents overview.",
+      "cat": "State"
+    },
+    {
+      "name": "verify_chain",
+      "desc": "Run format/typecheck/test/build.",
+      "cat": "Verify"
+    },
+    {
+      "name": "loop_status",
+      "desc": "Repeated actions/errors status.",
+      "cat": "State"
+    },
+    {
+      "name": "checkpoint_create",
+      "desc": "Snapshot files for rollback.",
+      "cat": "State"
+    },
+    {
+      "name": "checkpoint_verify",
+      "desc": "Verify a checkpoint against disk.",
+      "cat": "Other"
+    },
+    {
+      "name": "checkpoint_restore",
+      "desc": "Restore files from a checkpoint.",
+      "cat": "Other"
+    },
+    {
+      "name": "impact_analyze",
+      "desc": "Find references to a symbol.",
+      "cat": "Search"
+    },
+    {
+      "name": "security_scan",
+      "desc": "Scan for secrets/vulns.",
+      "cat": "Verify"
+    },
+    {
+      "name": "test_gap",
+      "desc": "Find untested functions.",
+      "cat": "Verify"
+    },
+    {
+      "name": "repro_capsule",
+      "desc": "Capture failing cmd + env.",
+      "cat": "Verify"
+    },
+    {
+      "name": "context_budget",
+      "desc": "Token budget per file.",
+      "cat": "Verify"
+    },
+    {
+      "name": "consensus",
+      "desc": "Multi-model consensus guidance.",
+      "cat": "Verify"
+    },
+    {
+      "name": "auto_heal",
+      "desc": "Self-heal loop: detect/fix/verify.",
+      "cat": "Verify"
+    },
+    {
+      "name": "rollback_on_failure",
+      "desc": "Rollback if verify fails.",
+      "cat": "Verify"
+    },
+    {
+      "name": "perf_regression",
+      "desc": "Benchmark before/after.",
+      "cat": "Quality"
+    },
+    {
+      "name": "test_synthesizer",
+      "desc": "Generate test stubs.",
+      "cat": "Quality"
+    },
+    {
+      "name": "memory_compactor",
+      "desc": "Compress memory files.",
+      "cat": "Quality"
+    },
+    {
+      "name": "dead_code_detector",
+      "desc": "Find unused exports.",
+      "cat": "Quality"
+    },
+    {
+      "name": "dependency_graph",
+      "desc": "Mermaid dep graph.",
+      "cat": "Quality"
+    },
+    {
+      "name": "changelog_generator",
+      "desc": "Generate changelog.",
+      "cat": "Quality"
+    },
+    {
+      "name": "token_budget_enforcer",
+      "desc": "Enforce token budget.",
+      "cat": "Quality"
+    },
+    {
+      "name": "architecture_drift",
+      "desc": "Compare docs vs code.",
+      "cat": "Quality"
+    },
+    {
+      "name": "session_replay",
+      "desc": "Replay session timeline.",
+      "cat": "Quality"
+    },
+    {
+      "name": "auto_document",
+      "desc": "Auto-generate docs.",
+      "cat": "Quality"
+    },
+    {
+      "name": "feature_flag_manager",
+      "desc": "List feature flags.",
+      "cat": "Quality"
+    },
+    {
+      "name": "license_checker",
+      "desc": "Check dep licenses.",
+      "cat": "Quality"
+    },
+    {
+      "name": "schema_validator",
+      "desc": "Validate JSON files.",
+      "cat": "Quality"
+    },
+    {
+      "name": "cost_estimator",
+      "desc": "Estimate token cost.",
+      "cat": "Quality"
+    },
+    {
+      "name": "self_critique_loop",
+      "desc": "Self-critique guidance.",
+      "cat": "Quality"
+    },
+    {
+      "name": "city_status",
+      "desc": "City agent status.",
+      "cat": "City"
+    },
+    {
+      "name": "city_post",
+      "desc": "Post message between agents.",
+      "cat": "City"
+    },
+    {
+      "name": "city_read",
+      "desc": "Read agent inbox.",
+      "cat": "City"
+    },
+    {
+      "name": "city_broadcast",
+      "desc": "Broadcast to all agents.",
+      "cat": "City"
+    },
+    {
+      "name": "city_mode",
+      "desc": "Activate city mode.",
+      "cat": "City"
+    },
+    {
+      "name": "city_clear",
+      "desc": "Clear city mailbox.",
+      "cat": "City"
+    },
+    {
+      "name": "batch",
+      "desc": "Run multiple ops in parallel in ONE call: read (file,start,end), grep (pattern,path), ctx (role). Returns combined results. Fastest way to do parallel tool work.",
+      "cat": "Parallel"
+    },
+    {
+      "name": "driftpost_connect",
+      "desc": "Start secure browser approval to connect Osien Stack with Driftpost.",
+      "cat": "Publishing"
+    },
+    {
+      "name": "driftpost_finish_connect",
+      "desc": "Complete browser approval and store the scoped local connection.",
+      "cat": "Publishing"
+    },
+    {
+      "name": "driftpost_connect_account",
+      "desc": "Connect a social account using Driftpost provider OAuth.",
+      "cat": "Publishing"
+    },
+    {
+      "name": "driftpost_accounts",
+      "desc": "List connected Driftpost social accounts.",
+      "cat": "Publishing"
+    },
+    {
+      "name": "driftpost_disconnect_account",
+      "desc": "Disconnect one selected social account.",
+      "cat": "Publishing"
+    },
+    {
+      "name": "driftpost_publish_video",
+      "desc": "Stream a video to Driftpost and publish or schedule it across selected platforms.",
+      "cat": "Publishing"
+    },
+    {
+      "name": "driftpost_publish_status",
+      "desc": "Check the status of a Driftpost publishing job.",
+      "cat": "Publishing"
+    },
+    {
+      "name": "driftpost_list_schedules",
+      "desc": "List scheduled and recent Driftpost posts.",
+      "cat": "Publishing"
+    },
+    {
+      "name": "driftpost_cancel_schedule",
+      "desc": "Cancel a scheduled Driftpost post.",
+      "cat": "Publishing"
+    },
+    {
+      "name": "driftpost_disconnect",
+      "desc": "Revoke the Osien Stack Driftpost connection.",
+      "cat": "Publishing"
+    }
+  ];
+  const filters = document.getElementById('filters');
+  let activeCat = "All";
+  function renderFilters() {
+    const cats = ["All", ...Array.from(new Set(tools.map(t=>t.cat)))];
+    if (!cats.includes(activeCat)) activeCat = "All";
+    filters.replaceChildren();
+    cats.forEach(c => {
+      const ch = document.createElement('button');
+      ch.type = 'button';
+      ch.className = 'chip' + (c===activeCat?' active':'');
+      ch.textContent = c;
+      ch.setAttribute('aria-pressed', c===activeCat ? 'true' : 'false');
+      ch.onclick = () => { activeCat = c; renderFilters(); render(); };
+      filters.appendChild(ch);
+    });
+  }
+  renderFilters();
+  const grid = document.getElementById('grid');
+  const search = document.getElementById('search');
+  const meta = document.getElementById('meta');
+  const empty = document.getElementById('empty');
+  function render() {
+    const q = search.value.trim().toLowerCase();
+    const filtered = tools.filter(t => (activeCat==='All' || t.cat===activeCat) && (q==='' || t.name.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q)));
+    grid.innerHTML = '';
+    filtered.forEach((t, i) => {
+      const card = document.createElement('div');
+      card.className = 'tool';
+      const category = document.createElement('div');
+      category.className = 'cat';
+      category.textContent = t.cat;
+      const name = document.createElement('div');
+      name.className = 'name';
+      name.append(document.createTextNode(t.name));
+      const copy = document.createElement('button');
+      copy.type = 'button';
+      copy.className = 'copy';
+      copy.dataset.name = t.name;
+      copy.textContent = 'copy';
+      name.appendChild(copy);
+      const description = document.createElement('div');
+      description.className = 'desc';
+      description.textContent = t.desc;
+      card.append(category, name, description);
+      card.addEventListener('click', e => { if (e.target.classList.contains('copy')) return; openModal(t); });
+      grid.appendChild(card);
+      setTimeout(() => card.classList.add('in'), 30 + i*25);
+    });
+    empty.style.display = filtered.length ? 'none' : 'block';
+    meta.innerHTML = 'Showing <strong>' + filtered.length + '</strong> of ' + tools.length + ' tools';
+    grid.querySelectorAll('.copy').forEach(b => b.onclick = (e) => {
+      e.stopPropagation();
+      navigator.clipboard.writeText(b.dataset.name);
+      b.textContent = 'copied';
+      setTimeout(() => b.textContent = 'copy', 1200);
+    });
+  }
+  search.addEventListener('input', render);
+  render();
+
+  // ---------- tool modal ----------
+  const modal = document.getElementById('modal');
+  function openModal(t) {
+    document.getElementById('mCat').textContent = t.cat;
+    document.getElementById('mName').textContent = t.name;
+    document.getElementById('mDesc').textContent = t.desc;
+    document.getElementById('mCopy').onclick = () => { navigator.clipboard.writeText(t.name); document.getElementById('mCopy').textContent = 'Copied!'; setTimeout(() => document.getElementById('mCopy').textContent = 'Copy tool name', 1400); };
+    modal.classList.add('open');
+  }
+  const deepTool = new URLSearchParams(location.search).get('tool');
+  function openDeepTool() {
+    if (!deepTool) return;
+    const match = tools.find(t => t.name === deepTool);
+    if (match) { search.value = match.name; render(); openModal(match); }
+  }
+  openDeepTool();
+  document.getElementById('mClose').onclick = () => modal.classList.remove('open');
+  modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+  window.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.remove('open'); if (e.key === '/') { e.preventDefault(); document.getElementById('search').focus(); } });
+
+
+  // cursor
+  const cursor=document.getElementById('cursor');const glow=document.getElementById('glow'); if(cursor&&glow) document.body.style.cursor='none';let cx=0,cy=0,gx=0,gy=0,lcx=1e9,lcy=1e9,lgx=1e9,lgy=1e9;window.addEventListener('pointermove',e=>{cx=e.clientX;cy=e.clientY;},{passive:true});(function loop(){requestAnimationFrame(loop);if(document.hidden)return;gx+=(cx-gx)*.25;gy+=(cy-gy)*.25;if(cx!==lcx||cy!==lcy){lcx=cx;lcy=cy;cursor.style.transform='translate3d('+cx+'px,'+cy+'px,0) translate(-50%,-50%)';}if(Math.abs(gx-lgx)>.05||Math.abs(gy-lgy)>.05){lgx=gx;lgy=gy;glow.style.transform='translate3d('+gx.toFixed(1)+'px,'+gy.toFixed(1)+'px,0) translate(-50%,-50%)';}})();
+  // scroll color: stays inside the ocean range so the brand never drifts off-palette
+  const hues = [212, 196, 224, 204, 218, 212];
+  window.addEventListener('scroll', () => requestAnimationFrame(() => {
+    const y = window.scrollY; const max = document.body.scrollHeight - window.innerHeight;
+    const progress = Math.min(1, Math.max(0, y/Math.max(1,max)));
+    const idx = Math.min(hues.length-2, Math.floor(progress*(hues.length-1)));
+    const local = progress*(hues.length-1) - idx;
+    document.documentElement.style.setProperty('--hue', hues[idx] + (hues[idx+1]-hues[idx])*local);
+  }), { passive:true });
+
+  // ---------- dark mode toggle (shares the osien-mode key with index) ----------
+  (function themeToggle() {
+    const btn = document.getElementById('modeBtn'), root = document.documentElement;
+    if (!btn) return;
+    function label() { btn.textContent = root.dataset.mode === 'dark' ? 'light' : 'dark'; }
+    label();
+    btn.addEventListener('click', () => {
+      root.dataset.mode = root.dataset.mode === 'dark' ? 'light' : 'dark';
+      try { localStorage.setItem('osien-mode', root.dataset.mode); } catch (e) {}
+      label();
+    });
+  })();
+
+  if (window.OsienLiveData) {
+    window.OsienLiveData.fetchSources().then(source => {
+      const categoryByName = new Map(tools.map(tool => [tool.name, tool.cat]));
+      tools = source.tools.map(tool => ({
+        name: tool.name,
+        desc: tool.desc,
+        cat: categoryByName.get(tool.name) || (tool.name.startsWith('driftpost_') ? 'Publishing' : 'Other'),
+      }));
+      renderFilters();
+      render();
+      openDeepTool();
+      const updatedText = source.updatedAt
+        ? ' · source updated ' + new Intl.DateTimeFormat(undefined, { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(source.updatedAt))
+        : ' · source update date unavailable';
+      document.getElementById('catalogStatus').textContent = 'Live catalog · v' + source.version + ' · ' + tools.length + ' tools' + updatedText;
+    }).catch(() => {
+      document.getElementById('catalogStatus').textContent = 'GitHub is unavailable. Showing the built-in catalog snapshot (' + tools.length + ' tools).';
+    });
+  }
+</script>
+</body>
+</html>
