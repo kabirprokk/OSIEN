@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<!-- HIDDEN page: reached only from Supabase auth emails. Not linked in nav. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>FameGo — Confirming…</title>
+<link rel="stylesheet" href="styles.css" />
+<link rel="icon" href="logo.svg" type="image/svg+xml" />
+</head>
+<body>
+<div class="ambient" aria-hidden="true"></div>
+<main class="auth">
+  <div class="auth-card" id="card">
+    <div class="logo">FAME<span>GO</span></div>
+    <div class="sub">FAMEBROS STUDIO</div>
+    <div class="auth-ic info" id="icon">◌</div>
+    <h1 id="title">Confirming…</h1>
+    <p id="msg">Give us a second while we check your link.</p>
+    <a class="btn" id="primary" href="famego://auth/callback" style="display:none">Open FameGo app</a>
+    <a class="ghost-btn" href="index.html">Back to site</a>
+    <p class="fine" id="fine">If nothing happens, open the FameGo app and request a fresh link from Sign in.</p>
+  </div>
+</main>
+<script>
+(function () {
+  var hash = window.location.hash || "", search = window.location.search || "";
+  var combined = search + "&" + hash.replace(/^#/, "");
+  function pick(k) { var m = combined.match(new RegExp("[?&#]" + k + "=([^&]+)")); return m ? decodeURIComponent(m[1].replace(/\+/g, " ")) : ""; }
+  var type = (pick("type") || "").toLowerCase();
+  var err = pick("error_description") || pick("error") || "";
+  var icon = document.getElementById("icon"), title = document.getElementById("title"),
+      msg = document.getElementById("msg"), primary = document.getElementById("primary"),
+      fine = document.getElementById("fine");
+
+  function show(cls, glyph, t, m, btnLabel, btnHref) {
+    icon.className = "auth-ic " + cls; icon.textContent = glyph;
+    title.textContent = t; msg.innerHTML = m;
+    if (btnLabel) { primary.style.display = "block"; primary.textContent = btnLabel; if (btnHref) primary.href = btnHref; }
+  }
+  if (err) {
+    show("err", "!", "Link didn't work",
+      escapeHtml(err) + " Please open FameGo and request a fresh link from Sign in.",
+      "Open FameGo app", "famego://auth/callback");
+    return;
+  }
+  // Route by Supabase email type. All roads end back in the app.
+  if (type === "recovery") {
+    window.location.replace("reset-password.html" + search + hash);
+  } else if (type === "invite") {
+    window.location.replace("invite.html" + search + hash);
+  } else if (type === "magiclink") {
+    show("ok", "✓", "You're signed in",
+      "Magic link accepted. Open the app — you're already in. This page closes the loop.",
+      "Open FameGo app", "famego://auth/callback");
+  } else if (type === "email_change" || type === "emailchange") {
+    show("ok", "✓", "Email updated",
+      "Your new address is confirmed. Return to the app — you may need to sign in again.",
+      "Open FameGo app", "famego://auth/callback");
+  } else {
+    // default: signup confirmation
+    window.location.replace("verified.html" + search + hash);
+  }
+  function escapeHtml(s) { return s.replace(/[&<>"']/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+})();
+</script>
+<!--
+  SUPABASE SETUP (owner only) — GitHub Pages:
+  Auth → URL Configuration → Site URL = https://famebrosstudio.github.io/FameGo/
+  Redirect URLs += https://famebrosstudio.github.io/FameGo/confirmation.html
+                    https://famebrosstudio.github.io/FameGo/verified.html
+                    https://famebrosstudio.github.io/FameGo/reset-password.html
+                    https://famebrosstudio.github.io/FameGo/invite.html
+  Each Email Template button → {{ .ConfirmationURL }} (already the case).
+  This file routes ?type=signup|recovery|magiclink|invite|email_change.
+-->
+</body>
+</html>

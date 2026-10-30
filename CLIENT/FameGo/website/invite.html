@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<!-- HIDDEN page: crew / user invite landing. Reached only from invite email. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>FameGo — You've been invited</title>
+<link rel="stylesheet" href="styles.css" />
+<link rel="icon" href="logo.svg" type="image/svg+xml" />
+</head>
+<body>
+<div class="ambient" aria-hidden="true"></div>
+<main class="auth">
+  <div class="auth-card">
+    <div class="logo">FAME<span>GO</span></div>
+    <div class="sub">FAMEBROS STUDIO</div>
+    <div class="auth-ic info">✦</div>
+    <h1>You've been invited to FameGo</h1>
+    <p>The studio invited you to join — clients book in minutes, crew get paid gigs with full-screen alerts. Accept in the app to finish setup.</p>
+    <a class="btn" id="primary" href="famego://auth/callback?type=invite">Accept invite in app</a>
+    <a class="ghost-btn" href="index.html">What is FameGo?</a>
+    <p class="fine">Invites expire in 7 days. Questions? famebros.studio@gmail.com</p>
+  </div>
+</main>
+<script>
+(function () {
+  var suffix = (window.location.search || "") + (window.location.hash || "");
+  if (suffix.length > 1) document.getElementById("primary").href = "famego://auth/callback" + suffix;
+})();
+</script>
+</body>
+</html>

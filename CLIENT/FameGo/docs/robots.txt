@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /confirmation.html
+Disallow: /verified.html
+Disallow: /reset-password.html
+Disallow: /invite.html
+
+Sitemap: https://famebrosstudio.github.io/FameGo/sitemap.xml

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FameGo — Book verified shoot crew in minutes</title>
+<meta name="description" content="FameGo by Famebros Studio — book verified cinematographers, photographers, videographers, drone operators and editors for your shoot." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css?v=4" />
+<link rel="icon" href="logo.svg?v=3" type="image/svg+xml" />
+<noscript><style>#loader{display:none}body.loading{overflow:visible}.rv{opacity:1;transform:none}</style></noscript>
+</head>
+<body class="loading">
+<a class="skip" href="#main">Skip to content</a>
+<div id="loader" aria-hidden="true">
+  <div class="slate">
+    <div class="stick"></div>
+    <div class="board">
+      <div>FAMEGO · FAMEBROS STUDIO</div>
+      <div class="t">SHOOT <span>DAY</span></div>
+      <div class="row"><span>SCENE 01 · TAKE 01</span><span id="lcount">ROLLING</span></div>
+    </div>
+  </div>
+  <div class="l-bar" id="lbar"></div>
+</div>
+<div class="cur-dot" id="curDot" aria-hidden="true"></div>
+<div class="cur-ring" id="curRing" aria-hidden="true"></div>
+<div class="ambient" aria-hidden="true"></div>
+<canvas id="grid" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<canvas id="sea" aria-hidden="true"></canvas>
+<div class="scrollbar" aria-hidden="true"><i id="scrollbarFill"></i></div>
+<div class="flash" id="flash" aria-hidden="true"></div>
+
+<header class="topbar" id="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="FameGo home">
+      <span class="mark"><img src="logo.svg?v=3" alt="FameGo" /></span>
+      <span><span class="brand-name">FAME<span style="color:var(--gold)">GO</span></span><br /><span class="brand-sub">BY FAMEBROS STUDIO</span></span>
+    </a>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false"><i></i><i></i><i></i></button>
+    <nav class="nav" id="siteNav" aria-label="Primary">
+      <a href="#demo">Product</a>
+      <a href="#how">How It Works</a>
+      <a href="crew.html">For Crew</a>
+      <a href="#plans">Pricing</a>
+      <a href="#safety">Safety</a>
+      <a href="support.html">Support</a>
+      <a class="btn sm cta" href="#download">Get FameGo</a>
+    </nav>
+  </div>
+</header>
+
+<nav class="mmenu" id="mmenu" aria-label="Menu">
+  <a class="big" href="#demo"><small>01</small>Product</a>
+  <a class="big" href="#how"><small>02</small>How It Works</a>
+  <a class="big" href="crew.html"><small>03</small>For Crew</a>
+  <a class="big" href="#plans"><small>04</small>Pricing</a>
+  <a class="big" href="support.html"><small>05</small>Support</a>
+  <a class="big" href="#download" style="color:var(--gold)"><small>06</small>Get FameGo</a>
+  <div class="mfoot">FAMEGO · MUMBAI, INDIA · FAMEBROS STUDIO</div>
+</nav>
+
+<main id="main">
+  <!-- ═══ HERO ═══ -->
+  <section class="wrap hero-desk" aria-labelledby="heroH">
+    <div class="setlights" aria-hidden="true"></div>
+    <div class="hero-grid2">
+      <div>
+        <span class="k-label rv in">FAMEGO · BOOK SHOOT CREW</span>
+        <h1 class="hero-h rv in" id="heroH">Shoot crew,<br />booked in minutes.</h1>
+        <p class="hero-sub rv in">Verified cinematographers, photographers, videographers, drone operators and editors — matched to your shoot. Tell us what you're shooting. That's the hard part done.</p>
+        <div class="hero-cta rv in">
+          <a class="btn sheen" href="#download" style="padding:15px 32px;font-size:16px">Book a shoot</a>
+          <a class="link-crew" href="crew.html">Join as crew<span class="recdot"></span></a>
+        </div>
+        <div class="hero-note rv in"><span class="hand">built by people who run shoots —</span></div>
+      </div>
+      <aside class="desk rv in" aria-label="Sample booking preview">        <div class="desk-head"><span class="live"><span class="live-dot"></span>SAMPLE BOOKING</span><span>DEMO PREVIEW</span></div>
+        <div class="desk-body">
+          <div class="desk-line"><span>SHOOT</span><b>Fashion editorial</b></div>
+          <div class="desk-line"><span>WHERE</span><b>Bandra West, Mumbai</b></div>
+          <div class="desk-line"><span>WHEN</span><b>Today · 4:00 PM</b></div>
+          <div class="desk-line"><span>WHO</span><b>Videographer + Photographer</b></div>
+          <div class="desk-status" id="deskStatus">
+            <div data-d="0">Searching nearby crew…</div>
+            <div data-d="1">Checking availability…</div>
+            <div data-d="2" class="gold">Matching verified profiles…</div>
+            <div data-d="3" class="ok">Crew confirmed ✓ — see you on set</div>
+          </div>
+          <div class="desk-bar"><i id="deskBar"></i></div>
+        </div>
+        <div class="desk-foot"><span>HOW A BOOKING FLOWS</span><span>TRY IT BELOW ↓</span></div>
+      </aside>
+      <div class="floatphone rv in" id="floatphone" aria-hidden="true">
+        <div class="phone">
+          <div class="screen vf">
+            <i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i>
+            <div class="notch"><i></i></div>
+            <div class="sbody" id="companionBody">
+              <div class="cscr on" data-c="0">
+                <span class="status-pill"><i></i>SAMPLE PROFILE</span>
+                <div class="mock-title">Videographer</div>
+                <div class="mock-sub">Verified · in-app rates</div>
+                <div class="mcard"><b>Gear checked</b><span>Kit matches the brief</span></div>
+                <div class="mcard"><b>Chat on accept</b><span>Client · crew · studio</span></div>
+                <div class="mcard"><b>Rides along</b><span>Keep scrolling — it travels</span></div>
+              </div>
+              <div class="cscr" data-c="1">
+                <span class="status-pill"><i></i>SAMPLE MATCH</span>
+                <div class="mock-title">Matching…</div>
+                <div class="mock-sub">Nearby verified crew only</div>
+                <div class="timeline">
+                  <div class="trow done"><span class="tdot">✓</span>Booking confirmed</div>
+                  <div class="trow now"><span class="tdot">●</span>Checking availability…</div>
+                  <div class="trow"><span class="tdot">·</span>Chat unlocks on accept</div>
+                </div>
+                <div class="mcard gold">Verified profiles only</div>
+              </div>
+              <div class="cscr" data-c="2">
+                <span class="status-pill"><i></i>SAMPLE WRAP</span>
+                <div class="bigcheck">✓</div>
+                <div class="mock-title">That's a wrap.</div>
+                <div class="mock-sub">Rate · rebook · done</div>
+                <div class="mcard"><b>★★★★★</b><span>Sample rating card</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a class="scroll-cue" id="scrollCue" href="#demo" aria-label="Scroll down and dive in"><span class="mouse"><i></i></span><span>DIVE IN</span></a>
+    <a class="spin-badge" href="#download" aria-label="Open for bookings — get FameGo">
+      <svg viewBox="0 0 120 120" aria-hidden="true"><defs><path id="cir" d="M60,60 m-45,0 a45,45 0 1,1 90,0 a45,45 0 1,1 -90,0" /></defs><text><textPath href="#cir">OPEN FOR BOOKINGS • MUMBAI •&#160;</textPath></text></svg>
+      <b>↓</b>
+    </a>
+  </section>
+
+  <!-- ═══ categories strip ═══ -->
+  <div class="filmstrip" aria-label="Shoot categories"><div class="holes" aria-hidden="true"></div>
+    <div class="strip">
+      <figure class="frame f1"><img src="assets/g-fashion.jpg" alt="Fashion shoot on set" loading="lazy" decoding="async" /><figcaption>FASHION · ON SET</figcaption></figure>
+      <figure class="frame f2"><img src="assets/g-bts.jpg" alt="Behind the scenes phone shoot" loading="lazy" decoding="async" /><figcaption>BEHIND THE SCENES</figcaption></figure>
+      <figure class="frame f3"><img src="assets/g-event.jpg" alt="Event coverage" loading="lazy" decoding="async" /><figcaption>EVENT · LIVE</figcaption></figure>
+      <figure class="frame f4"><img src="assets/g-launch.jpg" alt="Launch day crew" loading="lazy" decoding="async" /><figcaption>LAUNCH DAY</figcaption></figure>
+      <figure class="frame f5"><img src="assets/g-party.jpg" alt="Celebration shoot" loading="lazy" decoding="async" /><figcaption>CELEBRATIONS</figcaption></figure>
+      <figure class="frame f6"><img src="assets/story-beach.jpg" alt="Outdoor shoot at the beach" loading="lazy" decoding="async" /><figcaption>OUTDOOR · ON LOCATION</figcaption></figure>
+      <figure class="frame f1"><img src="assets/g-fashion.jpg" alt="" loading="lazy" decoding="async" /><figcaption>FASHION · ON SET</figcaption></figure>
+      <figure class="frame f2"><img src="assets/g-bts.jpg" alt="" loading="lazy" decoding="async" /><figcaption>BEHIND THE SCENES</figcaption></figure>
+      <figure class="frame f3"><img src="assets/g-event.jpg" alt="" loading="lazy" decoding="async" /><figcaption>EVENT · LIVE</figcaption></figure>
+      <figure class="frame f4"><img src="assets/g-launch.jpg" alt="" loading="lazy" decoding="async" /><figcaption>LAUNCH DAY</figcaption></figure>
+      <figure class="frame f5"><img src="assets/g-party.jpg" alt="" loading="lazy" decoding="async" /><figcaption>CELEBRATIONS</figcaption></figure>
+      <figure class="frame f6"><img src="assets/story-beach.jpg" alt="" loading="lazy" decoding="async" /><figcaption>OUTDOOR · ON LOCATION</figcaption></figure>
+    </div>
+  <div class="holes" aria-hidden="true"></div></div>
+
+  <!-- ═══ ribbon ═══ -->
+  <div class="ribbon" aria-hidden="true"><div class="rtrack">
+    <span>Book a shoot •</span><span class="solid">Verified crew •</span><span>Chat + tracking •</span><span class="solid">Pay per shoot •</span>
+    <span>Book a shoot •</span><span class="solid">Verified crew •</span><span>Chat + tracking •</span><span class="solid">Pay per shoot •</span>
+  </div></div>
+
+  <!-- ═══ manifesto ═══ -->
+  <section class="paper rv" aria-labelledby="maniH">
+    <span class="k-label"><b>01 /</b> WHY FAMEGO EXISTS</span>
+    <h2 id="maniH">Booking crew shouldn't take three days of phone calls.</h2>
+    <p>One booking. Verified crew. Chat, tracking and payment in the same thread — from first request to wrap.</p>
+    <div class="margin-note"><span class="hand">we've lived the chaos. that's why this exists.</span></div>
+  </section>
+
+  <!-- ═══ interactive demo ═══ -->
+  <section class="wrap sec" id="demo" aria-labelledby="demoH" style="padding-top:72px">
+    <span class="k-label rv"><b>02 /</b> TRY IT — INTERACTIVE DEMO, NO SIGN-UP</span>
+    <h2 class="disp rv" id="demoH" style="font-size:clamp(34px,4.6vw,58px);margin-top:14px">Book one<br />right now.</h2>
+    <div class="demo rv" id="demoBox">
+      <div class="demo-top">
+        <button class="back" id="demoBack" hidden>← BACK</button>
+        <span class="demo-step" id="demoStep">STEP 1 OF 4</span>
+        <div class="demo-dots" id="demoDots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
+      </div>
+      <div id="demoBody"></div>
+    </div>
+    <p class="rv" style="color:var(--faint);font-size:12.5px;margin-top:14px;font-family:var(--mono);letter-spacing:1px">A SHORT DEMO · THE APP WALKS YOU THROUGH 6 STEPS + PAYMENT</p>
+  </section>
+
+  <!-- ═══ sticky phone journey ═══ -->
+  <section class="wrap sec" id="how" aria-labelledby="howH" style="padding-top:72px">
+    <span class="k-label rv"><b>03 /</b> THE WHOLE SHOOT, ONE THREAD</span>
+    <h2 class="disp rv" id="howH" style="font-size:clamp(34px,4.6vw,58px);margin:14px 0 10px">Scroll.<br />Watch it happen.</h2>
+    <div class="journey">
+      <div class="j-phone">
+        <div class="p3d" id="p3d">
+          <div class="pback" aria-hidden="true">FG</div>
+          <div class="phone" style="animation:none">
+            <div class="screen vf">
+              <i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i>
+              <div class="notch"><i></i></div>
+              <div class="sbody" id="jScreen">
+                <div class="scr on" data-s="0">
+                  <span class="status-pill"><i></i>STEP 1/6</span>
+                  <div class="mock-title">What are we shooting?</div>
+                  <div class="mock-sub">Pick a category to begin</div>
+                  <div class="mcard"><b>Food &amp; beverage</b><span>Menu launch · saved venue</span></div>
+                  <div class="mcard"><b>When · Today 4 PM</b><span>3 hrs + buffer</span></div>
+                  <div class="mcard gold">Find My Crew →</div>
+                </div>
+                <div class="scr" data-s="1">
+                  <span class="status-pill"><i></i>FINDING YOUR CREW</span>
+                  <div class="mock-title">Matching…</div>
+                  <div class="mock-sub">Nearby verified crew only</div>
+                  <div class="timeline">
+                    <div class="trow done"><span class="tdot">✓</span>Booking confirmed</div>
+                    <div class="trow now"><span class="tdot">●</span>Checking availability…</div>
+                    <div class="trow"><span class="tdot">·</span>Chat unlocks on accept</div>
+                  </div>
+                  <div class="mcard gold">Searching verified crew…</div>
+                </div>
+                <div class="scr" data-s="2">
+                  <span class="status-pill"><i></i>CREW CONFIRMED</span>
+                  <div class="mock-title">Crew confirmed ✓</div>
+                  <div class="mock-sub">Videographer + Photographer</div>
+                  <div class="mcard"><b>Videographer · Verified</b><span>Gear checked · arrives before call time</span></div>
+                  <div class="mcard"><b>Photographer · Verified</b><span>Portfolio reviewed · confirmed</span></div>
+                </div>
+                <div class="scr" data-s="3">
+                  <span class="status-pill"><i></i>SHOOT CHAT</span>
+                  <div class="mock-title">Booking chat</div>
+                  <div class="mock-sub">Client · crew · studio</div>
+                  <div class="chatline">Parking is at the back gate — call on arrival</div>
+                  <div class="chatline me">On my way, ten minutes out</div>
+                  <div class="chatline">Natural light till 5:30, then we move inside</div>
+                </div>
+                <div class="scr" data-s="4">
+                  <span class="status-pill"><i></i>ON SET · LIVE</span>
+                  <div class="mock-title">Rolling…</div>
+                  <div class="mock-sub">Follow the shoot live</div>
+                  <div class="timeline">
+                    <div class="trow done"><span class="tdot">✓</span>Crew arrived</div>
+                    <div class="trow now"><span class="tdot">●</span>Shooting mains</div>
+                    <div class="trow"><span class="tdot">·</span>Wrap + rating</div>
+                  </div>
+                </div>
+                <div class="scr" data-s="5">
+                  <span class="status-pill"><i></i>WRAPPED</span>
+                  <div class="bigcheck">✓</div>
+                  <div class="mock-title">That's a wrap.</div>
+                  <div class="mock-sub">Rate your crew</div>
+                  <div class="mcard"><b>★★★★★</b><span>Early, prepared, great with low light</span></div>
+                  <div class="mcard gold">Book again →</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="j-steps" id="jSteps">
+        <div class="j-step" data-s="0"><span class="k-label">STEP 01</span><h3>Say what you need.</h3><p>What, when, where, who, details, confirm. Six short questions — no briefing calls.</p></div>
+        <div class="j-step" data-s="1"><span class="k-label">STEP 02</span><h3>Matching starts.</h3><p>Paid requests go straight to nearby verified crew, and the studio watches every stuck booking.</p></div>
+        <div class="j-step" data-s="2"><span class="k-label">STEP 03</span><h3>Crew locks in.</h3><p>Names, faces, gear, ratings. You know exactly who's walking onto your set.</p></div>
+        <div class="j-step" data-s="3"><span class="k-label">STEP 04</span><h3>One chat thread.</h3><p>Client, crew and studio. Parking, call times, last-minute changes — one place.</p></div>
+        <div class="j-step" data-s="4"><span class="k-label">STEP 05</span><h3>Arrival to wrap.</h3><p>Live status from the doorstep to the final frame.</p></div>
+        <div class="j-step" data-s="5"><span class="k-label">STEP 06</span><h3>Rate. Rebook.</h3><p>Good crew is hard to find twice. Keep yours one tap away.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ split: marketplace converge ═══ -->
+  <section class="splitwrap" id="split" aria-label="How the marketplace connects">
+    <div class="splitpin">
+      <div class="split" id="splitGrid">
+        <div class="half client" id="halfL">
+          <span class="k-label">FOR CLIENTS</span>
+          <h3>I need<br />a crew.</h3>
+          <p>Friday menu shoot. Forty dishes. You need a photographer who has done this before.</p>
+        </div>
+        <div class="half crew" id="halfR">
+          <span class="k-label"><b>●</b> FOR CREW</span>
+          <h3>I'm ready<br />to shoot.</h3>
+          <p>Verified crew nearby with Friday open. The request lands — one tap to accept.</p>
+        </div>
+      </div>
+      <div class="matchbadge" id="matchBadge">MATCHED ✓</div>
+    </div>
+  </section>
+
+  <!-- ═══ matching moment ═══ -->
+  <section class="wrap sec" id="matching" aria-labelledby="matchH" style="padding-top:72px">
+    <span class="k-label rv"><b>04 /</b> HOW MATCHING WORKS</span>
+    <h2 class="disp rv" id="matchH" style="font-size:clamp(34px,4.6vw,58px);margin-top:14px">Four checks.<br />Then a name.</h2>
+    <div class="mapstage">
+      <svg class="mapsvg rv" id="mapSvg" viewBox="0 0 440 340" role="img" aria-label="Illustration of crew matching around a shoot location">
+        <circle class="ring" cx="220" cy="170" r="40" />
+        <circle class="ring" cx="220" cy="170" r="80" />
+        <circle class="ring live" cx="220" cy="170" r="120" />
+        <circle class="ring" cx="220" cy="170" r="155" />
+        <circle class="ping" cx="220" cy="170" r="6" />
+        <text x="220" y="205" text-anchor="middle" fill="#A6ADB8" font-size="11" font-family="monospace" letter-spacing="2">SHOOT LOCATION</text>
+        <circle class="dotc" data-dot="0" cx="120" cy="90" r="9" />
+        <circle class="dotc" data-dot="1" cx="330" cy="110" r="9" />
+        <circle class="dotc" data-dot="2" cx="300" cy="250" r="9" />
+        <circle class="dotc" data-dot="3" cx="140" cy="250" r="9" />
+      </svg>
+      <div>
+        <div class="maplog" id="mapLog">
+          <div data-m="0">Checking availability…</div>
+          <div data-m="1">Matching equipment to the brief…</div>
+          <div data-m="2">Confirming distance…</div>
+          <div data-m="3" class="gold">Verifying identity + ratings…</div>
+          <div data-m="4" class="ok">CREW CONFIRMED ✓</div>
+        </div>
+        <div class="matchcard" id="matchCard">
+          <div class="demo-crew" style="margin-top:0">
+            <div class="avatar">V</div>
+            <div><h4>Videographer <small>· VERIFIED</small><span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></h4>
+            <p>Verified profile · gear checked · in-app rates<br />Chat unlocks the moment they accept.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ verification stamps ═══ -->
+  <section class="wrap sec" id="safety" aria-labelledby="safeH" style="padding-top:72px">
+    <span class="k-label rv"><b>05 /</b> WHY YOU CAN TRUST A STRANGER ON SET</span>
+    <h2 class="disp rv" id="safeH" style="font-size:clamp(34px,4.6vw,58px);margin-top:14px">Checked five ways<br />before day one.</h2>
+    <div class="stamps rv" id="stamps">
+      <span class="stamp">IDENTITY ✓</span>
+      <span class="stamp">PORTFOLIO ✓</span>
+      <span class="stamp">EXPERIENCE ✓</span>
+      <span class="stamp">GEAR ✓</span>
+      <span class="stamp">LOCATION ✓</span>
+      <span class="stamp final">FAMEGO VERIFIED</span>
+    </div>
+    <p class="rv" style="color:var(--muted);font-size:16px;max-width:560px;margin-top:26px">Only verified profiles receive paid requests — and verification status is always visible. <a href="crew.html" style="color:var(--gold)">How crew get verified →</a></p>
+  </section>
+
+  <!-- ═══ proof: product facts ═══ -->
+  <section style="padding-top:72px" aria-label="FameGo at a glance">
+    <div class="proof rv">
+      <div class="quote">
+        <span class="k-label" style="margin-bottom:18px"><b>06 /</b> BUILT FOR REAL SETS</span>
+        <blockquote>A booking desk for shoots, backed by a studio that runs them. <span>No brokers in between.</span></blockquote>
+        <cite>— FAMEBROS STUDIO · MUMBAI</cite>
+      </div>
+      <figure class="bts" data-plx="0.04"><img src="assets/bts-main.jpg" alt="Famebros photographer framing a product shoot" loading="lazy" decoding="async" /><span class="slate-no">ON SET · 06:12 AM</span><figcaption>PRODUCT SHOOT · FAMEBROS WORK</figcaption></figure>
+    </div>
+    <div class="statrow">
+      <div class="rv"><b>6</b><span>CREW ROLES TO BOOK</span></div>
+      <div class="rv"><b>3</b><span>SHOOT PLANS</span></div>
+      <div class="rv"><b>1</b><span>CHAT THREAD PER SHOOT</span></div>
+      <div class="rv"><b>0</b><span>BROKERS IN BETWEEN</span></div>
+    </div>
+  </section>
+
+  <!-- ═══ pricing ═══ -->
+  <section class="wrap sec" id="plans" aria-labelledby="planH" style="padding-top:72px">
+    <span class="k-label rv"><b>07 /</b> PICK YOUR COVERAGE</span>
+    <h2 class="disp rv" id="planH" style="font-size:clamp(34px,4.6vw,58px);margin-top:14px">Pay for hours.<br />Not headaches.</h2>
+    <div class="tiers">
+      <div class="tier silver rv">
+        <span class="tno">SILVER · 3 HR COVER</span>
+        <h3>Silver</h3>
+        <div class="amt">₹2,999</div>
+        <ul><li>3 hrs on set + 30-min buffer</li><li>Multi-role combos (photo + video)</li><li>In-app chat + live tracking</li><li>Products, reels, campaigns</li></ul>
+        <a class="btn" href="#download">Book Silver</a>
+        <div class="shootid">PLAN FG-S · CHAT + TRACKING INCLUDED</div>
+      </div>
+      <div class="tier rv">
+        <span class="tno">BRONZE · 90-MIN SPRINT</span>
+        <h3>Bronze</h3>
+        <div class="amt">₹1,999</div>
+        <ul><li>1 hr + buffer · 1–2 roles</li><li>Reels &amp; focused shoots</li></ul>
+        <a class="btn ghost" href="#download">Book Bronze</a>
+      </div>
+      <div class="tier gold rv">
+        <span class="tno">GOLD · FULL-DAY PRODUCTION</span>
+        <h3>Gold · ₹8,999</h3>
+        <ul><li>6 hrs + buffer · full crew incl. drone</li><li>Events &amp; large sets</li></ul>
+        <a class="btn ghost" href="#download">Book Gold</a>
+      </div>
+    </div>
+    <p class="rv" style="color:var(--faint);font-size:12.5px;margin-top:16px;font-family:var(--mono);letter-spacing:1px">CANCEL OVER 48H AHEAD: FULL REFUND · 24–48H: HALF · UNDER 24H: NO REFUND — <a href="terms.html" style="color:var(--gold)">TERMS §5</a></p>
+  </section>
+
+  <!-- ═══ story ═══ -->
+  <section class="wrap" style="padding-top:24px" aria-labelledby="storyH">
+    <div class="story rv">
+      <div>
+        <span class="k-label"><b>08 /</b> FAMEGO BY FAMEBROS STUDIO</span>
+        <h2 id="storyH">Built by people who <span>run shoots.</span></h2>
+        <p>Famebros Studio works in production and social content. FameGo is the booking desk we always wanted for our own sets — now open to everyone.</p>
+        <span class="sig">— Famebros Studio</span>
+      </div>
+      <div class="reel" data-plx="-0.05" aria-hidden="false" aria-label="Famebros Studio work"><img src="assets/story-event.jpg" alt="Famebros Studio event coverage" loading="lazy" decoding="async" /><img src="assets/story-team.jpg" alt="Famebros Studio crew" loading="lazy" decoding="async" /><img src="assets/story-beach.jpg" alt="Outdoor location shoot" loading="lazy" decoding="async" /></div>
+    </div>
+  </section>
+
+  <!-- ═══ categories gallery ═══ -->
+  <section class="wrap sec" id="gallery" aria-labelledby="galH" style="padding-top:72px">
+    <span class="k-label rv"><b>09 /</b> WHAT YOU CAN BOOK FOR</span>
+    <h2 class="disp rv" id="galH" style="font-size:clamp(34px,4.6vw,58px);margin-top:14px">One crew pool.<br />Every kind of shoot.</h2>
+    <div class="sheet rv" id="sheet">
+      <figure class="shot s1"><img src="assets/g-bts.jpg" alt="Behind the scenes at a shoot" loading="lazy" decoding="async" /><figcaption>BEHIND THE SCENES</figcaption></figure>
+      <figure class="shot s2"><img src="assets/g-fashion.jpg" alt="Fashion shoot" loading="lazy" decoding="async" /><figcaption>FASHION · ON SET</figcaption></figure>
+      <figure class="shot s3"><img src="assets/g-event.jpg" alt="Event coverage" loading="lazy" decoding="async" /><figcaption>EVENT · LIVE</figcaption></figure>
+      <figure class="shot s4"><img src="assets/g-launch.jpg" alt="Launch day" loading="lazy" decoding="async" /><figcaption>LAUNCH DAY</figcaption></figure>
+      <figure class="shot s5"><img src="assets/g-party.jpg" alt="Celebration shoot" loading="lazy" decoding="async" /><figcaption>CELEBRATIONS</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- ═══ faq ═══ -->
+  <section class="wrap sec" id="faq" aria-labelledby="faqH" style="padding-top:64px;max-width:860px">
+    <span class="k-label rv"><b>10 /</b> FINE PRINT, PLAIN WORDS</span>
+    <h2 class="disp rv" id="faqH" style="font-size:clamp(30px,3.6vw,44px);margin-top:14px">Asked often.</h2>
+    <div class="faq rv" style="margin-top:22px">
+      <details open><summary>Is the app free to download?</summary><div class="a">Yes. You pay only when you confirm a shoot plan. Browsing, support and chat on an active booking are free.</div></details>
+      <details><summary>How fast will crew respond?</summary><div class="a">Paid requests go to nearby available crew instantly, and the studio monitors bookings that get stuck. If yours ever does, email us the booking code and we'll step in.</div></details>
+      <details><summary>Can I cancel or reschedule?</summary><div class="a">Yes, from Booking Details. Over 48 hours ahead: full refund. 24–48 hours: half. Under 24 hours: no refund, because the crew turned down other work. Full policy in Terms §5.</div></details>
+      <details><summary>How does crew verification work?</summary><div class="a">ID, portfolio, experience, gear and location — five checks. Only verified profiles receive paid requests, and status is always visible.</div></details>
+      <details><summary>Which phones are supported?</summary><div class="a">Android 7.0 and above. Push notifications need Google Play services.</div></details>
+      <details><summary>How do I delete my account?</summary><div class="a">In-app: Profile → Delete Account. Or email famebros.studio@gmail.com with “Delete my FameGo account”. <a href="delete-account.html" style="color:var(--gold)">Details →</a></div></details>
+    </div>
+  </section>
+
+  <!-- ═══ finale ═══ -->
+  <section class="finale" id="download" aria-labelledby="finH">
+    <p class="k-label rv"><b>11 /</b> CALL TIME IS NOW</p>
+    <h2 class="rv" id="finH">Your next shoot<br /><span class="out">starts here.</span></h2>
+    <div class="cta-row rv">
+      <a class="btn sheen" href="https://github.com/FamebrosStudio/FameGo/releases" target="_blank" rel="noopener" style="padding:15px 36px;font-size:16px">Book a shoot</a>
+      <a class="link-crew" href="crew.html">Join as crew<span class="recdot"></span></a>
+    </div>
+    <p class="rv" style="color:var(--faint);font-size:12.5px;margin-top:20px;font-family:var(--mono);letter-spacing:1px">ANDROID 7.0+ · FREE TO DOWNLOAD · PAY PER SHOOT</p>
+  </section>
+</main>
+
+<footer class="foot"><div class="wrap">
+  <div class="cols">
+    <div>
+      <a class="brand" href="index.html" style="text-decoration:none"><span class="mark"><img src="logo.svg?v=3" alt="FameGo" /></span><span class="brand-name" style="font-size:15px">FAME<span style="color:var(--gold)">GO</span></span></a>
+      <p style="color:var(--faint);font-size:13px;margin-top:12px;max-width:280px">Shoot crew, on demand. Powered by Famebros Studio.</p>
+    </div>
+    <div><h5>PRODUCT</h5><a href="#demo">Book a shoot</a><a href="crew.html">Join as crew</a><a href="#plans">Pricing</a><a href="updates.html">Updates</a></div>
+    <div><h5>STUDIO</h5><a href="about.html">About</a><a href="support.html">Support</a><a href="bug-report.html">Report a bug</a><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a></div>
+  </div>
+  <div class="base"><span>© <span id="year"></span> FAMEBROS STUDIO · MUMBAI, INDIA</span><span>CONTACT · FAMEBROS.STUDIO@GMAIL.COM</span></div>
+</div></footer>
+
+<!-- Hidden auth landings (unlisted): confirmation.html · verified.html · reset-password.html · invite.html — reached only from Supabase emails. -->
+<script src="app.js?v=4"></script>
+</body>
+</html>

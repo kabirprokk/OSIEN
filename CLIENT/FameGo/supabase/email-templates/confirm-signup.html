@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<!--
+  Paste into: Supabase Dashboard > Authentication > Email Templates > Confirm signup.
+  (Site URL + Redirect URLs are already set — this only replaces the mail body.)
+-->
+<html lang="en">
+<head><meta charset="UTF-8" /></head>
+<body style="margin:0;padding:0;background:#070809;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#070809;padding:32px 16px;">
+    <tr><td align="center">
+      <table width="420" cellpadding="0" cellspacing="0" style="background:#111419;border:1px solid #F6B941;border-radius:22px;padding:40px 32px;text-align:center;">
+        <tr><td style="font-size:30px;letter-spacing:3px;color:#ffffff;font-weight:800;">FAME<span style="color:#F6B941;">GO</span></td></tr>
+        <tr><td style="color:#6E7683;font-size:10px;letter-spacing:4px;padding-top:6px;">FAMEBROS STUDIO</td></tr>
+        <tr><td style="color:#F8FAFC;font-size:21px;font-weight:700;padding-top:26px;">Confirm your email</td></tr>
+        <tr><td style="color:#A6ADB8;font-size:14px;line-height:1.65;padding-top:10px;">
+          One tap and you're in. Book verified reel crew in minutes.
+        </td></tr>
+        <tr><td style="padding-top:26px;">
+          <a href="{{ .ConfirmationURL }}" style="display:block;background:#F6B941;color:#1A1408;font-weight:800;font-size:16px;text-decoration:none;border-radius:14px;padding:15px;">
+            Yes, it's me
+          </a>
+        </td></tr>
+        <tr><td style="color:#6E7683;font-size:11px;padding-top:18px;">
+          Link expires in 24 hours. If the button fails, paste this in your phone browser:<br />
+          <span style="color:#A6ADB8;word-break:break-all;">{{ .ConfirmationURL }}</span>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>

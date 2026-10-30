@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<!-- HIDDEN page: signup / email confirmation landing. Reached only from email. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>FameGo — Email verified</title>
+<link rel="stylesheet" href="styles.css" />
+<link rel="icon" href="logo.svg" type="image/svg+xml" />
+</head>
+<body>
+<div class="ambient" aria-hidden="true"></div>
+<main class="auth">
+  <div class="auth-card">
+    <div class="logo">FAME<span>GO</span></div>
+    <div class="sub">FAMEBROS STUDIO</div>
+    <div class="auth-ic ok" id="icon">✓</div>
+    <h1 id="title">You're verified</h1>
+    <p id="msg">Your email is confirmed. Return to the FameGo app and sign in to book your first crew.</p>
+    <a class="btn" href="famego://auth/callback">Open FameGo app</a>
+    <a class="ghost-btn" href="mailto:famebros.studio@gmail.com?subject=Wrong%20account%20-%20not%20me">Not me? Report it</a>
+    <p class="fine">Didn't create a FameGo account? Ignore this page — nothing else happens.</p>
+  </div>
+</main>
+<script>
+(function () {
+  var hash = window.location.hash || "", search = window.location.search || "";
+  var combined = search + "&" + hash.replace(/^#/, "");
+  function pick(k) { var m = combined.match(new RegExp("[?&#]" + k + "=([^&]+)")); return m ? decodeURIComponent(m[1].replace(/\+/g, " ")) : ""; }
+  var err = pick("error_description") || pick("error") || "";
+  if (err) {
+    var icon = document.getElementById("icon");
+    icon.className = "auth-ic err"; icon.textContent = "!";
+    document.getElementById("title").textContent = "Link didn't work";
+    document.getElementById("msg").textContent = err + " Open FameGo and request a fresh link from Sign in.";
+  }
+})();
+</script>
+</body>
+</html>

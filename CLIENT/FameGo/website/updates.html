@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FameGo — Updates &amp; changelog</title>
+<meta name="description" content="FameGo changelog — what shipped, what improved, what's next." />
+<link rel="stylesheet" href="styles.css" />
+<link rel="icon" href="logo.svg" type="image/svg+xml" />
+</head>
+<body>
+<div class="ambient" aria-hidden="true"></div>
+<header class="topbar"><div class="wrap">
+  <a class="brand" href="index.html"><span class="mark"><img src="logo.svg" alt="FameGo" /></span><span><span class="brand-name">FAME<span style="color:var(--gold)">GO</span></span><br /><span class="brand-sub">FAMEBROS STUDIO</span></span></a>
+  <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false"><i></i><i></i><i></i></button>
+  <nav class="nav" id="siteNav">
+    <a href="index.html#demo">Product</a><a href="about.html">About</a><a href="updates.html">Updates</a><a href="support.html">Support</a><a href="terms.html">Terms</a>
+    <a class="btn sm cta" href="index.html#download">Get the app</a>
+  </nav>
+</div></header>
+<main class="wrap">
+  <section class="sec">
+    <span class="eyebrow">CHANGELOG</span>
+    <h1>Updates, <span class="gold">honestly logged.</span></h1>
+    <p class="lead">Every release, every fix. Newest first — so you always know what's in the APK you installed.</p>
+  </section>
+  <section style="padding:10px 0 30px;max-width:720px">
+    <div class="card rv in" style="border-color:var(--gold-line)">
+      <span class="kicker" style="color:var(--gold)">CURRENT · 18 SEP 2026</span>
+      <h3>vOSEM A.1.1 — matching hardening</h3>
+      <p>Crew-first pipeline, shoot-done signals, crash reporting, faster booking lists, FCM push stays inert until keys are set. Screenshot + Robolectric suite green.</p>
+    </div>
+    <div style="height:12px"></div>
+    <div class="card rv in"><span class="kicker">EARLIER</span><h3>vOSEM A.1.0 — first studio build</h3><p>Client 6-step booking, Silver/Gold/Bronze plans, crew incoming-call alerts, per-booking chat, admin dashboard, Supabase auth + realtime, OSM maps, support inbox.</p></div>
+    <div style="height:12px"></div>
+    <div class="card rv in"><span class="kicker">NEXT</span><h3>On the board</h3><p>Live UPI payments, crew live-location sharing, reschedule flow, Malayalam + Hindi copy pass. Vote by <a href="bug-report.html" style="color:var(--gold2)">reporting a bug / requesting a feature</a>.</p></div>
+    <div class="photostrip rv in">
+      <figure class="shot"><img src="assets/g-launch.jpg" alt="Crew covering a launch day" loading="lazy" decoding="async" /><figcaption>LAUNCH DAY · COVERED IN-APP</figcaption></figure>
+      <figure class="shot"><img src="assets/g-party.jpg" alt="Celebration shoot" loading="lazy" decoding="async" /><figcaption>CELEBRATIONS · ON SET</figcaption></figure>
+    </div>
+  </section>
+  <section><div class="band rv in">
+    <div><span class="kicker">GET IT</span><h2>Always run the latest</h2><p>Update from the releases page — changelogs ship with every APK.</p>
+      <div class="cta-row" style="margin-top:20px"><a class="btn" href="https://github.com/FamebrosStudio/FameGo/releases" target="_blank" rel="noopener">Releases on GitHub</a></div></div>
+    <div class="ver">
+      <div><span>Current</span><b>OSEM A.1.1</b></div>
+      <div><span>Channel</span><b>GitHub releases</b></div>
+      <div><span>Requires</span><b>Android 7.0+</b></div>
+    </div>
+  </div></section>
+</main>
+<footer><div class="wrap foot">
+  <div>© <span id="year"></span> FameBros Studio · <a href="index.html">Home</a></div>
+  <nav><a href="about.html">About</a><a href="updates.html">Updates</a><a href="support.html">Support</a><a href="bug-report.html">Report a bug</a><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a></nav>
+</div></footer>
+<script src="app.js"></script>
+</body>
+</html>
