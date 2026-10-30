@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+browser-game/node_modules/
+
+# Build output
+browser-game/dist/
+dist/
+
+# Python
+__pycache__/
+*.pyc
+
+# Blender backups
+*.blend1
+
+# OS
+.DS_Store
+Thumbs.db

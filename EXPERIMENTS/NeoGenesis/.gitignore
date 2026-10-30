@@ -1,0 +1,25 @@
+# dependencies
+node_modules/
+# builds
+dist/
+build/
+*.tsbuildinfo
+# vite
+.vite/
+# env + secrets
+.env
+.env.*
+!.env.example
+# logs + OS
+*.log
+.DS_Store
+Thumbs.db
+# editor
+.vscode/*
+!.vscode/extensions.json
+# local tool output
+.local/
+# dev-play artifacts (screenshots, run reports — regenerate with node connect.mjs)
+dev-play/shots/
+dev-play/LAST_RUN.md
+dev-play/server.log

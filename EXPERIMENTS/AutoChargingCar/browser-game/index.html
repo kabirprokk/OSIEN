@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#101719" />
+  <title>Auto Charging Car</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">AC</span><div><strong>Auto Charging Car</strong><small>Live 3D drive</small></div></div>
+      <div class="mode-bar" role="tablist" aria-label="Driving mode">
+  <button data-mode="free" class="mode-btn active" role="tab" aria-selected="true">Free Drive</button>
+  <button data-mode="traffic" class="mode-btn" role="tab" aria-selected="false">Traffic</button>
+  <button data-mode="race" class="mode-btn" role="tab" aria-selected="false">Race AI</button>
+</div>
+<div class="top-actions"><span class="connection"><i></i><span id="connection">Loading model…</span></span><button id="partsOpen" class="nerdy-open" aria-controls="partsPanel">Inspect parts</button><button id="nerdyOpen" class="nerdy-open" aria-haspopup="dialog" aria-controls="nerdyDialog"><span>⌘</span> Nerdy</button></div>
+    </header>
+
+    <section class="drive-stage" aria-label="Car driving simulator">
+      <div id="viewport" aria-label="Interactive 3D car model"></div>
+      <div class="energy-hud" aria-label="Live energy use and losses">
+        <article class="energy-card battery-card">
+          <div class="card-label"><span class="energy-icon battery-icon"></span><span>Battery use</span></div>
+          <strong><i id="batteryUse">0.0</i><em>mWh</em></strong>
+          <small id="batteryPower">0.00 W draw</small>
+          <div class="battery-state"><span class="battery-track"><i id="batteryFill"></i></span><b><i id="soc">100</i>%</b></div>
+        </article>
+        <article class="energy-card recovered-card">
+          <div class="card-label"><span class="energy-icon recovered-icon">↗</span><span>Generator output</span></div>
+          <strong><i id="energyRecovered">0.0</i><em>mWh</em></strong>
+          <small id="returnedPower">0.0 mW into test load</small>
+        </article>
+        <article class="energy-card loss-card">
+          <div class="card-label"><span class="energy-icon loss-icon">⌁</span><span>Belt loss</span></div>
+          <strong><i id="beltLossEnergy">0.0</i><em>mWh</em></strong>
+          <small id="beltLossPower">0.0 mW dissipated</small>
+        </article>
+      </div>
+
+      <div class="drive-footer"><span id="gearState">Motors off</span><span class="play-hint"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> drive &middot; <kbd>Space</kbd> brake &middot; hold left click and drag to orbit</span></div>
+<div id="raceHud" class="race-hud" hidden>
+  <div class="race-hud-item"><small>Lap</small><strong><i id="raceLap">0</i>/3</strong></div>
+  <div class="race-hud-item"><small>Time</small><strong><i id="raceTime">0.0</i>s</strong></div>
+  <div class="race-hud-item"><small>AI Lap</small><strong><i id="aiLap">0</i>/3</strong></div>
+  <div id="raceResult" class="race-result"></div>
+</div>
+    </section>
+  </main>
+
+  <aside id="partsPanel" class="parts-panel" aria-label="Exploded parts inspector" hidden>
+    <header class="parts-header"><div><span class="eyebrow">EXPLODED ASSEMBLY</span><h2>Parts inspector</h2><small id="partsCount">Loading parts?</small></div><button id="partsClose" class="close-button" aria-label="Close parts inspector">?</button></header>
+    <p class="parts-help">Separated by modeled size, smallest first. Select a part in the view or list to see its purpose and operation. Small pieces are enlarged for visibility.</p>
+    <label class="parts-search"><span>Find a part</span><input id="partsSearch" type="search" placeholder="Wheel, motor, belt?" autocomplete="off"></label>
+    <div id="partsList" class="parts-list" role="listbox" aria-label="Parts, ordered smallest to largest"></div>
+    <section id="partInfo" class="part-info"><span class="eyebrow">SELECT A PART</span><h3>How this car fits together</h3><p>The list is ordered by each model piece?s measured bounding volume. The exploded view keeps every piece selectable.</p></section>
+  </aside>
+  <dialog id="nerdyDialog" class="nerdy-dialog" aria-labelledby="nerdyTitle">
+    <div class="nerdy-shell">
+      <header class="nerdy-header"><div><span class="eyebrow">ADVANCED PANEL</span><h1 id="nerdyTitle">Nerdy stuff</h1></div><button id="nerdyClose" class="close-button" aria-label="Close nerdy panel">×</button></header>
+      <div class="nerdy-content">
+        <section class="nerdy-section">
+          <h2>Drive</h2>
+          <div class="button-row"><button id="reverseButton" class="action-button">Reverse / brake</button><button id="driveButton" class="action-button drive-button">Hold to drive</button></div>
+          <label class="range-row" for="throttle"><span>Throttle <output id="throttleValue">0%</output></span><input id="throttle" type="range" min="0" max="100" value="0" /></label>
+          <label class="range-row" for="steer"><span>Steering trim <output id="steerValue">0%</output></span><input id="steer" type="range" min="-100" max="100" value="0" /></label>
+          <div class="small-actions"><button id="demoButton" class="text-button">Play 10 second demo</button><button id="pauseButton" class="text-button">Pause</button><button id="resetView" class="text-button">Reset view</button></div>
+        </section>
+
+        <section class="nerdy-section">
+          <h2>Energy system</h2>
+          <div class="switch-row"><div><strong>Generator test load</strong><small>Measured output is dissipated; battery is not charged</small></div><button id="generatorSwitch" class="toggle on" aria-pressed="true"><i></i><span>ON</span></button></div>
+          <label class="range-row" for="load"><span>Test-load setting <output id="loadValue">65%</output></span><input id="load" type="range" min="0" max="100" value="65" /></label>
+          <label class="range-row" for="generators"><span>Generator count <output id="generatorCount">1 unit</output></span><input id="generators" type="range" min="1" max="4" value="1" step="1" /></label>
+          <label class="range-row" for="grade"><span>Road grade <output id="gradeValue">0%</output></span><input id="grade" type="range" min="-20" max="20" value="0" /></label>
+          <div class="switch-row"><div><strong>Motor speed balancing</strong><small>Encoder-style compensation for generator pull</small></div><button id="balanceSwitch" class="toggle" aria-pressed="false"><i></i><span>OFF</span></button></div>
+        </section>
+
+        <section class="nerdy-section">
+          <div class="section-heading"><h2>Live engineering data</h2><span class="physics-badge">ESTIMATES</span></div>
+          <div class="data-grid">
+            <div><small>Speed</small><strong><i id="speed">0.00</i> km/h</strong><span id="speedFill" class="hidden-meter"></span></div>
+            <div><small>Rear wheel RPM · L / R</small><strong><i id="leftRpm">0</i> / <i id="rightRpm">0</i></strong></div>
+            <div><small>Generator shaft</small><strong><i id="genRpm">0</i> rpm</strong><span id="beltSpeed">Belt 0.000 m/s · 4:1</span></div>
+            <div><small>Motor torque · L / R</small><strong><i id="motorTorque">0.00 / 0.00</i> mN·m</strong><span id="motorCurrent">0.000 A</span></div>
+            <div><small>Battery bus</small><strong><i id="batteryCurrent">0.000 A</i></strong></div>
+            <div><small>Motor / generator losses</small><strong id="losses">—</strong></div>
+            <div><small>Estimated remaining runtime</small><strong id="runtime">—</strong></div>
+            <div><small>Motor proxy</small><strong id="motorSpec">Published motor curve</strong></div>
+<div><small>AI learned samples</small><strong id="aiSamples">0</strong></div>
+            <div><small>No-generator cruise</small><strong id="caseA">—</strong></div>
+            <div><small>Loaded-generator cruise</small><strong id="caseB">—</strong></div>
+          </div>
+          <p class="notice" id="notice">Motion and energy are estimates based on the selected motor and battery assumptions.</p>
+          <a class="report-link" href="/ENGINEERING_REPORT.md" target="_blank" rel="noreferrer">Open assumptions, calculations, and build notes ↗</a>
+        </section>
+      </div>
+      <footer class="nerdy-footer">Keyboard: WASD or arrows to drive · Space to brake · G to connect/disconnect generation</footer>
+    </div>
+  </dialog>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
