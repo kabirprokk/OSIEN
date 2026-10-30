@@ -15,7 +15,7 @@ Apply selected visual elements from https://osien.is-a.dev/ to the OSIN landing 
 - NPM latest was found at `@kabirprokk/osin-cli@1.0.2`, containing updater behavior that was missing from the local repository's 1.0.1 source.
 - Release-prep commit `3e88b6a` is pushed; it preserves the updater shipped in npm 1.0.2 and updates npm/package-lock versions to 1.0.3.
 - Added updater regression coverage; local suite now passes 22/22.
-- `npm publish --access public` ran the prepublish test suite successfully but stopped at npm's required one-time-password authentication (EOTP). No publish occurred; registry remains 1.0.2.
+- `npm publish --access public` ran the prepublish suite successfully from the correct 1.0.3 checkout but stopped at npm's required one-time-password authentication (EOTP). A separate user attempt from a temp checkout was still at 1.0.2. No publish occurred; registry remains 1.0.2.
 - `OSIN/assets/osin-terminal.png` remains the authentic screenshot.
 
 ## Verification
@@ -25,5 +25,5 @@ Apply selected visual elements from https://osien.is-a.dev/ to the OSIN landing 
 - Local page and stylesheet returned HTTP 200; visual checks were made at desktop and 390px mobile widths.
 
 ## Next
-- After the user completes npm's browser/2FA authentication, retry `npm publish --access public` from `OSIN/` and verify the registry reports 1.0.3.
+- User must publish from the current repository's `OSIN/` (not the temporary 1.0.2 source copy) and complete npm browser/2FA authentication; then verify the registry reports 1.0.3.
 - The production `https://osin.pages.dev/` still serves prior web assets because only the feature branch was pushed; its origin/main is 441bd52.
