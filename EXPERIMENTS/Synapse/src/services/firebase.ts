@@ -44,3 +44,4 @@ export async function initAnalytics(): Promise<void> {
     /* analytics unavailable — non-fatal */
   }
 }
+
