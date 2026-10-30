@@ -3,6 +3,15 @@
   "version": "1.0.0",
   "description": "A terminal-based AI coding assistant with a clickable workspace",
   "main": "osin.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kabirprokk/OSIEN.git",
+    "directory": "OSIN"
+  },
+  "homepage": "https://osin.is-an.org/",
+  "bugs": {
+    "url": "https://github.com/kabirprokk/OSIEN/issues"
+  },
   "bin": {
     "osin": "osin.js"
   },
@@ -18,7 +27,8 @@
     "README.md"
   ],
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "prepublishOnly": "npm test"
   },
   "engines": {
     "node": ">=18"

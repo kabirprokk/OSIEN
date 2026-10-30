@@ -63,3 +63,23 @@ document.querySelectorAll('.command-chip').forEach(button => {
     messages.append(user, answer);
   });
 });
+
+document.querySelectorAll('[data-copy]').forEach(button => {
+  button.addEventListener('click', async () => {
+    const status = document.querySelector('.copy-status');
+    try {
+      await navigator.clipboard.writeText(button.dataset.copy);
+      button.textContent = 'COPIED';
+      button.dataset.copied = 'true';
+      button.setAttribute('aria-label', 'Command copied to clipboard');
+      if (status) status.textContent = 'Copied command to clipboard.';
+      window.setTimeout(() => {
+        button.textContent = 'COPY';
+        delete button.dataset.copied;
+        button.setAttribute('aria-label', `Copy command: ${button.dataset.copy}`);
+      }, 1800);
+    } catch {
+      if (status) status.textContent = 'Clipboard access is unavailable. Select and copy the command instead.';
+    }
+  });
+});

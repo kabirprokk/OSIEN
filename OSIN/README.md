@@ -7,7 +7,7 @@ run shell commands or directly edit project files.
 
 ## Install globally
 
-After the package is published to npm, install it for your user with:
+Once the first public npm release is available, install OSIN globally with:
 
 ```sh
 npm install --global @kabirprokk/osin-cli
@@ -16,6 +16,15 @@ npm install --global @kabirprokk/osin-cli
 The `osin` command is then available from any directory. Node.js 18 or newer
 and npm are required. To install and test from a local checkout before
 publication, run `npm install --global .` from this directory.
+
+Until the npm release is published, clone the repository, change to `OSIN`,
+and run `npm install --global .` there:
+
+```sh
+git clone https://github.com/kabirprokk/OSIEN.git
+cd OSIEN/OSIN
+npm install --global .
+```
 
 ## Configure
 
