@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/kabirprokk/opencode-registry/main/schema.json",
+  "title": "OpenCode Community Marketplace Registry",
+  "type": "object",
+  "required": ["version", "updated", "packages"],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "const": 1 },
+    "updated": { "type": "string", "format": "date" },
+    "packages": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/package" }
+    }
+  },
+  "$defs": {
+    "package": {
+      "type": "object",
+      "required": ["name", "type", "version", "description", "author", "repo", "install", "tags", "license"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$" },
+        "type": { "enum": ["skill", "agent", "command", "skill-pack", "mcp"] },
+        "version": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "author": { "type": "string", "minLength": 1 },
+        "repo": { "type": "string", "pattern": "^https://github\\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+(?:\\.git)?/?$" },
+        "path": { "type": "string", "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.\\.(?:/|$)).+$" },
+        "install": { "const": "git" },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 40 } },
+        "license": { "type": "string", "minLength": 1 },
+        "skill_count": { "type": "integer", "minimum": 0 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "enum": ["skill", "agent", "command", "mcp"] } } },
+          "then": { "required": ["path"] }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "opencode-community-registry",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Public package index for community skills, agents, and commands for OpenCode.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kabirprokk/opencode-registry.git"
+  },
+  "scripts": {
+    "test": "node scripts/validate-registry.js"
+  }
+}

@@ -1,0 +1,3704 @@
+{
+  "$schema": "./schema.json",
+  "version": 1,
+  "updated": "2026-10-29",
+  "packages": [
+    {
+      "name": "osien-stack",
+      "type": "skill-pack",
+      "version": "2.0.0",
+      "description": "Portable AI tooling stack: 47 MCP tools, city mode, 14 agents, skills, commands. Works with any MCP-compatible CLI.",
+      "author": "kabirprokk",
+      "repo": "https://github.com/kabirprokk/Osien-Stack",
+      "install": "git",
+      "tags": [
+        "mcp",
+        "tools",
+        "agents",
+        "skills",
+        "orchestration",
+        "city-mode"
+      ],
+      "license": "MIT",
+      "skill_count": 0
+    },
+    {
+      "name": "caveman",
+      "type": "skill",
+      "version": "1.0.0",
+      "description": "Cut output tokens ~65% with zero narration. Keeps all technical facts.",
+      "author": "kabirprokk",
+      "repo": "https://github.com/kabirprokk/Osien-Stack",
+      "path": "skills/caveman",
+      "install": "git",
+      "tags": [
+        "tokens",
+        "efficiency",
+        "output"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "osien-3d-forge",
+      "type": "skill",
+      "version": "1.0.0",
+      "description": "Ultra-fast procedural 3D generator: primitives, parametric kits, LOD, auto-UV/normals, GLB/OBJ/STL export.",
+      "author": "kabirprokk",
+      "repo": "https://github.com/kabirprokk/Osien-Stack",
+      "path": "skills/osien-3d-forge",
+      "install": "git",
+      "tags": [
+        "3d",
+        "model",
+        "mesh",
+        "asset"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "stop-slop",
+      "type": "skill",
+      "version": "1.0.0",
+      "description": "Removes AI writing tells from prose (docs, READMEs, messages).",
+      "author": "kabirprokk",
+      "repo": "https://github.com/kabirprokk/Osien-Stack",
+      "path": "skills/stop-slop",
+      "install": "git",
+      "tags": [
+        "writing",
+        "prose",
+        "cleanup"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "logic",
+      "type": "skill",
+      "version": "1.0.0",
+      "description": "Anti-self-sabotage + parallelism doctrine. Prevents killing terminals, interrupted processes, redundant sequential calls.",
+      "author": "kabirprokk",
+      "repo": "https://github.com/kabirprokk/Osien-Stack",
+      "path": "skills/logic",
+      "install": "git",
+      "tags": [
+        "workflow",
+        "parallelism",
+        "safety"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "ai-manager",
+      "type": "agent",
+      "version": "1.0.0",
+      "description": "Multi-agent orchestrator with context rotation and usage monitoring.",
+      "author": "kabirprokk",
+      "repo": "https://github.com/kabirprokk/Osien-Stack",
+      "path": "agents/ai-manager.md",
+      "install": "git",
+      "tags": [
+        "orchestration",
+        "manager",
+        "agents"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "brainstorming",
+      "type": "skill",
+      "version": "main",
+      "description": "Structure discovery and ideation before creating features, components, or plans.",
+      "author": "obra",
+      "repo": "https://github.com/obra/superpowers",
+      "path": "skills/brainstorming",
+      "install": "git",
+      "tags": [
+        "planning",
+        "ideation",
+        "design"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "systematic-debugging",
+      "type": "skill",
+      "version": "main",
+      "description": "Investigate bugs and test failures systematically before proposing fixes.",
+      "author": "obra",
+      "repo": "https://github.com/obra/superpowers",
+      "path": "skills/systematic-debugging",
+      "install": "git",
+      "tags": [
+        "debugging",
+        "testing",
+        "workflow"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "test-driven-development",
+      "type": "skill",
+      "version": "main",
+      "description": "Guide feature and bug-fix work with a test-first development workflow.",
+      "author": "obra",
+      "repo": "https://github.com/obra/superpowers",
+      "path": "skills/test-driven-development",
+      "install": "git",
+      "tags": [
+        "testing",
+        "tdd",
+        "workflow"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "code-review",
+      "type": "skill",
+      "version": "main",
+      "description": "Review code changes for alignment with project standards and the originating specification.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/engineering/code-review",
+      "install": "git",
+      "tags": [
+        "review",
+        "quality",
+        "engineering"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "grill-with-docs",
+      "type": "skill",
+      "version": "main",
+      "description": "Sharpen a plan or design through questions and capture decisions in project documentation.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/engineering/grill-with-docs",
+      "install": "git",
+      "tags": [
+        "planning",
+        "documentation",
+        "design"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "grill-me",
+      "type": "skill",
+      "version": "main",
+      "description": "Use a focused interview to clarify and strengthen a plan or design.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/productivity/grill-me",
+      "install": "git",
+      "tags": [
+        "planning",
+        "clarification",
+        "productivity"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "supabase-postgres-best-practices",
+      "type": "skill",
+      "version": "main",
+      "description": "Apply Postgres performance, schema, security, and query best practices to database work.",
+      "author": "supabase",
+      "repo": "https://github.com/supabase/agent-skills",
+      "path": "skills/supabase-postgres-best-practices",
+      "install": "git",
+      "tags": [
+        "supabase",
+        "postgres",
+        "database",
+        "security"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "supabase",
+      "type": "skill",
+      "version": "main",
+      "description": "Guidance for Supabase products, client libraries, auth, migrations, security, and troubleshooting.",
+      "author": "supabase",
+      "repo": "https://github.com/supabase/agent-skills",
+      "path": "skills/supabase",
+      "install": "git",
+      "tags": [
+        "supabase",
+        "database",
+        "auth",
+        "cloud"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "hyperframes-cli",
+      "type": "skill",
+      "version": "main",
+      "description": "Scaffold, inspect, edit, preview, render, and publish HyperFrames video projects with its CLI.",
+      "author": "heygen-com",
+      "repo": "https://github.com/heygen-com/hyperframes",
+      "path": "skills/hyperframes-cli",
+      "install": "git",
+      "tags": [
+        "video",
+        "cli",
+        "rendering",
+        "hyperframes"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "writing-plans",
+      "type": "skill",
+      "version": "main",
+      "description": "Turn a specification or requirements into a structured multi-step implementation plan.",
+      "author": "obra",
+      "repo": "https://github.com/obra/superpowers",
+      "path": "skills/writing-plans",
+      "install": "git",
+      "tags": [
+        "planning",
+        "specification",
+        "workflow"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "verification-before-completion",
+      "type": "skill",
+      "version": "main",
+      "description": "Require fresh verification evidence before reporting work complete or passing.",
+      "author": "obra",
+      "repo": "https://github.com/obra/superpowers",
+      "path": "skills/verification-before-completion",
+      "install": "git",
+      "tags": [
+        "verification",
+        "testing",
+        "quality"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "receiving-code-review",
+      "type": "skill",
+      "version": "main",
+      "description": "Assess review feedback rigorously before deciding how to respond or change code.",
+      "author": "obra",
+      "repo": "https://github.com/obra/superpowers",
+      "path": "skills/receiving-code-review",
+      "install": "git",
+      "tags": [
+        "review",
+        "feedback",
+        "engineering"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "diagnosing-bugs",
+      "type": "skill",
+      "version": "main",
+      "description": "Diagnose difficult bugs and performance regressions with a focused investigation loop.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/engineering/diagnosing-bugs",
+      "install": "git",
+      "tags": [
+        "debugging",
+        "performance",
+        "engineering"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "implement-spec",
+      "type": "skill",
+      "version": "main",
+      "description": "Implement a defined technical specification in code.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/engineering/implement-spec",
+      "install": "git",
+      "tags": [
+        "implementation",
+        "specification",
+        "engineering"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "improve-codebase-architecture",
+      "type": "skill",
+      "version": "main",
+      "description": "Identify codebase architecture improvements and explore a selected opportunity.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/engineering/improve-codebase-architecture",
+      "install": "git",
+      "tags": [
+        "architecture",
+        "refactoring",
+        "engineering"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "hyperframes-slideshow",
+      "type": "skill",
+      "version": "main",
+      "description": "Build interactive HyperFrames slide presentations with reveals and presenter mode.",
+      "author": "heygen-com",
+      "repo": "https://github.com/heygen-com/hyperframes",
+      "path": "skills/slideshow",
+      "install": "git",
+      "tags": [
+        "video",
+        "presentation",
+        "hyperframes"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "hyperframes-media-use",
+      "type": "skill",
+      "version": "main",
+      "description": "Find, create, and integrate media assets and audio for HyperFrames video projects.",
+      "author": "heygen-com",
+      "repo": "https://github.com/heygen-com/hyperframes",
+      "path": "skills/media-use",
+      "install": "git",
+      "tags": [
+        "video",
+        "media",
+        "audio",
+        "hyperframes"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "remotion-to-hyperframes",
+      "type": "skill",
+      "version": "main",
+      "description": "Port existing animation projects and footage into HyperFrames and verify the result frame by frame.",
+      "author": "heygen-com",
+      "repo": "https://github.com/heygen-com/hyperframes",
+      "path": "skills/remotion-to-hyperframes",
+      "install": "git",
+      "tags": [
+        "video",
+        "animation",
+        "migration",
+        "hyperframes"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "dispatching-parallel-agents",
+      "type": "skill",
+      "version": "main",
+      "description": "Split independent work into parallel agent tasks without creating shared-state conflicts.",
+      "author": "obra",
+      "repo": "https://github.com/obra/superpowers",
+      "path": "skills/dispatching-parallel-agents",
+      "install": "git",
+      "tags": [
+        "agents",
+        "parallelism",
+        "workflow"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "executing-plans",
+      "type": "skill",
+      "version": "main",
+      "description": "Execute an approved implementation plan step by step and verify the work as it progresses.",
+      "author": "obra",
+      "repo": "https://github.com/obra/superpowers",
+      "path": "skills/executing-plans",
+      "install": "git",
+      "tags": [
+        "planning",
+        "implementation",
+        "workflow"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "using-git-worktrees",
+      "type": "skill",
+      "version": "main",
+      "description": "Create isolated Git worktrees for feature work and implementation plans.",
+      "author": "obra",
+      "repo": "https://github.com/obra/superpowers",
+      "path": "skills/using-git-worktrees",
+      "install": "git",
+      "tags": [
+        "git",
+        "worktrees",
+        "workflow"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "writing-skills",
+      "type": "skill",
+      "version": "main",
+      "description": "Create, revise, and verify reusable agent skills before releasing them.",
+      "author": "obra",
+      "repo": "https://github.com/obra/superpowers",
+      "path": "skills/writing-skills",
+      "install": "git",
+      "tags": [
+        "skills",
+        "authoring",
+        "documentation"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "domain-modeling",
+      "type": "skill",
+      "version": "main",
+      "description": "Clarify domain terminology and maintain a project's glossary and architecture decision records.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/engineering/domain-modeling",
+      "install": "git",
+      "tags": [
+        "domain-modeling",
+        "architecture",
+        "documentation"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "implement",
+      "type": "skill",
+      "version": "main",
+      "description": "Implement scoped work from an approved specification or set of tickets.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/engineering/implement",
+      "install": "git",
+      "tags": [
+        "implementation",
+        "specification",
+        "engineering"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "research",
+      "type": "skill",
+      "version": "main",
+      "description": "Research questions using high-trust primary sources and capture findings in project documentation.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/engineering/research",
+      "install": "git",
+      "tags": [
+        "research",
+        "documentation",
+        "sources"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "prisma-client-api",
+      "type": "skill",
+      "version": "7.9.1",
+      "description": "Reference Prisma Client models, queries, filters, CRUD operations, and client methods.",
+      "author": "prisma",
+      "repo": "https://github.com/prisma/skills",
+      "path": "prisma-client-api",
+      "install": "git",
+      "tags": [
+        "prisma",
+        "database",
+        "orm",
+        "queries"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "prisma-orm-setup",
+      "type": "skill",
+      "version": "1.0.0",
+      "description": "Set up Prisma ORM, connect supported databases, and troubleshoot existing Prisma applications.",
+      "author": "prisma",
+      "repo": "https://github.com/prisma/skills",
+      "path": "prisma-orm-setup",
+      "install": "git",
+      "tags": [
+        "prisma",
+        "database",
+        "setup",
+        "orm"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "google-agents-cli-adk-code",
+      "type": "skill",
+      "version": "1.11.0",
+      "description": "Build Google Agent Development Kit agents with tools, callbacks, orchestration, and state management.",
+      "author": "Google",
+      "repo": "https://github.com/google/agents-cli",
+      "path": "skills/google-agents-cli-adk-code",
+      "install": "git",
+      "tags": [
+        "google",
+        "agents",
+        "adk",
+        "cloud"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "subagent-driven-development",
+      "type": "skill",
+      "version": "main",
+      "description": "Execute implementation plans by delegating independent tasks to focused subagents.",
+      "author": "obra",
+      "repo": "https://github.com/obra/superpowers",
+      "path": "skills/subagent-driven-development",
+      "install": "git",
+      "tags": [
+        "agents",
+        "implementation",
+        "parallelism"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "finishing-a-development-branch",
+      "type": "skill",
+      "version": "main",
+      "description": "Choose and verify an integration strategy after implementation and tests are complete.",
+      "author": "obra",
+      "repo": "https://github.com/obra/superpowers",
+      "path": "skills/finishing-a-development-branch",
+      "install": "git",
+      "tags": [
+        "git",
+        "release",
+        "workflow"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "diagnosing-superpowers",
+      "type": "skill",
+      "version": "main",
+      "description": "Investigate why a Superpowers workflow or skill behaved unexpectedly and prepare useful findings.",
+      "author": "obra",
+      "repo": "https://github.com/obra/superpowers",
+      "path": "skills/diagnosing-superpowers",
+      "install": "git",
+      "tags": [
+        "debugging",
+        "workflow",
+        "skills"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "codebase-design",
+      "type": "skill",
+      "version": "main",
+      "description": "Improve module boundaries and interfaces using deep-module design concepts.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/engineering/codebase-design",
+      "install": "git",
+      "tags": [
+        "architecture",
+        "modules",
+        "design"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "to-spec",
+      "type": "skill",
+      "version": "main",
+      "description": "Synthesize an agreed conversation into a technical specification for a configured issue tracker.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/engineering/to-spec",
+      "install": "git",
+      "tags": [
+        "specification",
+        "planning",
+        "issues"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "to-tickets",
+      "type": "skill",
+      "version": "main",
+      "description": "Break a plan or spec into dependency-aware implementation tickets for a configured tracker.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/engineering/to-tickets",
+      "install": "git",
+      "tags": [
+        "planning",
+        "tickets",
+        "project-management"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "prisma-postgres-setup",
+      "type": "skill",
+      "version": "2.2.0",
+      "description": "Set up or connect a Prisma Postgres database and configure Prisma ORM for an application.",
+      "author": "prisma",
+      "repo": "https://github.com/prisma/skills",
+      "path": "prisma-postgres-setup",
+      "install": "git",
+      "tags": [
+        "prisma",
+        "postgres",
+        "database",
+        "setup"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "prisma-upgrade-v7",
+      "type": "skill",
+      "version": "7.6.0",
+      "description": "Guide migrations from Prisma ORM 6 to 7, including breaking changes and driver adapters.",
+      "author": "prisma",
+      "repo": "https://github.com/prisma/skills",
+      "path": "prisma-upgrade-v7",
+      "install": "git",
+      "tags": [
+        "prisma",
+        "migration",
+        "upgrade"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "prisma-compute",
+      "type": "skill",
+      "version": "main",
+      "description": "Deploy and operate Prisma applications on Prisma Compute, including logs, rollbacks, and domains.",
+      "author": "prisma",
+      "repo": "https://github.com/prisma/skills",
+      "path": "prisma-compute",
+      "install": "git",
+      "tags": [
+        "prisma",
+        "deployment",
+        "hosting"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "prisma-driver-adapter-implementation",
+      "type": "skill",
+      "version": "7.9.1",
+      "description": "Implement or modify Prisma ORM 7 SQL driver adapters and verify transactions and result mapping.",
+      "author": "prisma",
+      "repo": "https://github.com/prisma/skills",
+      "path": "prisma-driver-adapter-implementation",
+      "install": "git",
+      "tags": [
+        "prisma",
+        "database",
+        "drivers",
+        "engineering"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "microsoft-foundry",
+      "type": "skill",
+      "version": "main",
+      "description": "Build, deploy, evaluate, and operate Microsoft Foundry agents, models, and resources.",
+      "author": "Microsoft",
+      "repo": "https://github.com/microsoft/azure-skills",
+      "path": "skills/microsoft-foundry",
+      "install": "git",
+      "tags": [
+        "microsoft",
+        "azure",
+        "agents",
+        "ai"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "azure-compute",
+      "type": "skill",
+      "version": "main",
+      "description": "Plan and provision Azure virtual machines and scale sets, with sizing, quota, and cost guidance.",
+      "author": "Microsoft",
+      "repo": "https://github.com/microsoft/azure-skills",
+      "path": "skills/azure-compute",
+      "install": "git",
+      "tags": [
+        "azure",
+        "compute",
+        "cloud",
+        "infrastructure"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "azure-cloud-migrate",
+      "type": "skill",
+      "version": "main",
+      "description": "Assess and migrate workloads from other cloud platforms to Azure services.",
+      "author": "Microsoft",
+      "repo": "https://github.com/microsoft/azure-skills",
+      "path": "skills/azure-cloud-migrate",
+      "install": "git",
+      "tags": [
+        "azure",
+        "migration",
+        "cloud",
+        "modernization"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "azure-quotas",
+      "type": "skill",
+      "version": "main",
+      "description": "Check Azure service quotas, regional capacity, usage, and deployment limits.",
+      "author": "Microsoft",
+      "repo": "https://github.com/microsoft/azure-skills",
+      "path": "skills/azure-quotas",
+      "install": "git",
+      "tags": [
+        "azure",
+        "quotas",
+        "capacity",
+        "cloud"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "azure-upgrade",
+      "type": "skill",
+      "version": "main",
+      "description": "Assess Azure workload plan upgrades and modernize selected Azure SDK dependencies.",
+      "author": "Microsoft",
+      "repo": "https://github.com/microsoft/azure-skills",
+      "path": "skills/azure-upgrade",
+      "install": "git",
+      "tags": [
+        "azure",
+        "upgrade",
+        "modernization",
+        "cloud"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "azure-enterprise-infra-planner",
+      "type": "skill",
+      "version": "main",
+      "description": "Plan enterprise Azure infrastructure, networking, identity, security, and deployment templates.",
+      "author": "Microsoft",
+      "repo": "https://github.com/microsoft/azure-skills",
+      "path": "skills/azure-enterprise-infra-planner",
+      "install": "git",
+      "tags": [
+        "azure",
+        "infrastructure",
+        "terraform",
+        "bicep"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "azure-kubernetes",
+      "type": "skill",
+      "version": "main",
+      "description": "Design, provision, secure, and operate Azure Kubernetes Service clusters.",
+      "author": "Microsoft",
+      "repo": "https://github.com/microsoft/azure-skills",
+      "path": "skills/azure-kubernetes",
+      "install": "git",
+      "tags": [
+        "azure",
+        "kubernetes",
+        "aks",
+        "containers"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "azure-reliability",
+      "type": "skill",
+      "version": "main",
+      "description": "Assess and improve availability, failover, and reliability for Azure App Service and Functions.",
+      "author": "Microsoft",
+      "repo": "https://github.com/microsoft/azure-skills",
+      "path": "skills/azure-reliability",
+      "install": "git",
+      "tags": [
+        "azure",
+        "reliability",
+        "availability",
+        "disaster-recovery"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "python-appservice-deploy",
+      "type": "skill",
+      "version": "main",
+      "description": "Deploy Flask, Django, or FastAPI applications to Azure App Service on Linux.",
+      "author": "Microsoft",
+      "repo": "https://github.com/microsoft/azure-skills",
+      "path": "skills/python-appservice-deploy",
+      "install": "git",
+      "tags": [
+        "python",
+        "azure",
+        "deployment",
+        "appservice"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "entra-agent-id",
+      "type": "skill",
+      "version": "main",
+      "description": "Configure Microsoft Entra agent identities and OAuth token exchange for agent applications.",
+      "author": "Microsoft",
+      "repo": "https://github.com/microsoft/azure-skills",
+      "path": "skills/entra-agent-id",
+      "install": "git",
+      "tags": [
+        "microsoft",
+        "entra",
+        "identity",
+        "agents"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "hyperframes",
+      "type": "skill",
+      "version": "main",
+      "description": "Create, edit, animate, and render videos with HyperFrames, including launch films and vertical clips.",
+      "author": "heygen-com",
+      "repo": "https://github.com/heygen-com/hyperframes",
+      "path": "skills/hyperframes",
+      "install": "git",
+      "tags": [
+        "video",
+        "animation",
+        "rendering",
+        "hyperframes"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "figma-to-hyperframes",
+      "type": "skill",
+      "version": "main",
+      "description": "Use Figma designs, brand assets, and components as sources for HyperFrames videos.",
+      "author": "heygen-com",
+      "repo": "https://github.com/heygen-com/hyperframes",
+      "path": "skills/figma",
+      "install": "git",
+      "tags": [
+        "figma",
+        "video",
+        "design",
+        "hyperframes"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "hyperframes-registry",
+      "type": "skill",
+      "version": "main",
+      "description": "Browse and install reusable HyperFrames blocks for transitions, titles, overlays, charts, and motion.",
+      "author": "heygen-com",
+      "repo": "https://github.com/heygen-com/hyperframes",
+      "path": "skills/hyperframes-registry",
+      "install": "git",
+      "tags": [
+        "video",
+        "components",
+        "assets",
+        "hyperframes"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "prototype",
+      "type": "skill",
+      "version": "main",
+      "description": "Build a throwaway prototype to test a design question, UI idea, or state model.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/engineering/prototype",
+      "install": "git",
+      "tags": [
+        "prototyping",
+        "design",
+        "engineering"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "triage",
+      "type": "skill",
+      "version": "main",
+      "description": "Classify and verify issues or external pull requests and prepare actionable briefs.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/engineering/triage",
+      "install": "git",
+      "tags": [
+        "triage",
+        "issues",
+        "pull-requests"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "pr",
+      "type": "skill",
+      "version": "main",
+      "description": "Draft concise, useful pull request descriptions for code changes.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/engineering/pr",
+      "install": "git",
+      "tags": [
+        "git",
+        "pull-request",
+        "documentation"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "writing-for-agents",
+      "type": "skill",
+      "version": "main",
+      "description": "Write clear project docs and instructions designed for agents to use effectively.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/productivity/writing-for-agents",
+      "install": "git",
+      "tags": [
+        "documentation",
+        "agents",
+        "writing"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "retro",
+      "type": "skill",
+      "version": "main",
+      "description": "Run a retrospective on a coding session and capture lessons for future work.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/engineering/retro",
+      "install": "git",
+      "tags": [
+        "retrospective",
+        "workflow",
+        "learning"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "handoff",
+      "type": "skill",
+      "version": "main",
+      "description": "Create a concise handoff document so another agent can resume the current work.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/productivity/handoff",
+      "install": "git",
+      "tags": [
+        "handoff",
+        "agents",
+        "continuity"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "teach",
+      "type": "skill",
+      "version": "main",
+      "description": "Teach a user a concept or practical skill within the current project workspace.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/productivity/teach",
+      "install": "git",
+      "tags": [
+        "learning",
+        "teaching",
+        "productivity"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "ask-matt",
+      "type": "skill",
+      "version": "main",
+      "description": "Route a request to the appropriate engineering skill or workflow in the collection.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/engineering/ask-matt",
+      "install": "git",
+      "tags": [
+        "routing",
+        "workflow",
+        "skills"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "wizard",
+      "type": "skill",
+      "version": "main",
+      "description": "Generate interactive setup wizards for steps that require a human, such as credentials or dashboards.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/engineering/wizard",
+      "install": "git",
+      "tags": [
+        "setup",
+        "interactive",
+        "infrastructure"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "setup-matt-pocock-skills",
+      "type": "skill",
+      "version": "main",
+      "description": "Configure issue tracking, triage labels, and domain documentation for the engineering skill collection.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/engineering/setup-matt-pocock-skills",
+      "install": "git",
+      "tags": [
+        "setup",
+        "engineering",
+        "configuration"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "to-questionnaire",
+      "type": "skill",
+      "version": "main",
+      "description": "Turn an unresolved decision into a questionnaire another person can complete.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/productivity/to-questionnaire",
+      "install": "git",
+      "tags": [
+        "questionnaire",
+        "decisions",
+        "communication"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "wait-what",
+      "type": "skill",
+      "version": "main",
+      "description": "Ask for a clearer explanation when a previous message did not make sense.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/productivity/wait-what",
+      "install": "git",
+      "tags": [
+        "communication",
+        "clarification",
+        "productivity"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "git-guardrails-claude-code",
+      "type": "skill",
+      "version": "main",
+      "description": "Set up Claude Code hooks that block selected potentially destructive Git commands.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/misc/git-guardrails-claude-code",
+      "install": "git",
+      "tags": [
+        "git",
+        "safety",
+        "claude-code"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "setup-pre-commit",
+      "type": "skill",
+      "version": "main",
+      "description": "Configure Husky pre-commit hooks for formatting, type checking, and tests.",
+      "author": "mattpocock",
+      "repo": "https://github.com/mattpocock/skills",
+      "path": "skills/misc/setup-pre-commit",
+      "install": "git",
+      "tags": [
+        "git",
+        "hooks",
+        "quality"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "agent-browser",
+      "type": "skill",
+      "version": "main",
+      "description": "Automate browser navigation, forms, clicks, screenshots, data extraction, and web-app testing.",
+      "author": "Vercel",
+      "repo": "https://github.com/vercel-labs/agent-browser",
+      "path": "skills/agent-browser",
+      "install": "git",
+      "tags": [
+        "browser",
+        "automation",
+        "testing",
+        "web"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "reddit-automation",
+      "type": "skill",
+      "version": "main",
+      "description": "Find relevant Reddit discussions and draft candid, genuinely helpful responses.",
+      "author": "flowkit-labs",
+      "repo": "https://github.com/flowkit-labs/skills",
+      "path": "reddit-automation",
+      "install": "git",
+      "tags": [
+        "reddit",
+        "research",
+        "community",
+        "marketing"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "design-mobile-apps",
+      "type": "skill",
+      "version": "main",
+      "description": "Design mobile app screens with Sleek and implement them in React Native or HTML.",
+      "author": "designed-by-ai",
+      "repo": "https://github.com/designed-by-ai/skills",
+      "path": "skills/design-mobile-apps",
+      "install": "git",
+      "tags": [
+        "mobile",
+        "design",
+        "react-native",
+        "ui"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "ai-video-generation",
+      "type": "skill",
+      "version": "main",
+      "description": "Generate AI videos through RunComfy and route prompts to suitable models and workflows.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "ai-video-generation",
+      "install": "git",
+      "tags": [
+        "video",
+        "ai",
+        "generation",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "image-to-video",
+      "type": "skill",
+      "version": "main",
+      "description": "Animate still images using RunComfy video models selected for the intended motion and style.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "image-to-video",
+      "install": "git",
+      "tags": [
+        "video",
+        "image-to-video",
+        "ai",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "kling-3-0",
+      "type": "skill",
+      "version": "main",
+      "description": "Generate multi-shot videos with Kling 3.0 through the RunComfy CLI.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "kling-3-0",
+      "install": "git",
+      "tags": [
+        "video",
+        "kling",
+        "generation",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "ai-image-generation",
+      "type": "skill",
+      "version": "main",
+      "description": "Generate and edit images through RunComfy with model routing for common image workflows.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "ai-image-generation",
+      "install": "git",
+      "tags": [
+        "images",
+        "ai",
+        "generation",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "ai-avatar-video",
+      "type": "skill",
+      "version": "main",
+      "description": "Create AI avatar, talking-head, and lip-sync videos using RunComfy models.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "ai-avatar-video",
+      "install": "git",
+      "tags": [
+        "video",
+        "avatar",
+        "lip-sync",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "runcomfy-cli",
+      "type": "skill",
+      "version": "main",
+      "description": "Install, authenticate, discover, and run model workflows with the RunComfy command-line tool.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "runcomfy-cli",
+      "install": "git",
+      "tags": [
+        "cli",
+        "models",
+        "automation",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "flux-2-klein",
+      "type": "skill",
+      "version": "main",
+      "description": "Generate images with Flux 2 Klein on RunComfy using model-aware prompting guidance.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "flux-2-klein",
+      "install": "git",
+      "tags": [
+        "images",
+        "flux",
+        "generation",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "gpt-image-2",
+      "type": "skill",
+      "version": "main",
+      "description": "Generate and edit images with OpenAI GPT Image 2 through RunComfy.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "gpt-image-2",
+      "install": "git",
+      "tags": [
+        "images",
+        "openai",
+        "generation",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "nano-banana-2",
+      "type": "skill",
+      "version": "main",
+      "description": "Generate images with Google Nano Banana 2 on RunComfy using its supported prompting options.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "nano-banana-2",
+      "install": "git",
+      "tags": [
+        "images",
+        "google",
+        "generation",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "seedance-v2",
+      "type": "skill",
+      "version": "main",
+      "description": "Create short cinematic videos with Seedance 2.0 Pro via RunComfy.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "seedance-v2",
+      "install": "git",
+      "tags": [
+        "video",
+        "seedance",
+        "generation",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "ai-music",
+      "type": "skill",
+      "version": "main",
+      "description": "Generate AI music with RunComfy models selected for track length, style, vocals, or editing needs.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "ai-music",
+      "install": "git",
+      "tags": [
+        "music",
+        "audio",
+        "generation",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "controlnet-pose",
+      "type": "skill",
+      "version": "main",
+      "description": "Use pose conditioning and reference motion for RunComfy image or video generation.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "controlnet-pose",
+      "install": "git",
+      "tags": [
+        "pose",
+        "controlnet",
+        "video",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "face-swap",
+      "type": "skill",
+      "version": "main",
+      "description": "Swap a face or character in images and video using suitable RunComfy models.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "face-swap",
+      "install": "git",
+      "tags": [
+        "images",
+        "video",
+        "face-swap",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "flux-kontext",
+      "type": "skill",
+      "version": "main",
+      "description": "Edit images with Flux Kontext Pro on RunComfy using model-specific prompt guidance.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "flux-kontext",
+      "install": "git",
+      "tags": [
+        "images",
+        "editing",
+        "flux",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "gpt-image-edit",
+      "type": "skill",
+      "version": "main",
+      "description": "Edit images with OpenAI GPT Image 2 through RunComfy, including reference-based edits.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "gpt-image-edit",
+      "install": "git",
+      "tags": [
+        "images",
+        "editing",
+        "openai",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "happyhorse-1-0",
+      "type": "skill",
+      "version": "main",
+      "description": "Generate text-to-video with HappyHorse 1.0 through RunComfy.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "happyhorse-1-0",
+      "install": "git",
+      "tags": [
+        "video",
+        "generation",
+        "happyhorse",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "image-edit",
+      "type": "skill",
+      "version": "main",
+      "description": "Route image-editing requests to an appropriate image-edit model in the RunComfy catalog.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "image-edit",
+      "install": "git",
+      "tags": [
+        "images",
+        "editing",
+        "ai",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "image-inpainting",
+      "type": "skill",
+      "version": "main",
+      "description": "Perform mask-driven image inpainting and controlled local image edits with RunComfy.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "image-inpainting",
+      "install": "git",
+      "tags": [
+        "images",
+        "inpainting",
+        "editing",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "image-outpainting",
+      "type": "skill",
+      "version": "main",
+      "description": "Extend an image canvas or change its aspect ratio while preserving existing content with RunComfy.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "image-outpainting",
+      "install": "git",
+      "tags": [
+        "images",
+        "outpainting",
+        "editing",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lipsync",
+      "type": "skill",
+      "version": "main",
+      "description": "Synchronize speech to a face or avatar in video using RunComfy audio and video models.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "lipsync",
+      "install": "git",
+      "tags": [
+        "video",
+        "audio",
+        "lip-sync",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "video-edit",
+      "type": "skill",
+      "version": "main",
+      "description": "Edit existing video with model-aware routing for restyling, background changes, and motion transfer.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "video-edit",
+      "install": "git",
+      "tags": [
+        "video",
+        "editing",
+        "ai",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "video-extend",
+      "type": "skill",
+      "version": "main",
+      "description": "Continue an existing video clip with consistent motion, lighting, and subject identity.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "video-extend",
+      "install": "git",
+      "tags": [
+        "video",
+        "extension",
+        "generation",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "video-inpainting",
+      "type": "skill",
+      "version": "main",
+      "description": "Edit or remove regions across video frames with RunComfy video models.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "video-inpainting",
+      "install": "git",
+      "tags": [
+        "video",
+        "inpainting",
+        "editing",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "video-outpainting",
+      "type": "skill",
+      "version": "main",
+      "description": "Expand a video's spatial canvas or aspect ratio while retaining its central action.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "video-outpainting",
+      "install": "git",
+      "tags": [
+        "video",
+        "outpainting",
+        "editing",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "wan-2-7",
+      "type": "skill",
+      "version": "main",
+      "description": "Generate videos with Wan 2.7 through RunComfy using model-specific prompt and reference guidance.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "wan-2-7",
+      "install": "git",
+      "tags": [
+        "video",
+        "wan",
+        "generation",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "ace-step",
+      "type": "skill",
+      "version": "main",
+      "description": "Generate or edit music with ACE Step, including audio inpainting and track extension.",
+      "author": "prime-skills",
+      "repo": "https://github.com/prime-skills/runcomfy-agent-skills",
+      "path": "ace-step",
+      "install": "git",
+      "tags": [
+        "music",
+        "audio",
+        "editing",
+        "runcomfy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-doc",
+      "type": "skill",
+      "version": "main",
+      "description": "Read, create, and edit Lark cloud documents and mind notes with the Lark CLI.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-doc",
+      "install": "git",
+      "tags": [
+        "lark",
+        "documents",
+        "productivity",
+        "cli"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-calendar",
+      "type": "skill",
+      "version": "main",
+      "description": "Manage Lark calendars, events, attendees, availability, and meeting rooms using lark-cli.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-calendar",
+      "install": "git",
+      "tags": [
+        "lark",
+        "calendar",
+        "meetings",
+        "cli"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-task",
+      "type": "skill",
+      "version": "main",
+      "description": "Create, assign, and track Lark tasks, lists, subtasks, and task-agent records.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-task",
+      "install": "git",
+      "tags": [
+        "lark",
+        "tasks",
+        "project-management",
+        "cli"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-sheets",
+      "type": "skill",
+      "version": "main",
+      "description": "Create, edit, format, and analyze Lark spreadsheets, including formulas and charts.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-sheets",
+      "install": "git",
+      "tags": [
+        "lark",
+        "spreadsheets",
+        "data",
+        "cli"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-base",
+      "type": "skill",
+      "version": "main",
+      "description": "Manage Lark Base tables, fields, records, views, forms, and dashboards.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-base",
+      "install": "git",
+      "tags": [
+        "lark",
+        "database",
+        "tables",
+        "cli"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-drive",
+      "type": "skill",
+      "version": "main",
+      "description": "Manage Lark Drive files, folders, permissions, comments, versions, and file transfers.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-drive",
+      "install": "git",
+      "tags": [
+        "lark",
+        "drive",
+        "files",
+        "cli"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-im",
+      "type": "skill",
+      "version": "main",
+      "description": "Send and search Lark messages, manage group chats, and work with interactive cards.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-im",
+      "install": "git",
+      "tags": [
+        "lark",
+        "messaging",
+        "chat",
+        "cli"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-mail",
+      "type": "skill",
+      "version": "main",
+      "description": "Draft, send, reply to, search, and organize Lark email.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-mail",
+      "install": "git",
+      "tags": [
+        "lark",
+        "email",
+        "productivity",
+        "cli"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-meeting",
+      "type": "skill",
+      "version": "main",
+      "description": "Search Lark video meeting recordings, transcripts, minutes, and live meeting context.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-meeting",
+      "install": "git",
+      "tags": [
+        "lark",
+        "meetings",
+        "transcripts",
+        "cli"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-slides",
+      "type": "skill",
+      "version": "main",
+      "description": "Create presentations and read or edit individual Lark slide pages.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-slides",
+      "install": "git",
+      "tags": [
+        "lark",
+        "presentations",
+        "slides",
+        "cli"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-shared",
+      "type": "skill",
+      "version": "main",
+      "description": "Configure lark-cli authentication, user or bot identity, permission scopes, and authorization.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-shared",
+      "install": "git",
+      "tags": [
+        "lark",
+        "authentication",
+        "permissions",
+        "cli"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-approval",
+      "type": "skill",
+      "version": "main",
+      "description": "Review, search, and initiate Lark approval requests and handle approval workflows.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-approval",
+      "install": "git",
+      "tags": [
+        "lark",
+        "approvals",
+        "workflow",
+        "cli"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-contact",
+      "type": "skill",
+      "version": "main",
+      "description": "Resolve Lark users by name or email and look up accessible contact and profile information.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-contact",
+      "install": "git",
+      "tags": [
+        "lark",
+        "contacts",
+        "directory",
+        "cli"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-event",
+      "type": "skill",
+      "version": "main",
+      "description": "Consume Lark real-time events as streams for bots, subscribers, and webhook workflows.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-event",
+      "install": "git",
+      "tags": [
+        "lark",
+        "events",
+        "streaming",
+        "cli"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-openapi-explorer",
+      "type": "skill",
+      "version": "main",
+      "description": "Find and use native Lark OpenAPI endpoints not yet covered by lark-cli commands.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-openapi-explorer",
+      "install": "git",
+      "tags": [
+        "lark",
+        "api",
+        "openapi",
+        "cli"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-wiki",
+      "type": "skill",
+      "version": "main",
+      "description": "Manage Lark knowledge spaces, members, document nodes, and shortcuts.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-wiki",
+      "install": "git",
+      "tags": [
+        "lark",
+        "wiki",
+        "knowledge-base",
+        "cli"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-whiteboard",
+      "type": "skill",
+      "version": "main",
+      "description": "Export, inspect, and update Lark document whiteboards and their node structures.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-whiteboard",
+      "install": "git",
+      "tags": [
+        "lark",
+        "whiteboard",
+        "documents",
+        "cli"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-workflow-standup-report",
+      "type": "skill",
+      "version": "main",
+      "description": "Summarize a date's Lark calendar agenda and outstanding tasks into a standup report.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-workflow-standup-report",
+      "install": "git",
+      "tags": [
+        "lark",
+        "standup",
+        "calendar",
+        "tasks"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-workflow-meeting-summary",
+      "type": "skill",
+      "version": "main",
+      "description": "Collect Lark meeting notes across a date range and produce a structured summary report.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-workflow-meeting-summary",
+      "install": "git",
+      "tags": [
+        "lark",
+        "meetings",
+        "summaries",
+        "workflow"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-markdown",
+      "type": "skill",
+      "version": "main",
+      "description": "Create, upload, edit, and compare native Markdown files stored in Lark.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-markdown",
+      "install": "git",
+      "tags": [
+        "lark",
+        "markdown",
+        "documents",
+        "cli"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-apps",
+      "type": "skill",
+      "version": "main",
+      "description": "Build, deploy, and operate Lark Spark/Miaoda apps, including UI prototypes and app integrations.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-apps",
+      "install": "git",
+      "tags": [
+        "lark",
+        "apps",
+        "development",
+        "deployment"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-okr",
+      "type": "skill",
+      "version": "main",
+      "description": "Manage Lark OKR cycles, objectives, key results, alignment, metrics, and progress updates.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-okr",
+      "install": "git",
+      "tags": [
+        "lark",
+        "okr",
+        "goals",
+        "planning"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-attendance",
+      "type": "skill",
+      "version": "main",
+      "description": "Look up Lark attendance and clock-in records for the current user.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-attendance",
+      "install": "git",
+      "tags": [
+        "lark",
+        "attendance",
+        "records",
+        "cli"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "lark-skill-maker",
+      "type": "skill",
+      "version": "main",
+      "description": "Create reusable lark-cli skills that wrap API operations or orchestrate multi-step workflows.",
+      "author": "LarkSuite",
+      "repo": "https://github.com/larksuite/cli",
+      "path": "skills/lark-skill-maker",
+      "install": "git",
+      "tags": [
+        "lark",
+        "skill-authoring",
+        "api",
+        "workflow"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "find-skills",
+      "type": "skill",
+      "version": "main",
+      "description": "Discover and install an existing agent skill when users ask how to do something or extend their setup.",
+      "author": "Vercel",
+      "repo": "https://github.com/vercel-labs/skills",
+      "path": "skills/find-skills",
+      "install": "git",
+      "tags": [
+        "discovery",
+        "skills",
+        "installation",
+        "vercel"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "emil-design-eng",
+      "type": "skill",
+      "version": "main",
+      "description": "Apply practical guidance on UI polish, component design, animation, and product details.",
+      "author": "emilkowalski",
+      "repo": "https://github.com/emilkowalski/skills",
+      "path": "skills/emil-design-eng",
+      "install": "git",
+      "tags": [
+        "design",
+        "frontend",
+        "animation",
+        "ui"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "neon",
+      "type": "skill",
+      "version": "main",
+      "description": "Choose and set up Neon backend services including Postgres, Auth, object storage, functions, and realtime.",
+      "author": "Neon",
+      "repo": "https://github.com/neondatabase/agent-skills",
+      "path": "skills/neon",
+      "install": "git",
+      "tags": [
+        "neon",
+        "postgres",
+        "backend",
+        "database"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "neon-auth",
+      "type": "skill",
+      "version": "main",
+      "description": "Add authentication with Neon Auth or integrate an existing identity provider.",
+      "author": "Neon",
+      "repo": "https://github.com/neondatabase/agent-skills",
+      "path": "skills/neon-auth",
+      "install": "git",
+      "tags": [
+        "neon",
+        "authentication",
+        "identity",
+        "postgres"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "neon-functions",
+      "type": "skill",
+      "version": "main",
+      "description": "Build long-running serverless Node.js functions deployed alongside a Neon database branch.",
+      "author": "Neon",
+      "repo": "https://github.com/neondatabase/agent-skills",
+      "path": "skills/neon-functions",
+      "install": "git",
+      "tags": [
+        "neon",
+        "serverless",
+        "functions",
+        "nodejs"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "neon-object-storage",
+      "type": "skill",
+      "version": "main",
+      "description": "Use Neon S3-compatible object storage that branches alongside database data.",
+      "author": "Neon",
+      "repo": "https://github.com/neondatabase/agent-skills",
+      "path": "skills/neon-object-storage",
+      "install": "git",
+      "tags": [
+        "neon",
+        "storage",
+        "s3",
+        "files"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "neon-postgres-branches",
+      "type": "skill",
+      "version": "main",
+      "description": "Create and manage Neon branches for isolated testing, migration checks, and CI/CD workflows.",
+      "author": "Neon",
+      "repo": "https://github.com/neondatabase/agent-skills",
+      "path": "skills/neon-postgres-branches",
+      "install": "git",
+      "tags": [
+        "neon",
+        "postgres",
+        "branching",
+        "testing"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "neon-realtime",
+      "type": "skill",
+      "version": "main",
+      "description": "Build reactive applications with live SQL queries and realtime state updates on Neon.",
+      "author": "Neon",
+      "repo": "https://github.com/neondatabase/agent-skills",
+      "path": "skills/neon-realtime",
+      "install": "git",
+      "tags": [
+        "neon",
+        "realtime",
+        "postgres",
+        "reactive"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "agents-sdk",
+      "type": "skill",
+      "version": "main",
+      "description": "Build, debug, and review applications using the Cloudflare Agents SDK.",
+      "author": "Cloudflare",
+      "repo": "https://github.com/cloudflare/skills",
+      "path": "skills/agents-sdk",
+      "install": "git",
+      "tags": [
+        "cloudflare",
+        "agents",
+        "sdk",
+        "workers"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "cf-cli",
+      "type": "skill",
+      "version": "main",
+      "description": "Use Cloudflare's cf CLI to discover commands and manage Workers and API resources.",
+      "author": "Cloudflare",
+      "repo": "https://github.com/cloudflare/skills",
+      "path": "skills/cf-cli",
+      "install": "git",
+      "tags": [
+        "cloudflare",
+        "cli",
+        "workers",
+        "devops"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "durable-objects",
+      "type": "skill",
+      "version": "main",
+      "description": "Build and review Cloudflare Durable Objects for persistent state and coordination.",
+      "author": "Cloudflare",
+      "repo": "https://github.com/cloudflare/skills",
+      "path": "skills/durable-objects",
+      "install": "git",
+      "tags": [
+        "cloudflare",
+        "durable-objects",
+        "workers",
+        "state"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "nextjs-on-cloudflare",
+      "type": "skill",
+      "version": "main",
+      "description": "Build, migrate, and deploy Next.js applications on Cloudflare Workers with vinext.",
+      "author": "Cloudflare",
+      "repo": "https://github.com/cloudflare/skills",
+      "path": "skills/nextjs-on-cloudflare",
+      "install": "git",
+      "tags": [
+        "cloudflare",
+        "nextjs",
+        "workers",
+        "deployment"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "workers-best-practices",
+      "type": "skill",
+      "version": "main",
+      "description": "Apply Cloudflare Workers best practices when writing, reviewing, or configuring Workers.",
+      "author": "Cloudflare",
+      "repo": "https://github.com/cloudflare/skills",
+      "path": "skills/workers-best-practices",
+      "install": "git",
+      "tags": [
+        "cloudflare",
+        "workers",
+        "best-practices",
+        "edge"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "wrangler",
+      "type": "skill",
+      "version": "main",
+      "description": "Run and troubleshoot Wrangler CLI commands for local development, deployment, and Workers resources.",
+      "author": "Cloudflare",
+      "repo": "https://github.com/cloudflare/skills",
+      "path": "skills/wrangler",
+      "install": "git",
+      "tags": [
+        "cloudflare",
+        "wrangler",
+        "cli",
+        "workers"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "web-perf",
+      "type": "skill",
+      "version": "main",
+      "description": "Audit and optimize website loading, interaction performance, Core Web Vitals, and Lighthouse scores.",
+      "author": "Cloudflare",
+      "repo": "https://github.com/cloudflare/skills",
+      "path": "skills/web-perf",
+      "install": "git",
+      "tags": [
+        "web",
+        "performance",
+        "lighthouse",
+        "optimization"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "workers-profiling",
+      "type": "skill",
+      "version": "main",
+      "description": "Profile CPU usage and memory allocation in deployed Cloudflare Workers and Durable Objects.",
+      "author": "Cloudflare",
+      "repo": "https://github.com/cloudflare/skills",
+      "path": "skills/workers-profiling",
+      "install": "git",
+      "tags": [
+        "cloudflare",
+        "workers",
+        "profiling",
+        "performance"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "cloudflare-email-service",
+      "type": "skill",
+      "version": "main",
+      "description": "Implement and troubleshoot Cloudflare Email Sending and Email Routing integrations.",
+      "author": "Cloudflare",
+      "repo": "https://github.com/cloudflare/skills",
+      "path": "skills/cloudflare-email-service",
+      "install": "git",
+      "tags": [
+        "cloudflare",
+        "email",
+        "routing",
+        "integration"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "cloudflare-one",
+      "type": "skill",
+      "version": "main",
+      "description": "Design and troubleshoot Cloudflare One Zero Trust and SASE deployments.",
+      "author": "Cloudflare",
+      "repo": "https://github.com/cloudflare/skills",
+      "path": "skills/cloudflare-one",
+      "install": "git",
+      "tags": [
+        "cloudflare",
+        "zero-trust",
+        "security",
+        "networking"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "turnstile-spin",
+      "type": "skill",
+      "version": "main",
+      "description": "Set up, repair, or migrate Cloudflare Turnstile bot verification across frontend and backend.",
+      "author": "Cloudflare",
+      "repo": "https://github.com/cloudflare/skills",
+      "path": "skills/turnstile-spin",
+      "install": "git",
+      "tags": [
+        "cloudflare",
+        "turnstile",
+        "security",
+        "frontend"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "cloudflare",
+      "type": "skill",
+      "version": "main",
+      "description": "Discover Cloudflare products for application, AI, storage, networking, and security needs.",
+      "author": "Cloudflare",
+      "repo": "https://github.com/cloudflare/skills",
+      "path": "skills/cloudflare",
+      "install": "git",
+      "tags": [
+        "cloudflare",
+        "architecture",
+        "products",
+        "cloud"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "basin",
+      "type": "skill",
+      "version": "main",
+      "description": "Build and query Cloudflare Basin analytics pipelines, catalogs, and SQL workflows.",
+      "author": "Cloudflare",
+      "repo": "https://github.com/cloudflare/skills",
+      "path": "skills/basin",
+      "install": "git",
+      "tags": [
+        "cloudflare",
+        "analytics",
+        "data",
+        "sql"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "neon-postgres",
+      "type": "skill",
+      "version": "main",
+      "description": "Guide Neon Postgres connections, schema changes, branching, scaling, and database search.",
+      "author": "Neon",
+      "repo": "https://github.com/neondatabase/agent-skills",
+      "path": "skills/neon-postgres",
+      "install": "git",
+      "tags": [
+        "neon",
+        "postgres",
+        "database",
+        "search"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "neon-ai-gateway",
+      "type": "skill",
+      "version": "main",
+      "description": "Call and route LLM and embedding models through Neon's unified AI gateway.",
+      "author": "Neon",
+      "repo": "https://github.com/neondatabase/agent-skills",
+      "path": "skills/neon-ai-gateway",
+      "install": "git",
+      "tags": [
+        "neon",
+        "ai",
+        "llm",
+        "gateway"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "neon-postgres-egress-optimizer",
+      "type": "skill",
+      "version": "main",
+      "description": "Diagnose excessive Postgres data transfer and reduce query overfetching and egress costs.",
+      "author": "Neon",
+      "repo": "https://github.com/neondatabase/agent-skills",
+      "path": "skills/neon-postgres-egress-optimizer",
+      "install": "git",
+      "tags": [
+        "neon",
+        "postgres",
+        "optimization",
+        "cost"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "playwright-cli",
+      "type": "skill",
+      "version": "main",
+      "description": "Automate browser interaction and run web checks using Microsoft's Playwright CLI.",
+      "author": "Microsoft",
+      "repo": "https://github.com/microsoft/playwright-cli",
+      "path": "skills/playwright-cli",
+      "install": "git",
+      "tags": [
+        "playwright",
+        "browser",
+        "automation",
+        "testing"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "browser-use",
+      "type": "skill",
+      "version": "main",
+      "description": "Control browsers through CDP for automation, scraping, testing, and screenshots.",
+      "author": "browser-use",
+      "repo": "https://github.com/browser-use/browser-use",
+      "path": "skills/browser-use",
+      "install": "git",
+      "tags": [
+        "browser",
+        "automation",
+        "scraping",
+        "testing"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "browser-use-cloud",
+      "type": "skill",
+      "version": "main",
+      "description": "Reference Browser Use Cloud APIs, SDKs, sessions, profiles, and browser integrations.",
+      "author": "browser-use",
+      "repo": "https://github.com/browser-use/browser-use",
+      "path": "skills/cloud",
+      "install": "git",
+      "tags": [
+        "browser",
+        "cloud",
+        "automation",
+        "sdk"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "browser-use-qa",
+      "type": "skill",
+      "version": "main",
+      "description": "QA-test websites and web apps in a real browser and return an evidence-backed quality score.",
+      "author": "browser-use",
+      "repo": "https://github.com/browser-use/browser-use",
+      "path": "skills/qa",
+      "install": "git",
+      "tags": [
+        "browser",
+        "qa",
+        "testing",
+        "evaluation"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "cn-check",
+      "type": "skill",
+      "version": "main",
+      "description": "Install and run Continue CLI agent checks against local code changes.",
+      "author": "continuedev",
+      "repo": "https://github.com/continuedev/continue",
+      "path": "skills/cn-check",
+      "install": "git",
+      "tags": [
+        "continue",
+        "code-review",
+        "checks",
+        "cli"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "adk-agent-builder",
+      "type": "skill",
+      "version": "main",
+      "description": "Build and test Google ADK Python agents, tools, graph workflows, and human-in-the-loop flows.",
+      "author": "Google",
+      "repo": "https://github.com/google/adk-python",
+      "path": ".agents/skills/adk-agent-builder",
+      "install": "git",
+      "tags": [
+        "google",
+        "adk",
+        "agents",
+        "python"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "adk-architecture",
+      "type": "skill",
+      "version": "main",
+      "description": "Explain Google ADK runtime, graph execution, events, context, tracing, and public API architecture.",
+      "author": "Google",
+      "repo": "https://github.com/google/adk-python",
+      "path": ".agents/skills/adk-architecture",
+      "install": "git",
+      "tags": [
+        "google",
+        "adk",
+        "architecture",
+        "python"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "adk-debug",
+      "type": "skill",
+      "version": "main",
+      "description": "Diagnose misbehaving Google ADK agents by inspecting sessions, events, tool calls, and model requests.",
+      "author": "Google",
+      "repo": "https://github.com/google/adk-python",
+      "path": ".agents/skills/adk-debug",
+      "install": "git",
+      "tags": [
+        "google",
+        "adk",
+        "debugging",
+        "agents"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "adk-git",
+      "type": "skill",
+      "version": "main",
+      "description": "Write repository-conformant commit messages and pull request descriptions for Google ADK Python.",
+      "author": "Google",
+      "repo": "https://github.com/google/adk-python",
+      "path": ".agents/skills/adk-git",
+      "install": "git",
+      "tags": [
+        "google",
+        "adk",
+        "git",
+        "pull-requests"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "adk-review",
+      "type": "skill",
+      "version": "main",
+      "description": "Review Google ADK Python changes for correctness, API stability, tests, samples, and documentation gaps.",
+      "author": "Google",
+      "repo": "https://github.com/google/adk-python",
+      "path": ".agents/skills/adk-review",
+      "install": "git",
+      "tags": [
+        "google",
+        "adk",
+        "code-review",
+        "python"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "adk-setup",
+      "type": "skill",
+      "version": "main",
+      "description": "Set up a local Google ADK Python development checkout, dependencies, hooks, and tests.",
+      "author": "Google",
+      "repo": "https://github.com/google/adk-python",
+      "path": ".agents/skills/adk-setup",
+      "install": "git",
+      "tags": [
+        "google",
+        "adk",
+        "setup",
+        "python"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "adk-style",
+      "type": "skill",
+      "version": "main",
+      "description": "Apply Google ADK Python conventions for imports, typing, Pydantic, async I/O, tests, and formatting.",
+      "author": "Google",
+      "repo": "https://github.com/google/adk-python",
+      "path": ".agents/skills/adk-style",
+      "install": "git",
+      "tags": [
+        "google",
+        "adk",
+        "python",
+        "style"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "adk-unit-design",
+      "type": "skill",
+      "version": "main",
+      "description": "Document the implemented architecture, data flow, extension points, and constraints of an ADK code unit.",
+      "author": "Google",
+      "repo": "https://github.com/google/adk-python",
+      "path": ".agents/skills/adk-unit-design",
+      "install": "git",
+      "tags": [
+        "google",
+        "adk",
+        "architecture",
+        "documentation"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "adk-unit-guide",
+      "type": "skill",
+      "version": "main",
+      "description": "Write hands-on developer guides with runnable examples and configuration details for ADK code units.",
+      "author": "Google",
+      "repo": "https://github.com/google/adk-python",
+      "path": ".agents/skills/adk-unit-guide",
+      "install": "git",
+      "tags": [
+        "google",
+        "adk",
+        "documentation",
+        "guides"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "adk-verify-snippets",
+      "type": "skill",
+      "version": "main",
+      "description": "Extract and run Python code blocks from Markdown to verify documentation snippets.",
+      "author": "Google",
+      "repo": "https://github.com/google/adk-python",
+      "path": ".agents/skills/adk-verify-snippets",
+      "install": "git",
+      "tags": [
+        "google",
+        "adk",
+        "documentation",
+        "testing"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "code-change-verification",
+      "type": "skill",
+      "version": "main",
+      "description": "Run the required formatting, lint, type, and test checks after OpenAI Agents SDK changes pass review.",
+      "author": "OpenAI",
+      "repo": "https://github.com/openai/openai-agents-python",
+      "path": ".agents/skills/code-change-verification",
+      "install": "git",
+      "tags": [
+        "openai",
+        "agents-sdk",
+        "verification",
+        "testing"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "docs-sync",
+      "type": "skill",
+      "version": "main",
+      "description": "Audit and update Python SDK documentation against the requested implementation scope.",
+      "author": "OpenAI",
+      "repo": "https://github.com/openai/openai-agents-python",
+      "path": ".agents/skills/docs-sync",
+      "install": "git",
+      "tags": [
+        "openai",
+        "agents-sdk",
+        "documentation",
+        "python"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "examples-run-analysis",
+      "type": "skill",
+      "version": "main",
+      "description": "Analyze logs and source from a completed manual run of OpenAI Agents SDK examples.",
+      "author": "OpenAI",
+      "repo": "https://github.com/openai/openai-agents-python",
+      "path": ".agents/skills/examples-run-analysis",
+      "install": "git",
+      "tags": [
+        "openai",
+        "agents-sdk",
+        "examples",
+        "analysis"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "final-release-review",
+      "type": "skill",
+      "version": "main",
+      "description": "Assess a Python SDK release candidate against the previous release and identify ship blockers.",
+      "author": "OpenAI",
+      "repo": "https://github.com/openai/openai-agents-python",
+      "path": ".agents/skills/final-release-review",
+      "install": "git",
+      "tags": [
+        "openai",
+        "release",
+        "review",
+        "python"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "implementation-final-review",
+      "type": "skill",
+      "version": "main",
+      "description": "Independently review completed Python SDK implementation changes before final verification.",
+      "author": "OpenAI",
+      "repo": "https://github.com/openai/openai-agents-python",
+      "path": ".agents/skills/implementation-final-review",
+      "install": "git",
+      "tags": [
+        "openai",
+        "implementation",
+        "review",
+        "python"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "implementation-kickoff",
+      "type": "skill",
+      "version": "main",
+      "description": "Carry an OpenAI Agents SDK implementation through isolated worktree execution and handoff.",
+      "author": "OpenAI",
+      "repo": "https://github.com/openai/openai-agents-python",
+      "path": ".agents/skills/implementation-kickoff",
+      "install": "git",
+      "tags": [
+        "openai",
+        "implementation",
+        "worktrees",
+        "workflow"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "implementation-strategy",
+      "type": "skill",
+      "version": "main",
+      "description": "Choose supported scope and compatibility boundaries for Python SDK behavior changes.",
+      "author": "OpenAI",
+      "repo": "https://github.com/openai/openai-agents-python",
+      "path": ".agents/skills/implementation-strategy",
+      "install": "git",
+      "tags": [
+        "openai",
+        "implementation",
+        "compatibility",
+        "planning"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "maintainer-review",
+      "type": "skill",
+      "version": "main",
+      "description": "Evaluate GitHub issues and pull requests for demonstrated need, alternatives, and maintainer action.",
+      "author": "OpenAI",
+      "repo": "https://github.com/openai/openai-agents-python",
+      "path": ".agents/skills/maintainer-review",
+      "install": "git",
+      "tags": [
+        "openai",
+        "github",
+        "issues",
+        "review"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "pr-draft-summary",
+      "type": "skill",
+      "version": "main",
+      "description": "Prepare a pull request title, description, and branch suggestion after implementation work.",
+      "author": "OpenAI",
+      "repo": "https://github.com/openai/openai-agents-python",
+      "path": ".agents/skills/pr-draft-summary",
+      "install": "git",
+      "tags": [
+        "openai",
+        "github",
+        "pull-request",
+        "writing"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "sensitive-logging-audit",
+      "type": "skill",
+      "version": "main",
+      "description": "Audit Python SDK diagnostics and telemetry for exposure of sensitive data.",
+      "author": "OpenAI",
+      "repo": "https://github.com/openai/openai-agents-python",
+      "path": ".agents/skills/sensitive-logging-audit",
+      "install": "git",
+      "tags": [
+        "openai",
+        "security",
+        "privacy",
+        "logging"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "test-coverage-improver",
+      "type": "skill",
+      "version": "main",
+      "description": "Measure Python SDK test coverage and address identified coverage gaps.",
+      "author": "OpenAI",
+      "repo": "https://github.com/openai/openai-agents-python",
+      "path": ".agents/skills/test-coverage-improver",
+      "install": "git",
+      "tags": [
+        "openai",
+        "testing",
+        "coverage",
+        "python"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "openai-knowledge",
+      "type": "skill",
+      "version": "main",
+      "description": "Retrieve authoritative OpenAI API and platform documentation for current integration evidence.",
+      "author": "OpenAI",
+      "repo": "https://github.com/openai/openai-agents-python",
+      "path": ".agents/skills/openai-knowledge",
+      "install": "git",
+      "tags": [
+        "openai",
+        "documentation",
+        "research",
+        "api"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "runtime-behavior-probe",
+      "type": "skill",
+      "version": "main",
+      "description": "Plan controlled runtime probes to investigate Python SDK behavior, gated by explicit approval.",
+      "author": "OpenAI",
+      "repo": "https://github.com/openai/openai-agents-python",
+      "path": ".agents/skills/runtime-behavior-probe",
+      "install": "git",
+      "tags": [
+        "openai",
+        "runtime",
+        "debugging",
+        "testing"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "release-candidate-prep",
+      "type": "skill",
+      "version": "main",
+      "description": "Prepare a Python SDK release candidate in an isolated worktree for a specified version.",
+      "author": "OpenAI",
+      "repo": "https://github.com/openai/openai-agents-python",
+      "path": ".agents/skills/release-candidate-prep",
+      "install": "git",
+      "tags": [
+        "openai",
+        "release",
+        "worktrees",
+        "python"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "async-pr-review",
+      "type": "skill",
+      "version": "main",
+      "description": "Start background pull request reviews and check the status of asynchronous review jobs.",
+      "author": "Google",
+      "repo": "https://github.com/google-gemini/gemini-cli",
+      "path": ".gemini/skills/async-pr-review",
+      "install": "git",
+      "tags": [
+        "gemini-cli",
+        "github",
+        "pull-requests",
+        "review"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "behavioral-evals",
+      "type": "skill",
+      "version": "main",
+      "description": "Create and run behavioral evaluations for agent decisions, prompts, and regression tests.",
+      "author": "Google",
+      "repo": "https://github.com/google-gemini/gemini-cli",
+      "path": ".gemini/skills/behavioral-evals",
+      "install": "git",
+      "tags": [
+        "gemini-cli",
+        "evaluation",
+        "agents",
+        "testing"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "ci",
+      "type": "skill",
+      "version": "main",
+      "description": "Monitor Gemini CLI GitHub Actions and reproduce CI failures with local verification.",
+      "author": "Google",
+      "repo": "https://github.com/google-gemini/gemini-cli",
+      "path": ".gemini/skills/ci",
+      "install": "git",
+      "tags": [
+        "gemini-cli",
+        "ci",
+        "github-actions",
+        "debugging"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "code-reviewer",
+      "type": "skill",
+      "version": "main",
+      "description": "Review local changes or remote pull requests for correctness, maintainability, and project standards.",
+      "author": "Google",
+      "repo": "https://github.com/google-gemini/gemini-cli",
+      "path": ".gemini/skills/code-reviewer",
+      "install": "git",
+      "tags": [
+        "gemini-cli",
+        "code-review",
+        "quality",
+        "github"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "docs-changelog",
+      "type": "skill",
+      "version": "main",
+      "description": "Generate and format release changelog files from a target version and raw change notes.",
+      "author": "Google",
+      "repo": "https://github.com/google-gemini/gemini-cli",
+      "path": ".gemini/skills/docs-changelog",
+      "install": "git",
+      "tags": [
+        "gemini-cli",
+        "changelog",
+        "release",
+        "documentation"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "docs-writer",
+      "type": "skill",
+      "version": "main",
+      "description": "Write, review, and edit documentation and Markdown files for Gemini CLI projects.",
+      "author": "Google",
+      "repo": "https://github.com/google-gemini/gemini-cli",
+      "path": ".gemini/skills/docs-writer",
+      "install": "git",
+      "tags": [
+        "gemini-cli",
+        "documentation",
+        "writing",
+        "markdown"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "github-issue-creator",
+      "type": "skill",
+      "version": "main",
+      "description": "Create GitHub issues using repository templates, issue types, and labels.",
+      "author": "Google",
+      "repo": "https://github.com/google-gemini/gemini-cli",
+      "path": ".gemini/skills/github-issue-creator",
+      "install": "git",
+      "tags": [
+        "gemini-cli",
+        "github",
+        "issues",
+        "workflow"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "pr-address-comments",
+      "type": "skill",
+      "version": "main",
+      "description": "Resolve GitHub pull request review comments for the current Gemini CLI branch.",
+      "author": "Google",
+      "repo": "https://github.com/google-gemini/gemini-cli",
+      "path": ".gemini/skills/pr-address-comments",
+      "install": "git",
+      "tags": [
+        "gemini-cli",
+        "github",
+        "pull-requests",
+        "review"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "pr-creator",
+      "type": "skill",
+      "version": "main",
+      "description": "Create Gemini CLI pull requests that follow repository templates and contribution standards.",
+      "author": "Google",
+      "repo": "https://github.com/google-gemini/gemini-cli",
+      "path": ".gemini/skills/pr-creator",
+      "install": "git",
+      "tags": [
+        "gemini-cli",
+        "github",
+        "pull-requests",
+        "workflow"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "review-duplication",
+      "type": "skill",
+      "version": "main",
+      "description": "Look for duplicated functionality and missed reusable utilities during code review.",
+      "author": "Google",
+      "repo": "https://github.com/google-gemini/gemini-cli",
+      "path": ".gemini/skills/review-duplication",
+      "install": "git",
+      "tags": [
+        "gemini-cli",
+        "code-review",
+        "duplication",
+        "architecture"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "tui-tester",
+      "type": "skill",
+      "version": "main",
+      "description": "Test terminal UI behavior and visual output with automated interaction workflows.",
+      "author": "Google",
+      "repo": "https://github.com/google-gemini/gemini-cli",
+      "path": ".gemini/skills/tui-tester",
+      "install": "git",
+      "tags": [
+        "gemini-cli",
+        "tui",
+        "testing",
+        "automation"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "farmage-opencode-skills",
+      "type": "skill-pack",
+      "version": "main",
+      "description": "67 specialized AI skills plus 9 workflow commands for OpenCode, adapted from Claude Skills by jeffallan.",
+      "author": "farmage",
+      "repo": "https://github.com/farmage/opencode-skills",
+      "install": "git",
+      "tags": [
+        "skills",
+        "commands",
+        "workflows",
+        "opencode",
+        "claude-skills"
+      ],
+      "license": "MIT",
+      "skill_count": 67
+    },
+    {
+      "name": "opencode-power-pack",
+      "type": "skill-pack",
+      "version": "main",
+      "description": "55 portable skills for OpenCode, Codex, and Claude Code: code review, security audit, feature development, frontend design, and more.",
+      "author": "waybarrios",
+      "repo": "https://github.com/waybarrios/opencode-power-pack",
+      "install": "git",
+      "tags": [
+        "skills",
+        "code-review",
+        "security",
+        "frontend",
+        "workflows"
+      ],
+      "license": "MIT",
+      "skill_count": 53
+    },
+    {
+      "name": "awesome-opencode-skills",
+      "type": "skill-pack",
+      "version": "main",
+      "description": "175+ OpenCode skills ported from Codex subagents, with auto-sync and one-command installation.",
+      "author": "jshsakura",
+      "repo": "https://github.com/jshsakura/awesome-opencode-skills",
+      "install": "git",
+      "tags": [
+        "skills",
+        "codex",
+        "subagents",
+        "automation",
+        "collection"
+      ],
+      "license": "MIT",
+      "skill_count": 136
+    },
+    {
+      "name": "garden-skills",
+      "type": "skill-pack",
+      "version": "main",
+      "description": "Production-ready agent skills for web design, knowledge retrieval, image generation, and more.",
+      "author": "ConardLi",
+      "repo": "https://github.com/ConardLi/garden-skills",
+      "install": "git",
+      "tags": [
+        "skills",
+        "web-design",
+        "image-generation",
+        "knowledge",
+        "agents"
+      ],
+      "license": "MIT",
+      "skill_count": 6
+    },
+    {
+      "name": "addyosmani-agent-skills",
+      "type": "skill-pack",
+      "version": "main",
+      "description": "Production-grade engineering skills: API design, testing, CI/CD, debugging, performance, and security.",
+      "author": "addyosmani",
+      "repo": "https://github.com/addyosmani/agent-skills",
+      "install": "git",
+      "tags": [
+        "skills",
+        "engineering",
+        "testing",
+        "ci-cd",
+        "debugging",
+        "performance"
+      ],
+      "license": "MIT",
+      "skill_count": 28
+    },
+    {
+      "name": "bestdeejay-agent-skills",
+      "type": "skill-pack",
+      "version": "main",
+      "description": "60 autonomous agent skills across code, data, media, repos, and social tasks with manifests.",
+      "author": "bestdeejay-design",
+      "repo": "https://github.com/bestdeejay-design/agent-skills",
+      "install": "git",
+      "tags": [
+        "skills",
+        "agents",
+        "code",
+        "data",
+        "media",
+        "automation"
+      ],
+      "license": "MIT",
+      "skill_count": 57
+    },
+    {
+      "name": "cloudflare-one-migrations",
+      "type": "skill",
+      "version": "main",
+      "description": "Assess and plan migrations from existing VPN, SWG, or SASE platforms to Cloudflare One.",
+      "author": "Cloudflare",
+      "repo": "https://github.com/cloudflare/skills",
+      "path": "skills/cloudflare-one-migrations",
+      "install": "git",
+      "tags": [
+        "cloudflare",
+        "workers",
+        "developer-platform"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "gateway-workers",
+      "type": "skill",
+      "version": "main",
+      "description": "Build and review Cloudflare Gateway Workers invoked by HTTP policy Forward actions.",
+      "author": "Cloudflare",
+      "repo": "https://github.com/cloudflare/skills",
+      "path": "skills/gateway-workers",
+      "install": "git",
+      "tags": [
+        "cloudflare",
+        "workers",
+        "developer-platform"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "k2",
+      "type": "skill",
+      "version": "main",
+      "description": "Build and troubleshoot Cloudflare K2 durable logs, streams, and subscriptions.",
+      "author": "Cloudflare",
+      "repo": "https://github.com/cloudflare/skills",
+      "path": "skills/k2",
+      "install": "git",
+      "tags": [
+        "cloudflare",
+        "workers",
+        "developer-platform"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "sandbox-migrate-to-next",
+      "type": "skill",
+      "version": "main",
+      "description": "Migrate Cloudflare Sandbox applications to the Next.js integration.",
+      "author": "Cloudflare",
+      "repo": "https://github.com/cloudflare/skills",
+      "path": "skills/sandbox-migrate-to-next",
+      "install": "git",
+      "tags": [
+        "cloudflare",
+        "workers",
+        "developer-platform"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "sandbox-next",
+      "type": "skill",
+      "version": "main",
+      "description": "Build applications using the Cloudflare Sandbox Next.js integration.",
+      "author": "Cloudflare",
+      "repo": "https://github.com/cloudflare/skills",
+      "path": "skills/sandbox-next",
+      "install": "git",
+      "tags": [
+        "cloudflare",
+        "workers",
+        "developer-platform"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "sandbox-stable",
+      "type": "skill",
+      "version": "main",
+      "description": "Build and troubleshoot applications using Cloudflare Sandbox stable APIs.",
+      "author": "Cloudflare",
+      "repo": "https://github.com/cloudflare/skills",
+      "path": "skills/sandbox-stable",
+      "install": "git",
+      "tags": [
+        "cloudflare",
+        "workers",
+        "developer-platform"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "data-wrangler",
+      "type": "agent",
+      "version": "main",
+      "description": "Data-wrangling subagent for database and analytics tasks.",
+      "author": "kabirprokk",
+      "repo": "https://github.com/kabirprokk/Osien-Stack",
+      "path": "agents/data-wrangler.md",
+      "install": "git",
+      "tags": [
+        "osien-stack",
+        "agent"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "devops",
+      "type": "agent",
+      "version": "main",
+      "description": "DevOps subagent for infrastructure, CI/CD, and operations tasks.",
+      "author": "kabirprokk",
+      "repo": "https://github.com/kabirprokk/Osien-Stack",
+      "path": "agents/devops.md",
+      "install": "git",
+      "tags": [
+        "osien-stack",
+        "agent"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "researcher",
+      "type": "agent",
+      "version": "main",
+      "description": "Research subagent for evidence gathering and technical investigation.",
+      "author": "kabirprokk",
+      "repo": "https://github.com/kabirprokk/Osien-Stack",
+      "path": "agents/researcher.md",
+      "install": "git",
+      "tags": [
+        "osien-stack",
+        "agent"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "test",
+      "type": "agent",
+      "version": "main",
+      "description": "Testing subagent for quality assurance and automated test tasks.",
+      "author": "kabirprokk",
+      "repo": "https://github.com/kabirprokk/Osien-Stack",
+      "path": "agents/test.md",
+      "install": "git",
+      "tags": [
+        "osien-stack",
+        "agent"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "flow-test",
+      "type": "command",
+      "version": "main",
+      "description": "Run the Osien Stack flow test workflow.",
+      "author": "kabirprokk",
+      "repo": "https://github.com/kabirprokk/Osien-Stack",
+      "path": "commands/flow-test.md",
+      "install": "git",
+      "tags": [
+        "osien-stack",
+        "workflow"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "make-mcp",
+      "type": "command",
+      "version": "main",
+      "description": "Guide the creation of an MCP server using the Osien Stack workflow.",
+      "author": "kabirprokk",
+      "repo": "https://github.com/kabirprokk/Osien-Stack",
+      "path": "commands/make-mcp.md",
+      "install": "git",
+      "tags": [
+        "osien-stack",
+        "workflow"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "mind-context",
+      "type": "command",
+      "version": "main",
+      "description": "Inspect and manage project context using Osien Stack commands.",
+      "author": "kabirprokk",
+      "repo": "https://github.com/kabirprokk/Osien-Stack",
+      "path": "commands/mind-context.md",
+      "install": "git",
+      "tags": [
+        "osien-stack",
+        "workflow"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "sys-fast",
+      "type": "command",
+      "version": "main",
+      "description": "Apply the Osien Stack fast workflow for focused tasks.",
+      "author": "kabirprokk",
+      "repo": "https://github.com/kabirprokk/Osien-Stack",
+      "path": "commands/sys-fast.md",
+      "install": "git",
+      "tags": [
+        "osien-stack",
+        "workflow"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "sys-doctor",
+      "type": "command",
+      "version": "main",
+      "description": "Diagnose project and agent setup using the Osien Stack workflow.",
+      "author": "kabirprokk",
+      "repo": "https://github.com/kabirprokk/Osien-Stack",
+      "path": "commands/sys-doctor.md",
+      "install": "git",
+      "tags": [
+        "osien-stack",
+        "workflow"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "osien-tools-mcp",
+      "type": "mcp",
+      "version": "1.1.0",
+      "description": "Local stdio MCP server with project memory, bounded code search, verification, and agent workflow tools; Osien Stack provides the Driftpost integration.",
+      "author": "kabirprokk",
+      "repo": "https://github.com/kabirprokk/Osien-Stack",
+      "path": "mcp-server",
+      "install": "git",
+      "tags": [
+        "mcp",
+        "osien-stack",
+        "driftpost",
+        "tools"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "frontend-ui-engineering",
+      "type": "skill",
+      "version": "main",
+      "description": "Build production-quality, accessible, responsive user interfaces, components, layouts, and application state.",
+      "author": "addyosmani",
+      "repo": "https://github.com/addyosmani/agent-skills",
+      "path": "skills/frontend-ui-engineering",
+      "install": "git",
+      "tags": [
+        "frontend",
+        "ui",
+        "accessibility",
+        "design"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "code-simplification",
+      "type": "skill",
+      "version": "main",
+      "description": "Refactor working code for clarity and maintainability without changing its behavior.",
+      "author": "addyosmani",
+      "repo": "https://github.com/addyosmani/agent-skills",
+      "path": "skills/code-simplification",
+      "install": "git",
+      "tags": [
+        "refactoring",
+        "code-quality",
+        "maintainability"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "api-and-interface-design",
+      "type": "skill",
+      "version": "main",
+      "description": "Design stable APIs, module boundaries, and contracts between frontend and backend systems.",
+      "author": "addyosmani",
+      "repo": "https://github.com/addyosmani/agent-skills",
+      "path": "skills/api-and-interface-design",
+      "install": "git",
+      "tags": [
+        "api",
+        "architecture",
+        "design",
+        "contracts"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "browser-testing-with-devtools",
+      "type": "skill",
+      "version": "main",
+      "description": "Test web apps in a real browser with Chrome DevTools MCP, including DOM, console, network, and performance checks.",
+      "author": "addyosmani",
+      "repo": "https://github.com/addyosmani/agent-skills",
+      "path": "skills/browser-testing-with-devtools",
+      "install": "git",
+      "tags": [
+        "browser",
+        "testing",
+        "debugging",
+        "frontend"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "security-and-hardening",
+      "type": "skill",
+      "version": "main",
+      "description": "Review and harden code handling untrusted input, authentication, data storage, integrations, and dependencies.",
+      "author": "addyosmani",
+      "repo": "https://github.com/addyosmani/agent-skills",
+      "path": "skills/security-and-hardening",
+      "install": "git",
+      "tags": [
+        "security",
+        "hardening",
+        "owasp",
+        "privacy"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "incremental-implementation",
+      "type": "skill",
+      "version": "main",
+      "description": "Deliver multi-file changes in thin, verifiable implementation slices.",
+      "author": "addyosmani",
+      "repo": "https://github.com/addyosmani/agent-skills",
+      "path": "skills/incremental-implementation",
+      "install": "git",
+      "tags": [
+        "implementation",
+        "workflow",
+        "testing",
+        "planning"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "documentation-and-adrs",
+      "type": "skill",
+      "version": "main",
+      "description": "Write architecture decision records and document decisions around APIs, features, and system design.",
+      "author": "addyosmani",
+      "repo": "https://github.com/addyosmani/agent-skills",
+      "path": "skills/documentation-and-adrs",
+      "install": "git",
+      "tags": [
+        "documentation",
+        "adr",
+        "architecture",
+        "writing"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "performance-optimization",
+      "type": "skill",
+      "version": "main",
+      "description": "Diagnose and improve application performance across frontend, backend, queries, and databases.",
+      "author": "addyosmani",
+      "repo": "https://github.com/addyosmani/agent-skills",
+      "path": "skills/performance-optimization",
+      "install": "git",
+      "tags": [
+        "performance",
+        "optimization",
+        "frontend",
+        "database"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "webapp-testing",
+      "type": "skill",
+      "version": "main",
+      "description": "Test local web applications with Playwright, including frontend behavior, screenshots, and browser logs.",
+      "author": "anthropics",
+      "repo": "https://github.com/anthropics/skills",
+      "path": "skills/webapp-testing",
+      "install": "git",
+      "tags": [
+        "web",
+        "testing",
+        "playwright",
+        "browser"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "web-artifacts-builder",
+      "type": "skill",
+      "version": "main",
+      "description": "Build rich multi-component web artifacts with modern frontend technologies, React, Tailwind CSS, and shadcn/ui.",
+      "author": "anthropics",
+      "repo": "https://github.com/anthropics/skills",
+      "path": "skills/web-artifacts-builder",
+      "install": "git",
+      "tags": [
+        "frontend",
+        "web",
+        "react",
+        "ui",
+        "design"
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "theme-factory",
+      "type": "skill",
+      "version": "main",
+      "description": "Apply or create cohesive visual themes for slides, documents, reports, and web pages.",
+      "author": "anthropics",
+      "repo": "https://github.com/anthropics/skills",
+      "path": "skills/theme-factory",
+      "install": "git",
+      "tags": [
+        "design",
+        "visual-design",
+        "themes",
+        "frontend"
+      ],
+      "license": "Apache-2.0"
+    }
+  ]
+}
