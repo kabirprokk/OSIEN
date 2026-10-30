@@ -10,16 +10,18 @@ Apply selected visual elements from https://osien.is-a.dev/ to the OSIN landing 
 - Work independently; user explicitly requested no delegation.
 
 ## Current State
-- Branch: `fix/web-authentic-terminal-capture`, based at `441bd52` before pending changes.
-- Pending edits: `WEB/index.html`, `WEB/styles.css`.
-- Changes add Google font loading, adjust dark palette/theme color, and style headings/cards/labels with mobile overrides.
+- Branch: `fix/web-authentic-terminal-capture`.
+- Web styling commit `6a6d3fc` is pushed to origin.
+- NPM latest was found at `@kabirprokk/osin-cli@1.0.2`, containing updater behavior that was missing from the local repository's 1.0.1 source.
+- Local OSIN changes are being aligned with the 1.0.2 published updater before preparing requested release 1.0.3.
 - `OSIN/assets/osin-terminal.png` remains the authentic screenshot.
 
 ## Verification
-- `npm test` in `OSIN/`: 18 passed, 0 failed.
+- Original `npm test` in `OSIN/`: 18 passed, 0 failed; tests are being expanded for release update behavior.
 - `node --check WEB/script.js`: passed.
 - `git diff --check`: passed.
 - Local page and stylesheet returned HTTP 200; visual checks were made at desktop and 390px mobile widths.
 
 ## Next
-- Commit and push the visual changes, then verify the deployed `https://osin.pages.dev/` page and its font/theme assets.
+- Verify updated OSIN source and tests, commit and push the 1.0.3 release preparation, publish to npm on the user's request, then confirm the registry reports 1.0.3.
+- The production `https://osin.pages.dev/` still serves prior web assets because only the feature branch was pushed; its origin/main is 441bd52.

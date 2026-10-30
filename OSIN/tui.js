@@ -7,6 +7,8 @@ const { execFile, spawn } = require('child_process');
 const { loadCampaigns, chooseCampaign, recordAggregate } = require('./sponsors');
 const { getConfigDirectory } = require('./config');
 const { listModels } = require('./providers');
+const { checkForUpdate, installUpdate } = require('./updater');
+const packageInfo = require('./package.json');
 const {
   createPasteAttachment,
   formatPrompt,
@@ -32,6 +34,7 @@ const COMMANDS = [
   ['/files', 'List attached files'], ['/detach N', 'Remove attachment number N'],
   ['/copy', 'Copy the last OSIN response'], ['/usage', 'Show provider-reported token usage'],
   ['/models', 'List models available from your provider'],
+  ['/update', 'Check for and install the latest OSIN release'],
   ['/settings', 'Change the model'], ['/model NAME', 'Set the model for this session'],
   ['/support', 'Open the OSIN donation/support page'], ['/help', 'Show command help'],
   ['/exit', 'Exit OSIN'],
@@ -301,7 +304,7 @@ function startTui({ model, apiKey, baseUrl, sponsorsFile, metricsFile, openUrl, 
     if (text === '/new') { newChat(); return; }
     if (text === '/settings') { state.view = 'settings'; draw(); return; }
     if (text === '/help') {
-      addNotice('Commands: /new, /clear, /undo, /attach <path>, /files, /detach N, /copy, /usage, /models, /settings, /model NAME, /support, /help, /exit. Ctrl+N creates a chat; Ctrl+S opens settings.');
+      addNotice('Commands: /new, /clear, /undo, /attach <path>, /files, /detach N, /copy, /usage, /models, /update, /settings, /model NAME, /support, /help, /exit. Ctrl+N creates a chat; Ctrl+S opens settings.');
       draw(); return;
     }
     if (text === '/models') {
@@ -312,6 +315,25 @@ function startTui({ model, apiKey, baseUrl, sponsorsFile, metricsFile, openUrl, 
         const models = await listModels({ baseUrl, apiKey });
         addNotice(`Models available to this API key (${models.length}):\n${models.map(id => `${id}${id === state.model ? '  ← active' : ''}`).join('\n')}\nUse /model MODEL_ID to switch.`);
       } catch (error) { addNotice(`Could not list models: ${error.message}`); }
+      state.busy = false;
+      state.notice = '';
+      draw(); return;
+    }
+    if (text === '/update') {
+      state.busy = true;
+      state.notice = 'Checking npm for a newer OSIN release…';
+      draw();
+      try {
+        const update = await checkForUpdate(packageInfo.version);
+        if (!update.updateAvailable) {
+          addNotice(`OSIN ${packageInfo.version} is already the latest release.`);
+        } else {
+          state.notice = `Installing OSIN ${update.latest}…`;
+          draw();
+          await installUpdate(update.latest);
+          addNotice(`Updated OSIN to ${update.latest}. Exit and restart OSIN to use the new version.`);
+        }
+      } catch (error) { addNotice(`Update failed: ${error.message}`); }
       state.busy = false;
       state.notice = '';
       draw(); return;
@@ -576,6 +598,14 @@ function startTui({ model, apiKey, baseUrl, sponsorsFile, metricsFile, openUrl, 
     try { recordAggregate(state.metricsPath, state.sponsor.id, 'impressions'); } catch {}
   }
   draw();
+  if (process.env.OSIN_DISABLE_UPDATE_CHECK !== '1') {
+    checkForUpdate(packageInfo.version).then(update => {
+      if (!state.closed && update.updateAvailable) {
+        state.notice = `OSIN ${update.latest} is available — type /update to install it.`;
+        draw();
+      }
+    }).catch(() => {});
+  }
 }
 
 function adXForWidth(w) {
