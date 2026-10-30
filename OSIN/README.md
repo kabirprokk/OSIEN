@@ -2,8 +2,9 @@
 
 OSIN is a terminal-based AI coding assistant with a mouse-enabled chat
 workspace, text-file attachments, large-paste handling, and slash commands.
-It sends requests to an OpenAI-compatible chat-completions API. It does not
-run shell commands or directly edit project files.
+It supports OpenAI-compatible APIs and ChatGPT account access through the
+official Codex CLI. OSIN does not run shell commands or directly edit project
+files.
 
 ## Install globally
 
@@ -15,6 +16,14 @@ npm install --global @kabirprokk/osin-cli
 
 The `osin` command is then available from any directory. Node.js 18 or newer
 and npm are required.
+
+Update an existing global installation with:
+
+```sh
+npm install --global @kabirprokk/osin-cli@latest
+```
+
+Then restart OSIN.
 
 To install from the source repository instead, clone it, change to `OSIN`, and
 run `npm install --global .`:
@@ -47,6 +56,14 @@ to query model IDs exposed by that provider to your key; a returned model may
 not necessarily support chat completions. Legacy `GROQ_*` and `OPENAI_*`
 environment variables are recognized. Existing process environment variables
 take precedence over values in the config file.
+
+To use your ChatGPT account instead, install the official Codex CLI and type
+`/signin` inside OSIN. Codex handles the browser/device sign-in and account
+credentials; OSIN does not read or store those credentials. Type `/model` to
+browse the visible Codex models, `/test-model` to test the selected model, or
+`/api` to return to the configured API-key provider. Codex responses are run in
+read-only mode. A model is only excluded from the API model picker after the
+provider explicitly reports that the model is unsupported.
 
 - Windows: `%APPDATA%\OSIN\.env`
 - macOS and Linux: `$XDG_CONFIG_HOME/osin/.env`, or `~/.config/osin/.env`
