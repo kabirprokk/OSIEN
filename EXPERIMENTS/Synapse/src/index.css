@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow-x: hidden;
+    background-color: #020617;
+  }
+
+  h1, h2, h3, h4, .font-headline {
+    font-family: 'Sora', sans-serif;
+  }
+
+  /* Visible keyboard focus everywhere (checklist: a11y, broken-button confidence) */
+  :focus-visible {
+    outline: 2px solid #22d3ee;
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  /* Respect reduced motion (checklist: mobile + a11y) */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+    html { scroll-behavior: auto; }
+  }
+}
+
+/* 80% minimalist base: quiet scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+/* 10% glassmorph: reusable calm surface */
+.glass {
+  background: rgb(255 255 255 / 0.03);
+  border: 1px solid rgb(255 255 255 / 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* 10% liquid glass: slow sheen sweep, used sparingly (board frame only) */
+@keyframes sheen {
+  0% { transform: translateX(-120%) skewX(-12deg); }
+  60%, 100% { transform: translateX(240%) skewX(-12deg); }
+}
+.liquid-sheen {
+  position: relative;
+  overflow: hidden;
+}
+.liquid-sheen::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0; width: 40%;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.06), transparent);
+  animation: sheen 9s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Gentle float kept single-use + calm */
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+.animate-float-slow { animation: floatSlow 14s ease-in-out infinite; }
+
+/* VengeanceUI: animated-rays aurora drift */
+@keyframes aurora-bg {
+  0% { background-position: 50% 50%, 50% 50%; }
+  50% { background-position: 50% 100%, 50% 0%; }
+  100% { background-position: 50% 50%, 50% 50%; }
+}
+.animate-aurora-bg { animation: aurora-bg 12s ease-in-out infinite; }
+
+/* VengeanceUI: glow-border-card conic rotation */
+@property --glow-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes glow-spin {
+  to { --glow-angle: 360deg; }
+}
+.glow-conic {
+  background: conic-gradient(
+    from var(--glow-angle),
+    var(--glow-color-1), var(--glow-color-2), var(--glow-color-3),
+    var(--glow-color-4), var(--glow-color-5), var(--glow-color-6),
+    var(--glow-color-7), var(--glow-color-8), var(--glow-color-9),
+    var(--glow-color-10), var(--glow-color-1)
+  );
+  animation: glow-spin var(--glow-animation-duration, 6s) linear infinite;
+}
