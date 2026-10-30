@@ -12,6 +12,8 @@ Apply selected visual elements from https://osien.is-a.dev/ to the OSIN landing 
 ## Current State
 - Branch: `fix/web-authentic-terminal-capture`.
 - Web styling commit `6a6d3fc` is pushed to origin.
+- User requested the portfolio influence be stronger: the OSIN page should use the viewport instead of a narrow centered column.
+- Latest local web edit expands the desktop content max width from 1160px to 1760px, uses responsive viewport gutters, gives the hero a near-screen-height editorial composition, and scales the headline toward OSIEN's oversized display style while retaining OSIN colors and content.
 - NPM latest was found at `@kabirprokk/osin-cli@1.0.2`, containing updater behavior that was missing from the local repository's 1.0.1 source.
 - Release-prep commit `3e88b6a` is pushed; it preserves the updater shipped in npm 1.0.2 and updates npm/package-lock versions to 1.0.3.
 - Added updater regression coverage; local suite now passes 22/22.
