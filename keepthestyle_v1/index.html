@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KeepTheStyle — No-Code Website Builder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Lora:wght@400;500;600;700&family=Merriweather:wght@300;400;700&family=Montserrat:wght@300;400;500;600;700&family=Nunito:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Rubik:wght@300;400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css?v=2.5.0">
+    <link rel="stylesheet" href="css/toolbar.css?v=1.7.0">
+    <link rel="stylesheet" href="css/sidebar.css?v=1.7.0">
+    <link rel="stylesheet" href="css/canvas.css?v=3.0.0">
+    <link rel="stylesheet" href="css/properties.css?v=1.7.0">
+    <link rel="stylesheet" href="css/code-panel.css?v=1.7.0">
+</head>
+<body class="intro-active">
+    <div id="app">
+        <!-- Top Toolbar -->
+        <header id="toolbar">
+            <div class="toolbar-left">
+                <button class="toolbar-btn" title="Add Media">+</button>
+                <button class="toolbar-btn" title="New Project">📄</button>
+                <button class="toolbar-btn" title="Open">📂</button>
+                <button class="toolbar-btn" title="Save">💾</button>
+                <span class="toolbar-divider"></span>
+                <button class="toolbar-btn" title="Undo">↩</button>
+                <button class="toolbar-btn" title="Redo">↪</button>
+                <span class="toolbar-divider"></span>
+                <button class="toolbar-btn" title="Import HTML">📥</button>
+                <button class="toolbar-btn" title="Export">📤</button>
+                <span class="toolbar-divider"></span>
+                <button class="toolbar-btn" title="Preview">▶</button>
+            </div>
+            <div class="toolbar-center">
+                <input class="project-name" value="Untitled Project" aria-label="Project name" maxlength="100">
+            </div>
+            <div class="toolbar-right">
+                <button class="toolbar-btn" title="Design System">◈</button>
+                <button class="toolbar-btn" title="Dark Mode">🌙</button>
+                <button class="toolbar-btn" title="Settings">⚙</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main id="main-content">
+            <!-- Left Sidebar -->
+            <aside id="left-sidebar">
+                <div class="sidebar-tabs"><button class="active" data-sidebar-view="insert">Insert</button><button data-sidebar-view="layers">Layers</button></div>
+                <div class="sidebar-search">
+                    <input type="text" placeholder="Search elements...">
+                </div>
+                <nav class="sidebar-nav"></nav>
+                <div class="sidebar-elements"></div>
+                <div class="sidebar-layers" hidden></div>
+            </aside>
+
+            <!-- Center Canvas -->
+            <section id="canvas-container">
+                <div class="canvas-controls">
+                    <button class="zoom-btn" data-action="zoom-in">+</button>
+                    <span class="zoom-level">100%</span>
+                    <button class="zoom-btn" data-action="zoom-out">−</button>
+                    <button class="zoom-btn" data-action="fit-screen">⊡</button>
+                    <span class="toolbar-divider"></span>
+                    <button class="canvas-btn" data-action="grid">⊞</button>
+                    <button class="canvas-btn" data-action="guidelines">⊟</button>
+                    <button class="canvas-btn" data-action="rulers">⊡</button>
+                    <span class="toolbar-divider"></span>
+                    <label class="breakpoint-control" title="Responsive editing breakpoint">
+                        <span>Viewport</span>
+                        <select class="breakpoint-select" aria-label="Responsive editing breakpoint">
+                            <option value="base">Desktop</option>
+                            <option value="tablet">Tablet</option>
+                            <option value="mobile">Mobile</option>
+                        </select>
+                    </label>
+                    <select class="page-size-select">
+                        <option value="1920x1080">Desktop (1920x1080)</option>
+                        <option value="1366x768">Laptop (1366x768)</option>
+                        <option value="1024x768">Tablet (1024x768)</option>
+                        <option value="768x1024">Mobile (768x1024)</option>
+                        <option value="375x812">Mobile (375x812)</option>
+                    </select>
+                </div>
+                <div class="canvas-wrapper">
+                    <div class="canvas-stage">
+                        <div class="canvas-page"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Sidebar -->
+            <aside id="right-sidebar">
+                <div class="properties-header">
+                    <h3>Properties</h3>
+                    <button class="clear-selection">✕</button>
+                </div>
+                <div class="properties-content"></div>
+            </aside>
+        </main>
+
+        <!-- Code Panel -->
+        <footer id="code-panel">
+            <div class="code-panel-header">
+                <div class="code-tabs">
+                    <button class="code-tab active" data-tab="html">HTML</button>
+                    <button class="code-tab" data-tab="css">CSS</button>
+                    <button class="code-tab" data-tab="javascript">JavaScript</button>
+                </div>
+                <div class="code-actions">
+                    <button class="code-btn" data-action="copy">Copy</button>
+                    <button class="code-btn" data-action="download">Download</button>
+                    <button class="code-btn" data-action="clear">Clear</button>
+                    <button class="code-btn" data-action="format">Format</button>
+                </div>
+            </div>
+            <div class="code-editor">
+                <pre><code class="language-html"></code></pre>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/utils.js?v=3.0.0"></script>
+    <script src="js/store.js?v=3.0.0"></script>
+    <script src="js/elements.js?v=1.9.0"></script>
+    <script src="js/shortcuts.js?v=1.9.0"></script>
+    <script src="js/sidebar.js?v=1.7.0"></script>
+    <script src="js/canvas.js?v=3.0.0"></script>
+    <script src="js/properties.js?v=3.0.0"></script>
+    <script src="js/code-panel.js?v=3.0.0"></script>
+    <script src="js/toolbar.js?v=3.0.0"></script>
+    <script src="js/main.js?v=2.5.0"></script>
+</body>
+</html>
