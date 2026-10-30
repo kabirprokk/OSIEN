@@ -27,7 +27,8 @@ The local checks cover the CLI package and authenticated Codex path.
 
 The package version is prepared for a release after the published `1.0.2`.
 
-- Package version is prepared as `1.0.3` after the published `1.0.2`.
+- `1.0.3` already exists on npm with a different (older) package artifact.
+- The Codex integration package is now prepared as `1.0.4`.
 - Publish from this directory with `npm publish --access public`, then update
   an existing global install with the following command:
 
