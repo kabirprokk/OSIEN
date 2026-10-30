@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAME_HTM - Play HTML5 Games</title>
+    <style>
+        :root {
+            --primary: #0ff0fc;
+            --secondary: #ff00ff;
+            --dark-bg: #0a0a1a;
+            --darker-bg: #050510;
+            --card-bg: rgba(20, 20, 40, 0.7);
+            --glass: rgba(255, 255, 255, 0.05);
+            --text: #e0e0ff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: all 0.5s ease;
+        }
+        
+        .light-theme {
+            --dark-bg: #f0f0ff;
+            --darker-bg: #d0d0f0;
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --glass: rgba(0, 0, 0, 0.05);
+            --text: #202040;
+        }
+        
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+        
+        .header-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        button {
+            padding: 8px 16px;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .theme-btn {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: var(--darker-bg);
+            font-weight: 600;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .game-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            padding: 20px 0;
+        }
+        
+        .game-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 255, 255, 0.2);
+        }
+        
+        .game-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .game-info {
+            padding: 15px;
+        }
+        
+        .game-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+        
+        .game-info p {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+        
+        .game-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        .play-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: var(--darker-bg);
+            border: none;
+            border-radius: 0 0 15px 15px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .play-btn:hover {
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        }
+        
+        .modal, .admin-panel, .profile-panel, .game-player {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content, .panel-content, .player-content {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80%;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+        
+        .player-content {
+            max-width: 900px;
+            padding: 20px;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        h2 {
+            margin-bottom: 20px;
+            color: var(--primary);
+            text-align: center;
+            font-size: 1.8rem;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--text);
+            font-size: 1rem;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+        
+        .thumbnail-preview, .media-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .media-preview img, .media-preview video {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .media-preview img:hover, .media-preview video:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .game-frame {
+            width: 100%;
+            height: 500px;
+            border: none;
+            border-radius: 10px;
+            background: #000;
+        }
+        
+        .game-player h3 {
+            color: var(--primary);
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .game-player p {
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+        
+        .game-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        
+        .stars {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        
+        .star {
+            color: gold;
+            font-size: 1.2rem;
+        }
+        
+        .empty-star {
+            color: #555;
+            font-size: 1.2rem;
+        }
+        
+        .file-input-label {
+            display: block;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .file-input-label:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .login-success {
+            color: #0ff0fc !important;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text);
+            opacity: 0.7;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        @media (max-width: 768px) {
+            .game-list {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .header {
+                padding: 10px 15px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .header-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .modal-content, .panel-content {
+                width: 95%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body class="fade-in">
+    <div class="header">
+        <div class="logo">GAME_HTM</div>
+        <div class="header-buttons">
+            <button id="adminBtn">Admin</button>
+            <button id="profileBtn">Profile</button>
+            <button id="themeBtn" class="theme-btn">Change Theme</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="game-list" id="gameList">
+            <div class="empty-state">
+                <h3>No Games Available</h3>
+                <p>Login as admin to add games to the portal</p>
+                <p><strong>Admin Credentials:</strong><br>Username: KABIRPROKK<br>Password: ISHANNOOB</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login/Register Modal -->
+    <div class="modal" id="loginModal" style="display:flex;">
+        <div class="modal-content">
+            <button class="close-btn" id="closeLoginBtn">&times;</button>
+            <h2>Welcome to GAME_HTM</h2>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button id="loginBtn">Login</button>
+            <button id="registerBtn">Register</button>
+            <div id="loginMsg" style="margin-top:10px;text-align:center;"></div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="panel-content">
+            <button class="close-btn" id="closeAdminBtn">&times;</button>
+            <h2>Admin Tools</h2>
+            <input type="text" id="gameTitle" placeholder="Game Title">
+            <textarea id="gameDesc" placeholder="Game Description" rows="3"></textarea>
+            <input type="text" id="gameCategory" placeholder="Category (comma separated)">
+            <select id="gameRating">
+                <option value="">Select Rating</option>
+                <option value="1">1 Star</option>
+                <option value="2">2 Stars</option>
+                <option value="3">3 Stars</option>
+                <option value="4">4 Stars</option>
+                <option value="5">5 Stars</option>
+            </select>
+            
+            <label for="gameThumbnail" class="file-input-label">Choose Thumbnail Image</label>
+            <input type="file" id="gameThumbnail" class="file-input" accept="image/*">
+            
+            <label for="gameUrl" class="file-input-label">Enter Game URL</label>
+            <input type="text" id="gameUrl" placeholder="Game URL (e.g., https://example.com/game)">
+            
+            <button id="addGameBtn">Publish Game</button>
+            
+            <div class="thumbnail-preview" id="thumbnailPreview"></div>
+            <div class="media-preview" id="mediaPreview"></div>
+        </div>
+    </div>
+
+    <!-- Profile Panel -->
+    <div class="profile-panel" id="profilePanel">
+        <div class="panel-content">
+            <button class="close-btn" id="closeProfileBtn">&times;</button>
+            <h2>User Profile</h2>
+            <p id="profileUsername"></p>
+            <h3>Favorites:</h3>
+            <ul id="profileFavorites"></ul>
+            <h3>History:</h3>
+            <ul id="profileHistory"></ul>
+            <button id="logoutBtn">Logout</button>
+        </div>
+    </div>
+
+    <!-- Game Player -->
+    <div class="game-player" id="gamePlayer">
+        <div class="player-content">
+            <button class="close-btn" id="closeGameBtn">&times;</button>
+            <h3 id="gamePlayerTitle"></h3>
+            <p id="gamePlayerDesc"></p>
+            <div class="stars" id="gamePlayerStars"></div>
+            <div class="game-frame-container">
+                <iframe class="game-frame" id="gameFrame" src="about:blank"></iframe>
+            </div>
+            <div class="game-controls">
+                <button id="addToFavoritesBtn">Add to Favorites</button>
+                <button id="fullscreenBtn">Fullscreen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            doc, 
+            getDoc, 
+            updateDoc, 
+            orderBy, 
+            query, 
+            serverTimestamp,
+            setDoc 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            signOut, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { 
+            getStorage, 
+            ref, 
+            uploadBytes, 
+            getDownloadURL 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSy_REDACTED",
+            authDomain: "game-htm.firebaseapp.com",
+            projectId: "game-htm",
+            storageBucket: "game-htm.firebasestorage.app",
+            messagingSenderId: "209461056965",
+            appId: "1:209461056965:web:f632d68cce68f2e92327ac"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const storage = getStorage(app);
+
+        // Global variables
+        let currentUser = null;
+        let games = [];
+        let currentGameIndex = -1;
+
+        // DOM Elements
+        const loginModal = document.getElementById('loginModal');
+        const adminPanel = document.getElementById('adminPanel');
+        const profilePanel = document.getElementById('profilePanel');
+        const gamePlayer = document.getElementById('gamePlayer');
+        const gameList = document.getElementById('gameList');
+
+        // ============================================================================
+        // AUTHENTICATION FUNCTIONS
+        // ============================================================================
+        document.getElementById('loginBtn').onclick = async () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginMsg = document.getElementById('loginMsg');
+            
+            if (!username || !password) {
+                loginMsg.innerText = 'Please enter both username and password';
+                loginMsg.style.color = '#ff5555';
+                return;
+            }
+            
+            try {
+                // Check for admin credentials
+                if (username === 'KABIRPROKK' && password === 'ISHANNOOB') {
+                    const adminEmail = 'admin@gamehtm.com';
+                    const userCredential = await signInWithEmailAndPassword(auth, adminEmail, password);
+                    currentUser = userCredential.user;
+                    
+                    // Ensure admin user exists in Firestore
+                    const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+                    if (!userDoc.exists()) {
+                        await setDoc(doc(db, 'users', currentUser.uid), {
+                            username: 'KABIRPROKK',
+                            email: adminEmail,
+                            favorites: [],
+                            history: [],
+                            isAdmin: true,
+                            createdAt: serverTimestamp()
+                        });
+                    } else {
+                        // Update existing user to be admin
+                        await updateDoc(doc(db, 'users', currentUser.uid), {
+                            isAdmin: true
+                        });
+                    }
+                    
+                    loginMsg.innerText = 'Admin login successful!';
+                    loginMsg.style.color = '#0ff0fc';
+                    
+                    setTimeout(() => {
+                        loginModal.style.display = 'none';
+                        loginMsg.innerText = '';
+                        document.getElementById('username').value = '';
+                        document.getElementById('password').value = '';
+                        loadGames();
+                        renderProfile();
+                    }, 1000);
+                    return;
+                }
+                
+                // Regular user login
+                const email = username + '@gamehtm.com';
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                currentUser = userCredential.user;
+                loginMsg.innerText = 'Login successful!';
+                loginMsg.style.color = '#0ff0fc';
+                
+                setTimeout(() => {
+                    loginModal.style.display = 'none';
+                    loginMsg.innerText = '';
+                    document.getElementById('username').value = '';
+                    document.getElementById('password').value = '';
+                    loadGames();
+                    renderProfile();
+                }, 1000);
+            } catch (error) {
+                console.error('Login error:', error);
+                loginMsg.innerText = 'Login failed: ' + error.message;
+                loginMsg.style.color = '#ff5555';
+            }
+        };
+
+        document.getElementById('registerBtn').onclick = async () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginMsg = document.getElementById('loginMsg');
+            
+            if (!username || !password) {
+                loginMsg.innerText = 'Please enter both username and password';
+                loginMsg.style.color = '#ff5555';
+                return;
+            }
+            
+            try {
+                const email = username + '@gamehtm.com';
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                currentUser = userCredential.user;
+                
+                // Create user document in Firestore
+                await setDoc(doc(db, 'users', userCredential.user.uid), {
+                    username: username,
+                    email: email,
+                    favorites: [],
+                    history: [],
+                    isAdmin: false,
+                    createdAt: serverTimestamp()
+                });
+                
+                loginMsg.innerText = 'Registration successful!';
+                loginMsg.style.color = '#0ff0fc';
+                
+                setTimeout(() => {
+                    loginModal.style.display = 'none';
+                    loginMsg.innerText = '';
+                    document.getElementById('username').value = '';
+                    document.getElementById('password').value = '';
+                    loadGames();
+                    renderProfile();
+                }, 1000);
+            } catch (error) {
+                console.error('Registration error:', error);
+                loginMsg.innerText = 'Registration failed: ' + error.message;
+                loginMsg.style.color = '#ff5555';
+            }
+        };
+
+        // ============================================================================
+        // GAME MANAGEMENT FUNCTIONS
+        // ============================================================================
+        async function loadGames() {
+            try {
+                const q = query(collection(db, 'games'), orderBy('createdAt', 'desc'));
+                const snapshot = await getDocs(q);
+                games = [];
+                snapshot.forEach(doc => {
+                    games.push({ id: doc.id, ...doc.data() });
+                });
+                renderGames();
+            } catch (error) {
+                console.error('Error loading games:', error);
+            }
+        }
+
+        async function saveGame(gameData) {
+            try {
+                const docRef = await addDoc(collection(db, 'games'), {
+                    ...gameData,
+                    createdAt: serverTimestamp()
+                });
+                return docRef.id;
+            } catch (error) {
+                console.error('Error saving game:', error);
+                throw error;
+            }
+        }
+
+        // ============================================================================
+        // FILE UPLOAD FUNCTIONS
+        // ============================================================================
+        async function uploadFile(file, path) {
+            const storageRef = ref(storage, path);
+            const snapshot = await uploadBytes(storageRef, file);
+            const downloadURL = await getDownloadURL(snapshot.ref);
+            return downloadURL;
+        }
+
+        // ============================================================================
+        // UI FUNCTIONS
+        // ============================================================================
+        function renderGames() {
+            gameList.innerHTML = '';
+            
+            if (games.length === 0) {
+                gameList.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No Games Available</h3>
+                        <p>Login as admin to add games to the portal</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            games.forEach((game, idx) => {
+                const card = document.createElement('div');
+                card.className = 'game-card fade-in';
+                
+                let starsHtml = '';
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= game.rating) {
+                        starsHtml += '<span class="star">★</span>';
+                    } else {
+                        starsHtml += '<span class="empty-star">★</span>';
+                    }
+                }
+                
+                card.innerHTML = `
+                    <img src='${game.thumbnail}' alt='${game.title}' onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'">
+                    <div class="game-info">
+                        <h3>${game.title}</h3>
+                        <p>${game.description}</p>
+                        <div class="game-meta">
+                            <span>${Array.isArray(game.category) ? game.category.join(', ') : game.category}</span>
+                            <div class="stars">${starsHtml}</div>
+                        </div>
+                    </div>
+                    <button class="play-btn" data-index="${idx}">PLAY NOW</button>
+                `;
+                gameList.appendChild(card);
+            });
+            
+            document.querySelectorAll('.play-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    playGame(index);
+                });
+            });
+        }
+
+        function playGame(index) {
+            if (!currentUser) {
+                loginModal.style.display = 'flex';
+                return;
+            }
+            
+            currentGameIndex = index;
+            const game = games[index];
+            
+            // Update user history in Firestore
+            updateUserHistory(game.title);
+            
+            document.getElementById('gamePlayerTitle').innerText = game.title;
+            document.getElementById('gamePlayerDesc').innerText = game.description;
+            
+            let starsHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= game.rating) {
+                    starsHtml += '<span class="star">★</span>';
+                } else {
+                    starsHtml += '<span class="empty-star">★</span>';
+                }
+            }
+            document.getElementById('gamePlayerStars').innerHTML = starsHtml;
+            
+            document.getElementById('gameFrame').src = game.gameUrl;
+            gamePlayer.style.display = 'flex';
+        }
+
+        async function updateUserHistory(gameTitle) {
+            if (!currentUser) return;
+            
+            try {
+                const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+                const userData = userDoc.data();
+                let history = userData.history || [];
+                
+                if (!history.includes(gameTitle)) {
+                    history.push(gameTitle);
+                    await updateDoc(doc(db, 'users', currentUser.uid), {
+                        history: history
+                    });
+                }
+            } catch (error) {
+                console.error('Error updating history:', error);
+            }
+        }
+
+        // ============================================================================
+        // EVENT LISTENERS
+        // ============================================================================
+        document.getElementById('closeLoginBtn').onclick = () => { 
+            loginModal.style.display = 'none'; 
+            document.getElementById('loginMsg').innerText = '';
+        };
+
+        document.getElementById('adminBtn').onclick = async () => { 
+            if (!currentUser) {
+                loginModal.style.display = 'flex';
+                return;
+            }
+            
+            // Check if user is admin
+            try {
+                const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+                if (userDoc.exists() && userDoc.data().isAdmin) {
+                    adminPanel.style.display = 'flex';
+                } else {
+                    alert('Only administrators can access this feature');
+                }
+            } catch (error) {
+                console.error('Error checking admin status:', error);
+                alert('Error checking permissions');
+            }
+        };
+
+        document.getElementById('closeAdminBtn').onclick = () => { 
+            adminPanel.style.display = 'none'; 
+            resetAdminForm();
+        };
+
+        document.getElementById('closeGameBtn').onclick = () => { 
+            gamePlayer.style.display = 'none'; 
+            document.getElementById('gameFrame').src = 'about:blank';
+        };
+
+        document.getElementById('addToFavoritesBtn').onclick = async () => {
+            if (!currentUser) return;
+            
+            const game = games[currentGameIndex];
+            try {
+                const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+                const userData = userDoc.data();
+                let favorites = userData.favorites || [];
+                
+                if (!favorites.includes(game.title)) {
+                    favorites.push(game.title);
+                    await updateDoc(doc(db, 'users', currentUser.uid), {
+                        favorites: favorites
+                    });
+                    renderProfile();
+                    alert('Added to favorites!');
+                } else {
+                    alert('Already in favorites!');
+                }
+            } catch (error) {
+                console.error('Error updating favorites:', error);
+            }
+        };
+
+        document.getElementById('fullscreenBtn').onclick = () => {
+            const iframe = document.getElementById('gameFrame');
+            if (iframe.requestFullscreen) {
+                iframe.requestFullscreen();
+            } else if (iframe.webkitRequestFullscreen) {
+                iframe.webkitRequestFullscreen();
+            } else if (iframe.msRequestFullscreen) {
+                iframe.msRequestFullscreen();
+            }
+        };
+
+        // Handle thumbnail preview
+        document.getElementById('gameThumbnail').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('thumbnailPreview');
+                    preview.innerHTML = '';
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.maxWidth = '200px';
+                    preview.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Game publishing
+        document.getElementById('addGameBtn').onclick = async () => {
+            if (!currentUser) return;
+            
+            // Verify admin status
+            let isAdmin = false;
+            try {
+                const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+                isAdmin = userDoc.exists() && userDoc.data().isAdmin;
+            } catch (error) {
+                console.error('Error checking admin status:', error);
+            }
+            
+            if (!isAdmin) {
+                alert('Only administrators can publish games');
+                return;
+            }
+            
+            const title = document.getElementById('gameTitle').value;
+            const desc = document.getElementById('gameDesc').value;
+            const category = document.getElementById('gameCategory').value.split(',').map(c => c.trim());
+            const rating = parseInt(document.getElementById('gameRating').value) || 0;
+            const gameUrl = document.getElementById('gameUrl').value;
+            const thumbFile = document.getElementById('gameThumbnail').files[0];
+            
+            if (!title || !desc || !gameUrl) { 
+                alert('Title, description, and game URL are required'); 
+                return; 
+            }
+            
+            try {
+                let thumbnailURL = '';
+                
+                // Upload thumbnail
+                if (thumbFile) {
+                    thumbnailURL = await uploadFile(thumbFile, `thumbnails/${Date.now()}_${thumbFile.name}`);
+                } else {
+                    // Use default placeholder
+                    thumbnailURL = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80';
+                }
+                
+                // Save game to Firestore
+                await saveGame({
+                    title,
+                    description: desc,
+                    category,
+                    rating,
+                    thumbnail: thumbnailURL,
+                    gameUrl: gameUrl,
+                    publishedBy: currentUser.uid
+                });
+                
+                alert('Game published successfully!');
+                adminPanel.style.display = 'none';
+                resetAdminForm();
+                loadGames(); // Reload games list
+                
+            } catch (error) {
+                console.error('Error publishing game:', error);
+                alert('Error publishing game: ' + error.message);
+            }
+        };
+
+        function resetAdminForm() {
+            document.getElementById('gameTitle').value = '';
+            document.getElementById('gameDesc').value = '';
+            document.getElementById('gameCategory').value = '';
+            document.getElementById('gameRating').value = '';
+            document.getElementById('gameUrl').value = '';
+            document.getElementById('gameThumbnail').value = '';
+            document.getElementById('thumbnailPreview').innerHTML = '';
+        }
+
+        // Profile functions
+        document.getElementById('profileBtn').onclick = () => { 
+            if (!currentUser) {
+                loginModal.style.display = 'flex';
+                return;
+            }
+            profilePanel.style.display = 'flex'; 
+            renderProfile(); 
+        };
+
+        document.getElementById('closeProfileBtn').onclick = () => { profilePanel.style.display = 'none'; };
+
+        document.getElementById('logoutBtn').onclick = () => {
+            signOut(auth).then(() => {
+                currentUser = null;
+                loginModal.style.display = 'flex';
+                profilePanel.style.display = 'none';
+                games = [];
+                renderGames();
+            });
+        };
+
+        async function renderProfile() {
+            if (!currentUser) return;
+            
+            try {
+                const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    document.getElementById('profileUsername').innerText = 'Username: ' + userData.username;
+                    
+                    const favList = document.getElementById('profileFavorites');
+                    favList.innerHTML = '';
+                    userData.favorites?.forEach(f => { 
+                        const li = document.createElement('li'); 
+                        li.innerText = f; 
+                        favList.appendChild(li); 
+                    });
+                    
+                    const histList = document.getElementById('profileHistory');
+                    histList.innerHTML = '';
+                    userData.history?.forEach(h => { 
+                        const li = document.createElement('li'); 
+                        li.innerText = h; 
+                        histList.appendChild(li); 
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        // Theme toggle
+        let dark = true;
+        document.getElementById('themeBtn').onclick = () => {
+            dark = !dark;
+            document.body.classList.toggle('light-theme', !dark);
+        };
+
+        // Initialize
+        loadGames();
+
+        // Auth state listener
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                loadGames();
+            } else {
+                currentUser = null;
+            }
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KeepTheStyle - Visual CSS Editor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/toolbar.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/canvas.css">
+    <link rel="stylesheet" href="css/properties.css">
+    <link rel="stylesheet" href="css/code-panel.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Top Toolbar -->
+        <header id="toolbar">
+            <div class="toolbar-left">
+                <button class="toolbar-btn" title="New Project">📄</button>
+                <button class="toolbar-btn" title="Open">📂</button>
+                <button class="toolbar-btn" title="Save">💾</button>
+                <span class="toolbar-divider"></span>
+                <button class="toolbar-btn" title="Undo">↩</button>
+                <button class="toolbar-btn" title="Redo">↪</button>
+                <span class="toolbar-divider"></span>
+                <button class="toolbar-btn" title="Import HTML">📥</button>
+                <button class="toolbar-btn" title="Export">📤</button>
+                <span class="toolbar-divider"></span>
+                <button class="toolbar-btn" title="Preview">▶</button>
+            </div>
+            <div class="toolbar-center">
+                <span class="project-name">Untitled Project</span>
+            </div>
+            <div class="toolbar-right">
+                <button class="toolbar-btn" title="Dark Mode">🌙</button>
+                <button class="toolbar-btn" title="Settings">⚙</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main id="main-content">
+            <!-- Left Sidebar -->
+            <aside id="left-sidebar">
+                <div class="sidebar-search">
+                    <input type="text" placeholder="Search elements...">
+                </div>
+                <nav class="sidebar-nav"></nav>
+                <div class="sidebar-elements"></div>
+            </aside>
+
+            <!-- Center Canvas -->
+            <section id="canvas-container">
+                <div class="canvas-controls">
+                    <button class="zoom-btn" data-action="zoom-in">+</button>
+                    <span class="zoom-level">100%</span>
+                    <button class="zoom-btn" data-action="zoom-out">−</button>
+                    <button class="zoom-btn" data-action="fit-screen">⊡</button>
+                    <span class="toolbar-divider"></span>
+                    <button class="canvas-btn" data-action="grid">⊞</button>
+                    <button class="canvas-btn" data-action="guidelines">⊟</button>
+                    <button class="canvas-btn" data-action="rulers">⊡</button>
+                    <span class="toolbar-divider"></span>
+                    <select class="page-size-select">
+                        <option value="1920x1080">Desktop (1920x1080)</option>
+                        <option value="1366x768">Laptop (1366x768)</option>
+                        <option value="1024x768">Tablet (1024x768)</option>
+                        <option value="768x1024">Mobile (768x1024)</option>
+                        <option value="375x812">Mobile (375x812)</option>
+                    </select>
+                </div>
+                <div class="canvas-wrapper">
+                    <div class="canvas-page"></div>
+                </div>
+            </section>
+
+            <!-- Right Sidebar -->
+            <aside id="right-sidebar">
+                <div class="properties-header">
+                    <h3>Properties</h3>
+                    <button class="clear-selection">✕</button>
+                </div>
+                <div class="properties-content"></div>
+            </aside>
+        </main>
+
+        <!-- Code Panel -->
+        <footer id="code-panel">
+            <div class="code-panel-header">
+                <div class="code-tabs">
+                    <button class="code-tab active" data-tab="html">HTML</button>
+                    <button class="code-tab" data-tab="css">CSS</button>
+                    <button class="code-tab" data-tab="javascript">JavaScript</button>
+                </div>
+                <div class="code-actions">
+                    <button class="code-btn" data-action="copy">Copy</button>
+                    <button class="code-btn" data-action="download">Download</button>
+                    <button class="code-btn" data-action="clear">Clear</button>
+                    <button class="code-btn" data-action="format">Format</button>
+                </div>
+            </div>
+            <div class="code-editor">
+                <pre><code class="language-html"></code></pre>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Store first
+        class Store {
+            constructor() {
+                this.state = {
+                    elements: [],
+                    selectedElements: [],
+                    history: [],
+                    historyIndex: -1,
+                    maxHistory: 50,
+                    zoom: 1,
+                    gridVisible: true,
+                    guidelinesVisible: true,
+                    rulersVisible: true,
+                    snapEnabled: true,
+                    pageSize: { width: 1200, height: 800 },
+                    darkMode: false,
+                    projectName: 'Untitled Project'
+                };
+                this.listeners = [];
+                this.loadFromStorage();
+                this.saveHistory();
+            }
+
+            subscribe(listener) {
+                this.listeners.push(listener);
+                return () => {
+                    this.listeners = this.listeners.filter(l => l !== listener);
+                };
+            }
+
+            notify() {
+                this.listeners.forEach(listener => listener(this.state));
+            }
+
+            getState() {
+                return this.state;
+            }
+
+            setState(newState) {
+                const oldState = JSON.stringify(this.state.elements);
+                Object.assign(this.state, newState);
+                const newStateStr = JSON.stringify(this.state.elements);
+                if (oldState !== newStateStr) {
+                    this.saveHistory();
+                }
+                this.notify();
+                this.saveToStorage();
+            }
+
+            saveHistory() {
+                if (this.state.historyIndex < this.state.history.length - 1) {
+                    this.state.history = this.state.history.slice(0, this.state.historyIndex + 1);
+                }
+                const snapshot = JSON.stringify(this.state.elements);
+                this.state.history.push(snapshot);
+                this.state.historyIndex = this.state.history.length - 1;
+                if (this.state.history.length > this.state.maxHistory) {
+                    this.state.history.shift();
+                    this.state.historyIndex--;
+                }
+            }
+
+            undo() {
+                if (this.state.historyIndex > 0) {
+                    this.state.historyIndex--;
+                    const snapshot = this.state.history[this.state.historyIndex];
+                    this.state.elements = JSON.parse(snapshot);
+                    this.notify();
+                    this.saveToStorage();
+                    return true;
+                }
+                return false;
+            }
+
+            redo() {
+                if (this.state.historyIndex < this.state.history.length - 1) {
+                    this.state.historyIndex++;
+                    const snapshot = this.state.history[this.state.historyIndex];
+                    this.state.elements = JSON.parse(snapshot);
+                    this.notify();
+                    this.saveToStorage();
+                    return true;
+                }
+                return false;
+            }
+
+            addElement(elementData) {
+                const element = {
+                    id: this.generateId(),
+                    tag: elementData.tag || 'div',
+                    position: elementData.position || { x: 100, y: 100 },
+                    size: elementData.size || { width: 200, height: 150 },
+                    styles: elementData.styles || {},
+                    content: elementData.content || '',
+                    attributes: elementData.attributes || {},
+                    children: elementData.children || []
+                };
+                this.state.elements.push(element);
+                this.state.selectedElements = [element.id];
+                this.notify();
+                this.saveToStorage();
+                return element;
+            }
+
+            deleteElement(id) {
+                this.state.elements = this.state.elements.filter(el => el.id !== id);
+                this.state.selectedElements = this.state.selectedElements.filter(sid => sid !== id);
+                this.notify();
+                this.saveToStorage();
+            }
+
+            updateElement(id, updates) {
+                const element = this.state.elements.find(el => el.id === id);
+                if (element) {
+                    Object.assign(element, updates);
+                    this.notify();
+                    this.saveToStorage();
+                }
+            }
+
+            selectElement(id) {
+                if (!this.state.selectedElements.includes(id)) {
+                    this.state.selectedElements.push(id);
+                    this.notify();
+                }
+            }
+
+            deselectElement(id) {
+                this.state.selectedElements = this.state.selectedElements.filter(sid => sid !== id);
+                this.notify();
+            }
+
+            clearSelection() {
+                this.state.selectedElements = [];
+                this.notify();
+            }
+
+            duplicateElement(id) {
+                const element = this.state.elements.find(el => el.id === id);
+                if (element) {
+                    const newElement = {
+                        ...element,
+                        id: this.generateId(),
+                        position: {
+                            x: element.position.x + 30,
+                            y: element.position.y + 30
+                        }
+                    };
+                    this.state.elements.push(newElement);
+                    this.state.selectedElements = [newElement.id];
+                    this.notify();
+                    this.saveToStorage();
+                }
+            }
+
+            generateId() {
+                return `el_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            }
+
+            saveToStorage() {
+                try {
+                    const data = {
+                        elements: this.state.elements,
+                        projectName: this.state.projectName,
+                        pageSize: this.state.pageSize
+                    };
+                    localStorage.setItem('keepthestyle_project', JSON.stringify(data));
+                } catch (e) {
+                    console.warn('Failed to save to localStorage:', e);
+                }
+            }
+
+            loadFromStorage() {
+                try {
+                    const data = localStorage.getItem('keepthestyle_project');
+                    if (data) {
+                        const parsed = JSON.parse(data);
+                        this.state.elements = parsed.elements || [];
+                        this.state.projectName = parsed.projectName || 'Untitled Project';
+                        this.state.pageSize = parsed.pageSize || { width: 1200, height: 800 };
+                    }
+                } catch (e) {
+                    console.warn('Failed to load from localStorage:', e);
+                }
+            }
+
+            exportProject() {
+                return {
+                    elements: this.state.elements,
+                    projectName: this.state.projectName,
+                    pageSize: this.state.pageSize,
+                    version: '1.0.0'
+                };
+            }
+
+            importProject(data) {
+                try {
+                    this.state.elements = data.elements || [];
+                    this.state.projectName = data.projectName || 'Imported Project';
+                    this.state.pageSize = data.pageSize || { width: 1200, height: 800 };
+                    this.saveHistory();
+                    this.notify();
+                    this.saveToStorage();
+                    return true;
+                } catch (e) {
+                    console.error('Failed to import project:', e);
+                    return false;
+                }
+            }
+        }
+
+        // Element definitions
+        const ELEMENTS_CATEGORIES = {
+            'Basic HTML': {
+                icon: '📄',
+                elements: [
+                    { name: 'Div', tag: 'div', icon: '⊞', defaults: { styles: { width: '200px', height: '150px', backgroundColor: '#FFFFFF', border: '1px solid #E8E8E8', borderRadius: '4px', padding: '16px' } } },
+                    { name: 'Span', tag: 'span', icon: '⊟', defaults: { styles: { display: 'inline-block', padding: '4px 8px', backgroundColor: '#F5F5F5', borderRadius: '4px' } } },
+                    { name: 'Paragraph', tag: 'p', icon: '¶', defaults: { styles: { fontSize: '16px', lineHeight: '1.6', color: '#000000', margin: '0' }, content: 'Lorem ipsum dolor sit amet.' } },
+                    { name: 'Heading', tag: 'h1', icon: 'H', defaults: { styles: { fontSize: '32px', fontWeight: '700', lineHeight: '1.2', margin: '0' }, content: 'Heading' } },
+                    { name: 'Image', tag: 'img', icon: '🖼', defaults: { styles: { width: '100%', height: 'auto', display: 'block' }, attributes: { src: 'https://via.placeholder.com/200x150', alt: 'Image' } } },
+                    { name: 'Button', tag: 'button', icon: '◆', defaults: { styles: { padding: '8px 16px', backgroundColor: '#4D6BFF', color: '#FFFFFF', border: 'none', borderRadius: '4px', fontSize: '14px', fontWeight: '500', cursor: 'pointer' }, content: 'Button' } },
+                ]
+            },
+            'Typography': {
+                icon: 'A',
+                elements: [
+                    { name: 'Heading 1', tag: 'h1', icon: 'H1', defaults: { styles: { fontSize: '32px', fontWeight: '700', lineHeight: '1.2', margin: '0' }, content: 'Heading 1' } },
+                    { name: 'Heading 2', tag: 'h2', icon: 'H2', defaults: { styles: { fontSize: '24px', fontWeight: '600', lineHeight: '1.3', margin: '0' }, content: 'Heading 2' } },
+                    { name: 'Heading 3', tag: 'h3', icon: 'H3', defaults: { styles: { fontSize: '20px', fontWeight: '600', lineHeight: '1.4', margin: '0' }, content: 'Heading 3' } },
+                    { name: 'Heading 4', tag: 'h4', icon: 'H4', defaults: { styles: { fontSize: '18px', fontWeight: '500', lineHeight: '1.4', margin: '0' }, content: 'Heading 4' } },
+                    { name: 'Link', tag: 'a', icon: '🔗', defaults: { styles: { color: '#4D6BFF', textDecoration: 'underline', cursor: 'pointer' }, content: 'Link', attributes: { href: '#' } } },
+                ]
+            },
+            'Layout': {
+                icon: '⊞',
+                elements: [
+                    { name: 'Container', tag: 'div', icon: '⊞', defaults: { styles: { width: '100%', padding: '20px', backgroundColor: '#F8F9FA' } } },
+                    { name: 'Section', tag: 'section', icon: '▤', defaults: { styles: { width: '100%', padding: '40px 20px' } } },
+                    { name: 'Header', tag: 'header', icon: '▨', defaults: { styles: { width: '100%', padding: '20px', backgroundColor: '#FFFFFF', borderBottom: '1px solid #E8E8E8' } } },
+                    { name: 'Footer', tag: 'footer', icon: '▩', defaults: { styles: { width: '100%', padding: '20px', backgroundColor: '#F8F9FA', borderTop: '1px solid #E8E8E8' } } },
+                    { name: 'Navbar', tag: 'nav', icon: '☰', defaults: { styles: { width: '100%', padding: '12px 20px', backgroundColor: '#FFFFFF', borderBottom: '1px solid #E8E8E8' } } },
+                ]
+            },
+            'Forms': {
+                icon: '✓',
+                elements: [
+                    { name: 'Input', tag: 'input', icon: '⌨', defaults: { styles: { padding: '8px 12px', border: '1px solid #E8E8E8', borderRadius: '4px', fontSize: '14px', width: '200px' }, attributes: { type: 'text', placeholder: 'Enter text...' } } },
+                    { name: 'Textarea', tag: 'textarea', icon: '▭', defaults: { styles: { padding: '8px 12px', border: '1px solid #E8E8E8', borderRadius: '4px', fontSize: '14px', width: '200px', height: '100px' }, attributes: { placeholder: 'Enter text...' } } },
+                    { name: 'Checkbox', tag: 'input', icon: '☐', defaults: { attributes: { type: 'checkbox' } } },
+                    { name: 'Radio', tag: 'input', icon: '◯', defaults: { attributes: { type: 'radio' } } },
+                    { name: 'Select', tag: 'select', icon: '▽', defaults: { content: '<option>Option 1</option><option>Option 2</option>', styles: { padding: '8px 12px', border: '1px solid #E8E8E8', borderRadius: '4px', fontSize: '14px', width: '200px' } } },
+                ]
+            },
+            'Media': {
+                icon: '▶',
+                elements: [
+                    { name: 'Image', tag: 'img', icon: '🖼', defaults: { styles: { width: '100%', height: 'auto', display: 'block' }, attributes: { src: 'https://via.placeholder.com/400x300', alt: 'Image' } } },
+                    { name: 'Video', tag: 'video', icon: '▶', defaults: { attributes: { controls: true, width: '400', height: '300' }, styles: { width: '400px', height: '300px' } } },
+                    { name: 'Canvas', tag: 'canvas', icon: '▭', defaults: { styles: { width: '300px', height: '200px', border: '1px solid #E8E8E8' }, attributes: { width: '300', height: '200' } } },
+                ]
+            },
+            'Buttons': {
+                icon: '◆',
+                elements: [
+                    { name: 'Button', tag: 'button', icon: '◆', defaults: { styles: { padding: '8px 16px', backgroundColor: '#4D6BFF', color: '#FFFFFF', border: 'none', borderRadius: '4px', fontSize: '14px', fontWeight: '500', cursor: 'pointer' }, content: 'Button' } },
+                    { name: 'Secondary Button', tag: 'button', icon: '◆', defaults: { styles: { padding: '8px 16px', backgroundColor: 'transparent', color: '#4D6BFF', border: '1px solid #4D6BFF', borderRadius: '4px', fontSize: '14px', fontWeight: '500', cursor: 'pointer' }, content: 'Secondary' } },
+                ]
+            }
+        };
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create store instance
+            window.store = new Store();
+
+            // Setup Sidebar
+            const sidebarNav = document.querySelector('.sidebar-nav');
+            const sidebarElements = document.querySelector('.sidebar-elements');
+            const searchInput = document.querySelector('.sidebar-search input');
+            
+            let currentCategory = Object.keys(ELEMENTS_CATEGORIES)[0];
+
+            function renderCategories() {
+                sidebarNav.innerHTML = '';
+                Object.keys(ELEMENTS_CATEGORIES).forEach(name => {
+                    const btn = document.createElement('button');
+                    btn.className = `category-btn ${name === currentCategory ? 'active' : ''}`;
+                    btn.textContent = name;
+                    btn.dataset.category = name;
+                    btn.addEventListener('click', () => {
+                        currentCategory = name;
+                        renderCategories();
+                        renderElements();
+                    });
+                    sidebarNav.appendChild(btn);
+                });
+            }
+
+            function renderElements(filter = '') {
+                const category = ELEMENTS_CATEGORIES[currentCategory];
+                const elements = category.elements;
+                
+                sidebarElements.innerHTML = '';
+                elements.forEach(el => {
+                    const div = document.createElement('div');
+                    div.className = 'element-item';
+                    div.draggable = true;
+                    div.dataset.tag = el.tag;
+                    
+                    const icon = document.createElement('span');
+                    icon.className = 'element-icon';
+                    icon.textContent = el.icon || '⊞';
+                    
+                    const name = document.createElement('span');
+                    name.className = 'element-name';
+                    name.textContent = el.name;
+                    
+                    div.appendChild(icon);
+                    div.appendChild(name);
+                    
+                    if (filter && !el.name.toLowerCase().includes(filter)) {
+                        div.style.display = 'none';
+                    }
+                    
+                    div.addEventListener('dblclick', () => {
+                        insertElement(el);
+                    });
+                    
+                    div.addEventListener('dragstart', (e) => {
+                        e.dataTransfer.setData('text/plain', JSON.stringify({
+                            tag: el.tag,
+                            defaults: el.defaults || {}
+                        }));
+                    });
+                    
+                    sidebarElements.appendChild(div);
+                });
+            }
+
+            function insertElement(elementData) {
+                const defaults = elementData.defaults || {};
+                const newElement = {
+                    tag: elementData.tag,
+                    position: { x: 100 + Math.random() * 50, y: 100 + Math.random() * 50 },
+                    size: { width: 200, height: 150 },
+                    styles: defaults.styles || {},
+                    content: defaults.content || '',
+                    attributes: defaults.attributes || {}
+                };
+                window.store.addElement(newElement);
+                renderCanvas();
+            }
+
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                renderElements(query);
+            });
+
+            // Setup Canvas
+            const canvasPage = document.querySelector('.canvas-page');
+            const canvasWrapper = document.querySelector('.canvas-wrapper');
+            let isDragging = false;
+            let dragTarget = null;
+            let dragOffset = { x: 0, y: 0 };
+            let zoomLevel = 1;
+
+            function renderCanvas() {
+                const state = window.store.getState();
+                const elements = state.elements;
+                const selectedIds = state.selectedElements;
+                
+                canvasPage.innerHTML = '';
+                
+                elements.forEach(element => {
+                    const el = document.createElement(element.tag || 'div');
+                    el.dataset.id = element.id;
+                    el.dataset.tag = element.tag || 'div';
+                    
+                    // Position
+                    el.style.position = 'absolute';
+                    if (element.position) {
+                        el.style.left = element.position.x + 'px';
+                        el.style.top = element.position.y + 'px';
+                    }
+                    
+                    // Size
+                    if (element.size) {
+                        el.style.width = element.size.width + 'px';
+                        el.style.height = element.size.height + 'px';
+                    }
+                    
+                    // Styles
+                    if (element.styles) {
+                        Object.entries(element.styles).forEach(([prop, value]) => {
+                            el.style[prop] = value;
+                        });
+                    }
+                    
+                    // Content
+                    if (element.content) {
+                        el.innerHTML = element.content;
+                    }
+                    
+                    // Attributes
+                    if (element.attributes) {
+                        Object.entries(element.attributes).forEach(([attr, value]) => {
+                            el.setAttribute(attr, value);
+                        });
+                    }
+                    
+                    // Make draggable
+                    el.style.cursor = 'move';
+                    el.style.userSelect = 'none';
+                    
+                    // Selection
+                    if (selectedIds.includes(element.id)) {
+                        el.classList.add('selected');
+                    }
+                    
+                    // Click to select
+                    el.addEventListener('mousedown', (e) => {
+                        e.stopPropagation();
+                        if (e.shiftKey) {
+                            const state = window.store.getState();
+                            if (state.selectedElements.includes(element.id)) {
+                                window.store.deselectElement(element.id);
+                            } else {
+                                window.store.selectElement(element.id);
+                            }
+                        } else {
+                            window.store.selectElement(element.id);
+                        }
+                        renderCanvas();
+                        
+                        // Start drag
+                        isDragging = true;
+                        dragTarget = el;
+                        const rect = el.getBoundingClientRect();
+                        const wrapperRect = canvasWrapper.getBoundingClientRect();
+                        dragOffset = {
+                            x: e.clientX - rect.left,
+                            y: e.clientY - rect.top
+                        };
+                    });
+                    
+                    canvasPage.appendChild(el);
+                });
+                
+                // Update zoom
+                canvasPage.style.transform = `scale(${zoomLevel})`;
+                canvasPage.style.transformOrigin = 'top left';
+                document.querySelector('.zoom-level').textContent = Math.round(zoomLevel * 100) + '%';
+            }
+
+            // Mouse events for dragging
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging || !dragTarget) return;
+                
+                const id = dragTarget.dataset.id;
+                const state = window.store.getState();
+                const element = state.elements.find(el => el.id === id);
+                if (!element) return;
+                
+                const wrapperRect = canvasWrapper.getBoundingClientRect();
+                const x = (e.clientX - wrapperRect.left - dragOffset.x) / zoomLevel;
+                const y = (e.clientY - wrapperRect.top - dragOffset.y) / zoomLevel;
+                
+                window.store.updateElement(id, {
+                    position: { x: Math.max(0, x), y: Math.max(0, y) }
+                });
+                renderCanvas();
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                dragTarget = null;
+            });
+
+            // Drop on canvas
+            canvasPage.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+
+            canvasPage.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const data = e.dataTransfer.getData('text/plain');
+                if (data) {
+                    try {
+                        const elementData = JSON.parse(data);
+                        const wrapperRect = canvasWrapper.getBoundingClientRect();
+                        const x = (e.clientX - wrapperRect.left) / zoomLevel;
+                        const y = (e.clientY - wrapperRect.top) / zoomLevel;
+                        
+                        const defaults = elementData.defaults || {};
+                        const newElement = {
+                            tag: elementData.tag,
+                            position: { x: Math.max(0, x - 100), y: Math.max(0, y - 75) },
+                            size: { width: 200, height: 150 },
+                            styles: defaults.styles || {},
+                            content: defaults.content || '',
+                            attributes: defaults.attributes || {}
+                        };
+                        window.store.addElement(newElement);
+                        renderCanvas();
+                    } catch (err) {
+                        console.warn('Failed to parse dragged element:', err);
+                    }
+                }
+            });
+
+            // Clear selection on canvas click
+            canvasPage.addEventListener('mousedown', (e) => {
+                if (e.target === canvasPage) {
+                    window.store.clearSelection();
+                    renderCanvas();
+                }
+            });
+
+            // Zoom controls
+            document.querySelectorAll('.zoom-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const action = btn.dataset.action;
+                    if (action === 'zoom-in') {
+                        zoomLevel = Math.min(zoomLevel + 0.1, 3);
+                    } else if (action === 'zoom-out') {
+                        zoomLevel = Math.max(zoomLevel - 0.1, 0.1);
+                    } else if (action === 'fit-screen') {
+                        const rect = canvasWrapper.getBoundingClientRect();
+                        const pageRect = canvasPage.getBoundingClientRect();
+                        const scaleX = (rect.width - 40) / pageRect.width;
+                        const scaleY = (rect.height - 40) / pageRect.height;
+                        zoomLevel = Math.min(scaleX, scaleY, 1);
+                    }
+                    renderCanvas();
+                });
+            });
+
+            // Page size
+            document.querySelector('.page-size-select').addEventListener('change', (e) => {
+                const [width, height] = e.target.value.split('x').map(Number);
+                window.store.setState({ pageSize: { width, height } });
+                canvasPage.style.width = width + 'px';
+                canvasPage.style.height = height + 'px';
+                renderCanvas();
+            });
+
+            // Setup Properties
+            const propertiesContent = document.querySelector('.properties-content');
+            const clearSelectionBtn = document.querySelector('.clear-selection');
+
+            function renderProperties() {
+                const state = window.store.getState();
+                const selectedIds = state.selectedElements;
+                
+                if (selectedIds.length === 0) {
+                    propertiesContent.innerHTML = '<div class="no-selection">Select an element to edit its properties</div>';
+                    return;
+                }
+                
+                const id = selectedIds[0];
+                const element = state.elements.find(el => el.id === id);
+                if (!element) {
+                    propertiesContent.innerHTML = '<div class="no-selection">Element not found</div>';
+                    return;
+                }
+                
+                const propertyGroups = {
+                    'Layout': [
+                        { key: 'width', label: 'Width', type: 'number' },
+                        { key: 'height', label: 'Height', type: 'number' },
+                        { key: 'padding', label: 'Padding', type: 'number' },
+                        { key: 'margin', label: 'Margin', type: 'number' },
+                        { key: 'display', label: 'Display', type: 'select', options: ['block', 'inline', 'flex', 'grid', 'none'] },
+                        { key: 'position', label: 'Position', type: 'select', options: ['static', 'relative', 'absolute', 'fixed', 'sticky'] },
+                    ],
+                    'Typography': [
+                        { key: 'fontSize', label: 'Font Size', type: 'number' },
+                        { key: 'fontWeight', label: 'Font Weight', type: 'number', min: 100, max: 900, step: 100 },
+                        { key: 'color', label: 'Color', type: 'color' },
+                        { key: 'textAlign', label: 'Text Align', type: 'select', options: ['left', 'center', 'right', 'justify'] },
+                    ],
+                    'Background': [
+                        { key: 'backgroundColor', label: 'Background Color', type: 'color' },
+                        { key: 'opacity', label: 'Opacity', type: 'number', min: 0, max: 1, step: 0.01 },
+                    ],
+                    'Border': [
+                        { key: 'borderRadius', label: 'Radius', type: 'number' },
+                        { key: 'borderWidth', label: 'Width', type: 'number' },
+                        { key: 'borderColor', label: 'Color', type: 'color' },
+                        { key: 'borderStyle', label: 'Style', type: 'select', options: ['none', 'solid', 'dashed', 'dotted'] },
+                    ]
+                };
+                
+                propertiesContent.innerHTML = '';
+                
+                Object.entries(propertyGroups).forEach(([groupName, properties]) => {
+                    const groupDiv = document.createElement('div');
+                    groupDiv.className = 'property-group';
+                    
+                    const header = document.createElement('div');
+                    header.className = 'property-group-header';
+                    header.innerHTML = `<span class="property-group-title">${groupName}</span><span class="property-group-toggle">−</span>`;
+                    
+                    let expanded = true;
+                    header.addEventListener('click', () => {
+                        expanded = !expanded;
+                        content.style.display = expanded ? 'block' : 'none';
+                        header.querySelector('.property-group-toggle').textContent = expanded ? '−' : '+';
+                    });
+                    
+                    const content = document.createElement('div');
+                    content.className = 'property-group-content';
+                    
+                    properties.forEach(prop => {
+                        const control = document.createElement('div');
+                        control.className = 'property-control';
+                        
+                        const label = document.createElement('label');
+                        label.className = 'property-label';
+                        label.textContent = prop.label;
+                        
+                        const value = element.styles[prop.key] || '';
+                        
+                        if (prop.type === 'color') {
+                            const input = document.createElement('input');
+                            input.type = 'color';
+                            input.className = 'property-color';
+                            input.value = value || '#000000';
+                            input.addEventListener('change', (e) => {
+                                const styles = { ...element.styles, [prop.key]: e.target.value };
+                                window.store.updateElement(element.id, { styles });
+                                renderCanvas();
+                            });
+                            control.appendChild(label);
+                            control.appendChild(input);
+                        } else if (prop.type === 'select') {
+                            const select = document.createElement('select');
+                            select.className = 'property-select';
+                            prop.options.forEach(option => {
+                                const opt = document.createElement('option');
+                                opt.value = option;
+                                opt.textContent = option.charAt(0).toUpperCase() + option.slice(1);
+                                if (option === value) opt.selected = true;
+                                select.appendChild(opt);
+                            });
+                            select.addEventListener('change', (e) => {
+                                const styles = { ...element.styles, [prop.key]: e.target.value };
+                                window.store.updateElement(element.id, { styles });
+                                renderCanvas();
+                            });
+                            control.appendChild(label);
+                            control.appendChild(select);
+                        } else {
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'property-number-wrapper';
+                            
+                            const input = document.createElement('input');
+                            input.type = 'number';
+                            input.className = 'property-number';
+                            input.value = value || '';
+                            if (prop.min !== undefined) input.min = prop.min;
+                            if (prop.max !== undefined) input.max = prop.max;
+                            if (prop.step !== undefined) input.step = prop.step;
+                            
+                            input.addEventListener('change', (e) => {
+                                const styles = { ...element.styles, [prop.key]: e.target.value + 'px' };
+                                window.store.updateElement(element.id, { styles });
+                                renderCanvas();
+                            });
+                            
+                            wrapper.appendChild(input);
+                            control.appendChild(label);
+                            control.appendChild(wrapper);
+                        }
+                        
+                        content.appendChild(control);
+                    });
+                    
+                    groupDiv.appendChild(header);
+                    groupDiv.appendChild(content);
+                    propertiesContent.appendChild(groupDiv);
+                });
+            }
+
+            clearSelectionBtn.addEventListener('click', () => {
+                window.store.clearSelection();
+                renderCanvas();
+                renderProperties();
+            });
+
+            // Setup Code Panel
+            const codeDisplay = document.querySelector('.code-editor code');
+            let currentTab = 'html';
+
+            function generateCode() {
+                const state = window.store.getState();
+                const elements = state.elements;
+                
+                let code = '';
+                switch(currentTab) {
+                    case 'html':
+                        code = generateHTML(elements);
+                        break;
+                    case 'css':
+                        code = generateCSS(elements);
+                        break;
+                    case 'javascript':
+                        code = '// Your JavaScript code here\nconsole.log("Hello from KeepTheStyle!");';
+                        break;
+                }
+                codeDisplay.textContent = code;
+            }
+
+            function generateHTML(elements) {
+                let html = `<!DOCTYPE html>\n<html lang="en">\n<head>\n`;
+                html += `    <meta charset="UTF-8">\n`;
+                html += `    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n`;
+                html += `    <title>${window.store.getState().projectName}</title>\n`;
+                html += `    <link rel="stylesheet" href="styles.css">\n`;
+                html += `</head>\n<body>\n`;
+                
+                elements.forEach(el => {
+                    html += renderElementHTML(el, 1);
+                });
+                
+                html += `</body>\n</html>`;
+                return html;
+            }
+
+            function renderElementHTML(element, indent) {
+                const spaces = '    '.repeat(indent);
+                const tag = element.tag || 'div';
+                const content = element.content || '';
+                let attrs = '';
+                if (element.attributes) {
+                    Object.entries(element.attributes).forEach(([key, value]) => {
+                        if (value) attrs += ` ${key}="${value}"`;
+                    });
+                }
+                let styles = '';
+                if (element.styles) {
+                    Object.entries(element.styles).forEach(([key, value]) => {
+                        if (value) styles += `${key}: ${value}; `;
+                    });
+                }
+                const styleAttr = styles ? ` style="${styles.trim()}"` : '';
+                
+                if (tag === 'img' || tag === 'input' || tag === 'video' || tag === 'audio' || tag === 'iframe') {
+                    return `${spaces}<${tag}${attrs}${styleAttr} />\n`;
+                }
+                
+                return `${spaces}<${tag}${attrs}${styleAttr}>${content}</${tag}>\n`;
+            }
+
+            function generateCSS(elements) {
+                let css = `/* KeepTheStyle Generated CSS */\n\n`;
+                css += `* {\n    margin: 0;\n    padding: 0;\n    box-sizing: border-box;\n}\n\n`;
+                css += `body {\n    font-family: 'Inter', -apple-system, sans-serif;\n}\n\n`;
+                
+                elements.forEach(el => {
+                    const id = el.id || 'element';
+                    const styles = el.styles || {};
+                    if (Object.keys(styles).length > 0) {
+                        css += `#${id} {\n`;
+                        Object.entries(styles).forEach(([key, value]) => {
+                            if (value) css += `    ${key}: ${value};\n`;
+                        });
+                        css += `}\n\n`;
+                    }
+                });
+                
+                return css;
+            }
+
+            // Code panel tabs
+            document.querySelectorAll('.code-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    currentTab = tab.dataset.tab;
+                    document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    generateCode();
+                });
+            });
+
+            // Code actions
+            document.querySelector('[data-action="copy"]').addEventListener('click', () => {
+                navigator.clipboard.writeText(codeDisplay.textContent).then(() => {
+                    showNotification('Code copied to clipboard!');
+                });
+            });
+
+            document.querySelector('[data-action="download"]').addEventListener('click', () => {
+                const extension = currentTab === 'html' ? 'html' : currentTab === 'css' ? 'css' : 'js';
+                const blob = new Blob([codeDisplay.textContent], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${window.store.getState().projectName}.${extension}`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+
+            document.querySelector('[data-action="clear"]').addEventListener('click', () => {
+                if (confirm('Clear all elements?')) {
+                    window.store.setState({ elements: [] });
+                    renderCanvas();
+                    renderProperties();
+                    generateCode();
+                }
+            });
+
+            document.querySelector('[data-action="format"]').addEventListener('click', () => {
+                showNotification('Code formatted!');
+            });
+
+            // Toolbar actions
+            document.querySelector('[title="New Project"]').addEventListener('click', () => {
+                if (confirm('Start new project?')) {
+                    window.store.setState({ elements: [], projectName: 'Untitled Project' });
+                    renderCanvas();
+                    renderProperties();
+                    generateCode();
+                }
+            });
+
+            document.querySelector('[title="Undo"]').addEventListener('click', () => {
+                window.store.undo();
+                renderCanvas();
+                renderProperties();
+                generateCode();
+            });
+
+            document.querySelector('[title="Redo"]').addEventListener('click', () => {
+                window.store.redo();
+                renderCanvas();
+                renderProperties();
+                generateCode();
+            });
+
+            document.querySelector('[title="Preview"]').addEventListener('click', () => {
+                const html = generateHTML(window.store.getState().elements);
+                const blob = new Blob([html], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                window.open(url, '_blank');
+            });
+
+            document.querySelector('[title="Dark Mode"]').addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+            });
+
+            // Notification system
+            function showNotification(message) {
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.textContent = message;
+                notification.style.cssText = `
+                    position: fixed;
+                    bottom: 220px;
+                    right: 20px;
+                    background: #4D6BFF;
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 4px;
+                    font-family: 'Inter', sans-serif;
+                    font-size: 14px;
+                    z-index: 9999;
+                    animation: slideIn 0.3s ease;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                `;
+                document.body.appendChild(notification);
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    notification.style.transition = 'opacity 0.3s ease';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 3000);
+            }
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 'z') {
+                    e.preventDefault();
+                    window.store.undo();
+                    renderCanvas();
+                    renderProperties();
+                    generateCode();
+                }
+                if (e.ctrlKey && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {
+                    e.preventDefault();
+                    window.store.redo();
+                    renderCanvas();
+                    renderProperties();
+                    generateCode();
+                }
+                if (e.key === 'Delete' || e.key === 'Backspace') {
+                    const state = window.store.getState();
+                    if (state.selectedElements.length > 0) {
+                        e.preventDefault();
+                        state.selectedElements.forEach(id => {
+                            window.store.deleteElement(id);
+                        });
+                        renderCanvas();
+                        renderProperties();
+                        generateCode();
+                    }
+                }
+                if (e.key === 'Escape') {
+                    window.store.clearSelection();
+                    renderCanvas();
+                    renderProperties();
+                }
+                if (e.ctrlKey && e.key === 'd') {
+                    e.preventDefault();
+                    const state = window.store.getState();
+                    if (state.selectedElements.length === 1) {
+                        window.store.duplicateElement(state.selectedElements[0]);
+                        renderCanvas();
+                        renderProperties();
+                        generateCode();
+                    }
+                }
+            });
+
+            // Subscribe to store changes
+            window.store.subscribe(() => {
+                renderProperties();
+                generateCode();
+            });
+
+            // Initialize
+            renderCategories();
+            renderElements();
+            
+            // Set initial page size
+            const state = window.store.getState();
+            canvasPage.style.width = state.pageSize.width + 'px';
+            canvasPage.style.height = state.pageSize.height + 'px';
+            
+            // Add some demo elements
+            if (state.elements.length === 0) {
+                window.store.addElement({
+                    tag: 'h1',
+                    position: { x: 80, y: 80 },
+                    size: { width: 400, height: 60 },
+                    styles: { fontSize: '32px', fontWeight: '700', color: '#000000', margin: '0' },
+                    content: 'Welcome to KeepTheStyle'
+                });
+                window.store.addElement({
+                    tag: 'p',
+                    position: { x: 80, y: 160 },
+                    size: { width: 500, height: 80 },
+                    styles: { fontSize: '16px', lineHeight: '1.6', color: '#555555', margin: '0' },
+                    content: 'Start building your design by dragging elements from the left sidebar or double-clicking to add them.'
+                });
+                window.store.addElement({
+                    tag: 'button',
+                    position: { x: 80, y: 260 },
+                    size: { width: 150, height: 48 },
+                    styles: { backgroundColor: '#4D6BFF', color: '#FFFFFF', border: 'none', borderRadius: '4px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', padding: '0 20px' },
+                    content: 'Get Started'
+                });
+                window.store.saveToStorage();
+            }
+
+            renderCanvas();
+            renderProperties();
+            generateCode();
+
+            console.log('🚀 KeepTheStyle initialized successfully!');
+        });
+    </script>
+</body>
+</html>
