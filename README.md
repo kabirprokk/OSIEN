@@ -1,10 +1,16 @@
+<div align="center">
+
 # OSIEN
+
+<img src="assets/osien-logo.png" alt="OSIEN Logo" width="200"/>
 
 > A parent company and monorepo housing a diverse ecosystem of AI tooling, web applications, games, browser extensions, and experimental projects.
 
 ![GitHub](https://img.shields.io/badge/organization-OSIEN-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Projects](https://img.shields.io/badge/projects-15+-orange)
+
+</div>
 
 ---
 
