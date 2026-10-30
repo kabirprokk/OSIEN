@@ -64,7 +64,9 @@ Configuration:
   Windows: %APPDATA%\\OSIN\\.env
   macOS/Linux: $XDG_CONFIG_HOME/osin/.env (default: ~/.config/osin/.env)
 
-Run osin init, add your provider key to the generated .env, and run osin.
+Run osin init, configure your provider, and start osin. OSIN checks npm for
+new releases in the background; type /update inside the workspace to install
+an available release. Set OSIN_DISABLE_UPDATE_CHECK=1 to opt out of checks.
 `);
 }
 

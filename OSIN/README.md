@@ -58,7 +58,12 @@ osin
 ```
 
 Use `osin --help` for command-line options. Inside the workspace, type `/` to
-see available commands. Use `/attach <path>` to attach a UTF-8 text file.
+see available commands. OSIN checks npm for a newer release in the background
+and shows an `/update` prompt when one is available. Run `/update` to install
+the latest release, then exit and restart OSIN. Set
+`OSIN_DISABLE_UPDATE_CHECK=1` to disable the background check. The check only
+requests public version metadata from npm; it doesn't send your API key or
+model conversation. Use `/attach <path>` to attach a UTF-8 text file.
 
 The config directory also stores optional `sponsors.json` and local aggregate
 `metrics.json` data. Metrics are not uploaded. Keep API keys private and do

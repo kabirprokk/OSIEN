@@ -1,6 +1,6 @@
 {
   "name": "@kabirprokk/osin-cli",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A terminal-based AI coding assistant with a clickable workspace",
   "main": "osin.js",
   "repository": {
@@ -21,6 +21,7 @@
     "composer.js",
     "config.js",
     "providers.js",
+    "updater.js",
     "sponsors.js",
     "sponsors.json",
     "sponsors.example.json",
