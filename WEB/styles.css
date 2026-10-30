@@ -14,3 +14,6 @@
 @media(max-width:620px){.start-panel{grid-template-columns:1fr}.start-copy{padding:25px 20px}.start-copy h2{font-size:38px}.setup-terminal{margin:0 12px 12px}.setup-content{padding:14px 12px}.install-command code{font-size:9px}.install-steps{gap:11px}}
 
 .setup-live{display:flex;align-items:center;gap:6px;color:var(--green)!important}.setup-live i{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 9px rgba(130,216,174,.55)}
+
+.terminal-capture{margin:22px 0 0;overflow:hidden;border:1px solid #283047;border-radius:7px;background:#090d16;box-shadow:0 24px 80px rgba(0,0,0,.25)}.terminal-capture img{display:block;width:100%;height:auto}.terminal-capture figcaption{padding:13px 17px;color:var(--muted);font-size:11px;line-height:1.7}.terminal-capture figcaption span{margin-right:9px;color:#b9a3f3;font-size:9px;letter-spacing:.06em}.terminal-capture figcaption code{color:#a7d9e2;font-family:var(--mono)}
+@media(max-width:620px){.terminal-capture{margin-top:14px}.terminal-capture figcaption{padding:11px 12px;font-size:10px}.terminal-capture figcaption span{display:block;margin:0 0 4px}}

@@ -49,23 +49,11 @@
     </section>
 
     <section class="showcase section-wrap" aria-labelledby="demo-title">
-      <div class="section-kicker"><span>01 / IN THE TERMINAL</span><span class="kicker-line"></span><span id="demo-title">A small window into OSIN</span></div>
-      <div class="terminal-frame">
-        <div class="terminal-bar"><div class="window-dots" aria-hidden="true"><i></i><i></i><i></i></div><span class="terminal-title">osin <span>/</span> workspace</span><span class="demo-badge"><i></i> INTERACTIVE DEMO</span></div>
-        <div class="terminal-body">
-          <aside class="term-sidebar" aria-label="Demo workspace navigation"><p class="term-label">WORKSPACE</p><p class="side-item side-active"><span class="side-icon">◉</span> Chat</p><p class="side-item"><span class="side-icon">＋</span> New chat</p><p class="side-item"><span class="side-icon">⚙</span> Settings</p><div class="side-rule"></div><p class="term-label">RECENT</p><p class="side-item side-muted"><span class="side-icon">◌</span> Review a function</p><div class="side-model"><span class="model-led"></span><span><small>MODEL</small><br>qwen / qwen3.8</span></div></aside>
-          <div class="term-chat" aria-label="Illustrative conversation. This demo does not connect to a model or run code.">
-            <div class="chat-heading"><span>NEW CHAT</span><span class="chat-heading-right">API CHAT <span class="green-led"></span></span></div>
-            <div class="messages" id="demo-messages" aria-live="polite" aria-relevant="additions">
-              <article class="message"><div class="message-role role-you"><span class="role-mark">›</span> YOU</div><p>Can you explain what this debounce function is doing and where the edge cases might be?</p><div class="attached-file"><span class="file-icon">▤</span><span>debounce.js</span><small>text attachment</small></div></article>
-              <article class="message message-response"><div class="message-role role-osin"><span class="osin-glyph">◈</span> OSIN</div><p>Sure. A debounce wrapper delays a function call until a quiet period has passed. Each new call resets the timer, so rapid events—like keystrokes—collapse into one call.</p><p class="response-subhead">A few things worth checking:</p><ul><li>Does the final call preserve its <code>this</code> context and arguments?</li><li>Should callers get a way to cancel or flush the pending call?</li><li>Is the timer cleared when the wrapper is no longer needed?</li></ul><div class="token-note"><span class="green-led"></span> Provider-reported usage · demo values omitted</div></article>
-            </div>
-            <div class="composer"><span class="composer-prompt">›</span><span class="composer-placeholder">Ask OSIN a question…</span><span class="composer-hint">Enter to send</span></div>
-            <div class="command-row" aria-label="Try a demo command"><span class="command-label">TRY A COMMAND</span><button type="button" class="command-chip" data-command="/help">/help</button><button type="button" class="command-chip" data-command="/attach src/app.js">/attach</button><button type="button" class="command-chip" data-command="/usage">/usage</button><span class="command-disclaimer">Visual demo only — no model calls or code execution.</span></div>
-          </div>
-        </div>
-      </div>
-      <p class="showcase-caption"><span>REAL INTERFACE, STATIC DEMO</span> The command controls update this illustration only. They do not connect to a model, read files, or execute commands.</p>
+      <div class="section-kicker"><span>01 / IN THE TERMINAL</span><span class="kicker-line"></span><span id="demo-title">OSIN, running for real</span></div>
+      <figure class="terminal-capture">
+        <img src="assets/osin-terminal.png" alt="Screenshot of the real OSIN terminal interface running locally in Windows Terminal, showing its new-chat workspace and the /help command output." width="1129" height="635" fetchpriority="high">
+        <figcaption><span>REAL OSIN TERMINAL CAPTURE</span> Captured locally while running <code>/help</code>. The interface and command output are real; no model request was made.</figcaption>
+      </figure>
     </section>
 
     <section class="features section-wrap" id="features">
