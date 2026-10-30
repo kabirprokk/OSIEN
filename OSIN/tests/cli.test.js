@@ -29,12 +29,12 @@ test('osin init creates per-user config and does not overwrite it', () => {
     });
     assert.equal(first.status, 0, first.stderr);
     assert.ok(fs.existsSync(configFile));
-    assert.match(fs.readFileSync(configFile, 'utf8'), /GROQ_API_KEY=/);
-    fs.writeFileSync(configFile, 'GROQ_API_KEY=keep-me\n');
+    assert.match(fs.readFileSync(configFile, 'utf8'), /OSIN_API_KEY=/);
+    fs.writeFileSync(configFile, 'OSIN_API_KEY=keep-me\n');
     const second = spawnSync(process.execPath, [cli, 'init'], {
       encoding: 'utf8', env: { ...process.env, APPDATA: appData },
     });
     assert.equal(second.status, 0, second.stderr);
-    assert.equal(fs.readFileSync(configFile, 'utf8'), 'GROQ_API_KEY=keep-me\n');
+    assert.equal(fs.readFileSync(configFile, 'utf8'), 'OSIN_API_KEY=keep-me\n');
   } finally { fs.rmSync(directory, { recursive: true, force: true }); }
 });

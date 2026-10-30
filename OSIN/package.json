@@ -20,6 +20,7 @@
     "tui.js",
     "composer.js",
     "config.js",
+    "providers.js",
     "sponsors.js",
     "sponsors.json",
     "sponsors.example.json",

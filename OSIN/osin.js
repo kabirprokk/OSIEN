@@ -30,12 +30,11 @@ function initializeConfig(configDir = getConfigDirectory()) {
     return;
   }
   const template = [
-    '# Add a key from your OpenAI-compatible provider.',
-    'GROQ_API_KEY=',
-    '# Optional: choose another model supported by your provider.',
-    'GROQ_MODEL=llama-3.3-70b-versatile',
-    '# Optional: override the OpenAI-compatible API endpoint.',
-    'GROQ_BASE_URL=https://api.groq.com/openai/v1',
+    '# Any provider with an OpenAI-compatible Chat Completions API.',
+    'OSIN_API_KEY=',
+    'OSIN_BASE_URL=https://api.openai.com/v1',
+    'OSIN_MODEL=gpt-4o-mini',
+    '# Optional: set a compatible provider model-list endpoint at /models.',
     '# Optional: set an HTTPS support or donation page.',
     'OSIN_SUPPORT_URL=',
     '',
@@ -117,9 +116,9 @@ async function main(argv = process.argv.slice(2)) {
   const configDir = loadConfigurationEnvironment();
   const userSponsors = path.join(configDir, 'sponsors.json');
   const configuration = {
-    model: process.env.GROQ_MODEL || process.env.OSIN_MODEL || 'llama-3.3-70b-versatile',
-    apiKey: process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY || '',
-    baseUrl: process.env.GROQ_BASE_URL || process.env.OSIN_BASE_URL || 'https://api.groq.com/openai/v1',
+    model: process.env.OSIN_MODEL || process.env.OPENAI_MODEL || process.env.GROQ_MODEL || 'gpt-4o-mini',
+    apiKey: process.env.OSIN_API_KEY || process.env.OPENAI_API_KEY || process.env.GROQ_API_KEY || '',
+    baseUrl: process.env.OSIN_BASE_URL || process.env.OPENAI_BASE_URL || process.env.GROQ_BASE_URL || 'https://api.openai.com/v1',
     supportUrl: process.env.OSIN_SUPPORT_URL || '',
     sponsorsFile: fs.existsSync(userSponsors) ? userSponsors : path.join(__dirname, 'sponsors.json'),
     metricsFile: path.join(configDir, 'metrics.json'),

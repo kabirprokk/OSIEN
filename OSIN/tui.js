@@ -6,6 +6,7 @@ const path = require('path');
 const { execFile, spawn } = require('child_process');
 const { loadCampaigns, chooseCampaign, recordAggregate } = require('./sponsors');
 const { getConfigDirectory } = require('./config');
+const { listModels } = require('./providers');
 const {
   createPasteAttachment,
   formatPrompt,
@@ -299,7 +300,19 @@ function startTui({ model, apiKey, baseUrl, sponsorsFile, metricsFile, openUrl, 
     if (text === '/new') { newChat(); return; }
     if (text === '/settings') { state.view = 'settings'; draw(); return; }
     if (text === '/help') {
-      addNotice('Commands: /new, /clear, /undo, /attach <path>, /files, /detach N, /copy, /usage, /settings, /model NAME, /support, /help, /exit. Ctrl+N creates a chat; Ctrl+S opens settings.');
+      addNotice('Commands: /new, /clear, /undo, /attach <path>, /files, /detach N, /copy, /usage, /models, /settings, /model NAME, /support, /help, /exit. Ctrl+N creates a chat; Ctrl+S opens settings.');
+      draw(); return;
+    }
+    if (text === '/models') {
+      state.busy = true;
+      state.notice = 'Loading models from your configured provider…';
+      draw();
+      try {
+        const models = await listModels({ baseUrl, apiKey });
+        addNotice(`Models available to this API key (${models.length}):\n${models.map(id => `${id}${id === state.model ? '  ← active' : ''}`).join('\n')}\nUse /model MODEL_ID to switch.`);
+      } catch (error) { addNotice(`Could not list models: ${error.message}`); }
+      state.busy = false;
+      state.notice = '';
       draw(); return;
     }
     if (text.startsWith('/model ')) { state.model = text.slice(7).trim() || state.model; draw(); return; }

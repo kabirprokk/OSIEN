@@ -34,10 +34,20 @@ Create per-user configuration files:
 osin init
 ```
 
-Edit the generated `.env` file and set a provider key. For the default Groq
-endpoint, set `GROQ_API_KEY`. You can also set `GROQ_MODEL`, `GROQ_BASE_URL`,
-or `OSIN_SUPPORT_URL`. Existing process environment variables take precedence
-over values in the config file.
+Edit the generated `.env` file and set the API key, OpenAI-compatible API base
+URL, and model ID for your provider:
+
+```dotenv
+OSIN_API_KEY=your_provider_key
+OSIN_BASE_URL=https://api.openai.com/v1
+OSIN_MODEL=gpt-4o-mini
+```
+
+OSIN currently sends OpenAI-compatible Chat Completions requests. Use `/models`
+to query model IDs exposed by that provider to your key; a returned model may
+not necessarily support chat completions. Legacy `GROQ_*` and `OPENAI_*`
+environment variables are recognized. Existing process environment variables
+take precedence over values in the config file.
 
 - Windows: `%APPDATA%\OSIN\.env`
 - macOS and Linux: `$XDG_CONFIG_HOME/osin/.env`, or `~/.config/osin/.env`
