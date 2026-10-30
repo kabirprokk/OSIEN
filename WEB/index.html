@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070a12">
+  <meta name="description" content="OSIN is a terminal-based AI coding assistant with a focused chat workspace, configurable model endpoint, text-file attachments, and useful slash commands.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="OSIN — AI coding, from your terminal">
+  <meta property="og:description" content="A focused AI coding chat in your terminal. Bring a compatible API endpoint and model; keep your workflow in the shell.">
+  <meta property="og:url" content="https://osin.is-an.org/">
+  <meta property="og:image" content="https://osin.is-an.org/assets/osin-logo-source.png">
+  <meta name="twitter:card" content="summary">
+  <title>OSIN — AI coding, from your terminal</title>
+  <link rel="canonical" href="https://osin.is-an.org/">
+  <link rel="icon" type="image/png" href="assets/osin-logo-source.png">
+  <link rel="preload" as="image" href="assets/osin-logo-source.png" fetchpriority="high">
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="OSIN home">
+      <img src="assets/osin-logo-source.png" width="38" height="38" alt="">
+      <span>OSIN<span class="brand-period">.</span></span>
+    </a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open navigation"><span></span><span></span></button>
+    <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a class="nav-github" href="https://github.com/kabirprokk/OSIEN/tree/main/OSIN" target="_blank" rel="noreferrer">View on GitHub <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero section-wrap" id="top">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="status-dot"></span> AN AI CODING ASSISTANT, IN YOUR TERMINAL</p>
+        <h1>Think it through.<br><span>Right where you build.</span></h1>
+        <p class="hero-intro">OSIN gives you a focused place to think through coding problems with AI—without leaving your terminal. Bring a compatible API endpoint and model; keep the conversation close to your work.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#get-started">Get started <span aria-hidden="true">↓</span></a>
+          <a class="button button-quiet" href="https://github.com/kabirprokk/OSIEN/tree/main/OSIN" target="_blank" rel="noreferrer">Explore the source <span aria-hidden="true">↗</span></a>
+        </div>
+        <p class="hero-note"><span aria-hidden="true">⌘</span> Terminal-native · Endpoint-configurable · Open source</p>
+      </div>
+      <div class="hero-mark" aria-hidden="true"><div class="mark-orbit orbit-one"></div><div class="mark-orbit orbit-two"></div><img src="assets/osin-logo-source.png" alt="" width="420" height="420"></div>
+    </section>
+
+    <section class="showcase section-wrap" aria-labelledby="demo-title">
+      <div class="section-kicker"><span>01 / IN THE TERMINAL</span><span class="kicker-line"></span><span id="demo-title">A small window into OSIN</span></div>
+      <div class="terminal-frame">
+        <div class="terminal-bar"><div class="window-dots" aria-hidden="true"><i></i><i></i><i></i></div><span class="terminal-title">osin <span>/</span> workspace</span><span class="demo-badge"><i></i> INTERACTIVE DEMO</span></div>
+        <div class="terminal-body">
+          <aside class="term-sidebar" aria-label="Demo workspace navigation"><p class="term-label">WORKSPACE</p><p class="side-item side-active"><span class="side-icon">◉</span> Chat</p><p class="side-item"><span class="side-icon">＋</span> New chat</p><p class="side-item"><span class="side-icon">⚙</span> Settings</p><div class="side-rule"></div><p class="term-label">RECENT</p><p class="side-item side-muted"><span class="side-icon">◌</span> Review a function</p><div class="side-model"><span class="model-led"></span><span><small>MODEL</small><br>qwen / qwen3.8</span></div></aside>
+          <div class="term-chat" aria-label="Illustrative conversation. This demo does not connect to a model or run code.">
+            <div class="chat-heading"><span>NEW CHAT</span><span class="chat-heading-right">API CHAT <span class="green-led"></span></span></div>
+            <div class="messages" id="demo-messages" aria-live="polite" aria-relevant="additions">
+              <article class="message"><div class="message-role role-you"><span class="role-mark">›</span> YOU</div><p>Can you explain what this debounce function is doing and where the edge cases might be?</p><div class="attached-file"><span class="file-icon">▤</span><span>debounce.js</span><small>text attachment</small></div></article>
+              <article class="message message-response"><div class="message-role role-osin"><span class="osin-glyph">◈</span> OSIN</div><p>Sure. A debounce wrapper delays a function call until a quiet period has passed. Each new call resets the timer, so rapid events—like keystrokes—collapse into one call.</p><p class="response-subhead">A few things worth checking:</p><ul><li>Does the final call preserve its <code>this</code> context and arguments?</li><li>Should callers get a way to cancel or flush the pending call?</li><li>Is the timer cleared when the wrapper is no longer needed?</li></ul><div class="token-note"><span class="green-led"></span> Provider-reported usage · demo values omitted</div></article>
+            </div>
+            <div class="composer"><span class="composer-prompt">›</span><span class="composer-placeholder">Ask OSIN a question…</span><span class="composer-hint">Enter to send</span></div>
+            <div class="command-row" aria-label="Try a demo command"><span class="command-label">TRY A COMMAND</span><button type="button" class="command-chip" data-command="/help">/help</button><button type="button" class="command-chip" data-command="/attach src/app.js">/attach</button><button type="button" class="command-chip" data-command="/usage">/usage</button><span class="command-disclaimer">Visual demo only — no model calls or code execution.</span></div>
+          </div>
+        </div>
+      </div>
+      <p class="showcase-caption"><span>REAL INTERFACE, STATIC DEMO</span> The command controls update this illustration only. They do not connect to a model, read files, or execute commands.</p>
+    </section>
+
+    <section class="features section-wrap" id="features">
+      <div class="section-kicker"><span>02 / BUILT FOR THE LOOP</span><span class="kicker-line"></span><span>Useful details, not magic tricks</span></div>
+      <div class="features-head"><h2>A calmer place<br>to <em>work it out.</em></h2><p>OSIN is a terminal chat for coding questions. It keeps the interaction simple: choose a model, bring relevant text into the conversation, and stay in your shell.</p></div>
+      <div class="feature-grid">
+        <article class="feature-card feature-wide"><div class="feature-top"><span class="feature-index">01</span><span class="feature-symbol">⌨</span></div><h3>A focused terminal workspace</h3><p>A mouse-enabled, keyboard-friendly chat interface with multiple conversations, recent chats, and a model settings view.</p><div class="feature-visual mini-terminal"><span class="mini-prompt">›</span><span>Ask a question or describe a coding task.</span><span class="mini-cursor"></span></div></article>
+        <article class="feature-card"><div class="feature-top"><span class="feature-index">02</span><span class="feature-symbol symbol-cyan">⇄</span></div><h3>Choose your endpoint</h3><p>Configure a model name and OpenAI-compatible chat-completions endpoint through environment variables.</p><div class="feature-code"><span>OSIN_MODEL</span><span>GROQ_BASE_URL</span></div></article>
+        <article class="feature-card"><div class="feature-top"><span class="feature-index">03</span><span class="feature-symbol">▤</span></div><h3>Bring text into the chat</h3><p>Attach UTF-8 text files with <code>/attach</code>, or paste larger text to turn it into an attachment. File and request sizes are bounded.</p><div class="feature-file"><span class="file-icon">▤</span> notes.md <span class="file-check">READY TO ATTACH</span></div></article>
+        <article class="feature-card"><div class="feature-top"><span class="feature-index">04</span><span class="feature-symbol symbol-cyan">/</span></div><h3>Commands that stay out of the way</h3><p>Use slash commands for new chats, settings, attachments, undo, copying a response, help, and usage.</p><div class="feature-command-list"><code>/new</code><code>/attach</code><code>/usage</code><span>+ more</span></div></article>
+        <article class="feature-card feature-usage"><div class="feature-top"><span class="feature-index">05</span><span class="feature-symbol">◷</span></div><h3>See reported token usage</h3><p>When the endpoint returns usage data, OSIN totals requests and input/output tokens for the current chat. It is not a cost estimate.</p><div class="usage-meter"><span>INPUT</span><span class="usage-track"><i></i></span><span>OUTPUT</span><span class="usage-track usage-track-short"><i></i></span></div></article>
+      </div>
+      <p class="capability-note"><span aria-hidden="true">i</span> OSIN sends chat requests to the configured endpoint. The code does not provide tools that edit project files or run shell commands.</p>
+    </section>
+
+    <section class="how section-wrap" id="how">
+      <div class="section-kicker"><span>03 / HOW IT WORKS</span><span class="kicker-line"></span><span>A direct path in</span></div>
+      <div class="how-layout"><div><h2>Three steps.<br><em>Then get to work.</em></h2><p class="how-intro">OSIN is a chat interface, not an autonomous agent. You decide what to ask and what context to share.</p></div>
+        <ol class="steps"><li><span class="step-number">01</span><div><h3>Set your endpoint</h3><p>Provide an API key and model. OSIN defaults to Groq’s OpenAI-compatible endpoint, or you can configure another compatible URL.</p></div></li><li><span class="step-number">02</span><div><h3>Start a conversation</h3><p>Launch OSIN in an interactive terminal and describe the coding question you want to work through.</p></div></li><li><span class="step-number">03</span><div><h3>Add context, as needed</h3><p>Attach UTF-8 text files or ask follow-up questions. OSIN sends the chat to your configured endpoint and displays its response.</p></div></li></ol>
+      </div>
+    </section>
+
+    <section class="get-started section-wrap" id="get-started">
+      <div class="section-kicker"><span>04 / GETTING STARTED</span><span class="kicker-line"></span><span>Bring your own endpoint</span></div>
+      <div class="start-panel"><div class="start-copy"><span class="terminal-label"><span class="green-led"></span> SETUP NOTES</span><h2>Your next step<br><em>starts here.</em></h2><p>The OSIN source folder available for this page did not include a README or published installation instructions. We’ve left the commands unfilled rather than inventing a setup that might not work.</p><a class="text-link" href="https://github.com/kabirprokk/OSIEN/tree/main/OSIN" target="_blank" rel="noreferrer">Check the OSIN source for current instructions <span aria-hidden="true">↗</span></a></div>
+        <div class="setup-terminal" aria-label="Configuration variables verified from OSIN source code"><div class="setup-bar"><span>CONFIGURATION · VERIFIED FROM SOURCE</span><span>ENV</span></div><div class="setup-content"><p class="setup-comment"># Variables read by OSIN</p><p><span class="env-name">GROQ_API_KEY</span><span class="env-value">= your_api_key</span></p><p><span class="env-name">GROQ_MODEL</span><span class="env-value">= your_model_name</span></p><p><span class="env-name">GROQ_BASE_URL</span><span class="env-value">= https://your-compatible-endpoint/v1</span></p><div class="setup-divider"></div><p class="setup-comment"># Installation command: <strong>not documented in the available source.</strong></p><p class="setup-comment"># Ask the project maintainers or check the repository.</p></div></div>
+      </div>
+      <p class="domain-note"><span aria-hidden="true">⌁</span> Prepared for <strong>osin.is-an.org</strong> · This page has not been deployed or DNS-verified.</p>
+    </section>
+
+    <section class="final-cta section-wrap"><div class="cta-rule"></div><div class="cta-content"><div class="cta-brand"><img src="assets/osin-logo-source.png" alt="" width="52" height="52"><span>OSIN</span></div><div><h2>Make room for<br><em>the next good question.</em></h2><p>Explore the source and see if OSIN fits your workflow.</p></div><a class="button button-primary" href="https://github.com/kabirprokk/OSIEN/tree/main/OSIN" target="_blank" rel="noreferrer">View OSIN on GitHub <span aria-hidden="true">↗</span></a></div></section>
+  </main>
+  <footer class="site-footer"><a class="footer-brand" href="#top"><img src="assets/osin-logo-source.png" alt="" width="26" height="26"> <span>OSIN</span></a><p>AI coding, funded intelligently.</p><a href="https://github.com/kabirprokk/OSIEN/tree/main/OSIN" target="_blank" rel="noreferrer">Source on GitHub <span aria-hidden="true">↗</span></a><span class="copyright">© OSIN · Built for the terminal.</span></footer>
+</body>
+</html>
