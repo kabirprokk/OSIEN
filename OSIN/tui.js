@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const { execFile, spawn } = require('child_process');
 const { loadCampaigns, chooseCampaign, recordAggregate } = require('./sponsors');
+const { getConfigDirectory } = require('./config');
 const {
   createPasteAttachment,
   formatPrompt,
@@ -82,7 +83,7 @@ function startTui({ model, apiKey, baseUrl, sponsorsFile, metricsFile, openUrl, 
     active: 0,
     sponsor: chooseCampaign(loadCampaigns(sponsorsFile || path.join(__dirname, 'sponsors.json'))),
     supportUrl: validHttpsUrl(supportUrl),
-    metricsPath: metricsFile || path.join(__dirname, 'metrics.json'),
+    metricsPath: metricsFile || path.join(getConfigDirectory(), 'metrics.json'),
     closed: false,
     buffer: '',
     pasteBuffer: '',

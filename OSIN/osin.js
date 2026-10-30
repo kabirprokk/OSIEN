@@ -1,32 +1,73 @@
+#!/usr/bin/env node
+'use strict';
+
 const fs = require('fs');
 const path = require('path');
 const { startTui } = require('./tui');
-
-function loadEnv() {
-  const paths = [path.join(__dirname, '.env'), path.join(process.env.USERPROFILE || '', 'OSIEN', '.env')];
-  for (const file of paths) {
-    try {
-      if (!fs.existsSync(file)) continue;
-      for (const line of fs.readFileSync(file, 'utf8').replace(/^\uFEFF/, '').split(/\r?\n/)) {
-        const entry = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/);
-        if (entry && !process.env[entry[1]]) process.env[entry[1]] = entry[2].trim();
-      }
-    } catch {}
-  }
-}
-loadEnv();
-
-const configuration = {
-  model: process.env.GROQ_MODEL || process.env.OSIN_MODEL || 'llama-3.3-70b-versatile',
-  apiKey: process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY || '',
-  baseUrl: process.env.GROQ_BASE_URL || 'https://api.groq.com/openai/v1',
-  supportUrl: process.env.OSIN_SUPPORT_URL || '',
-};
+const { getConfigDirectory, loadEnvFile } = require('./config');
 
 const ESC = '\x1b[';
 const dot = String.fromCharCode(0x25CF);
 const useColor = !!process.stdout.isTTY && !process.env.NO_COLOR;
 const logoPath = path.join(__dirname, 'logo-dots.json');
+const packageInfo = require('./package.json');
+
+function loadConfigurationEnvironment(env = process.env) {
+  const configDir = getConfigDirectory({ env });
+  loadEnvFile(path.join(configDir, '.env'), env);
+  // Keep the repository-local and previous OSIEN config locations working
+  // during development and for existing Windows users.
+  loadEnvFile(path.join(__dirname, '.env'), env);
+  if (process.platform === 'win32') loadEnvFile(path.join(env.USERPROFILE || '', 'OSIEN', '.env'), env);
+  return configDir;
+}
+
+function initializeConfig(configDir = getConfigDirectory()) {
+  fs.mkdirSync(configDir, { recursive: true });
+  const envFile = path.join(configDir, '.env');
+  if (fs.existsSync(envFile)) {
+    console.log(`OSIN config already exists: ${envFile}`);
+    return;
+  }
+  const template = [
+    '# Add a key from your OpenAI-compatible provider.',
+    'GROQ_API_KEY=',
+    '# Optional: choose another model supported by your provider.',
+    'GROQ_MODEL=llama-3.3-70b-versatile',
+    '# Optional: override the OpenAI-compatible API endpoint.',
+    'GROQ_BASE_URL=https://api.groq.com/openai/v1',
+    '# Optional: set an HTTPS support or donation page.',
+    'OSIN_SUPPORT_URL=',
+    '',
+  ].join('\n');
+  const writeOptions = { encoding: 'utf8', flag: 'wx' };
+  if (process.platform !== 'win32') writeOptions.mode = 0o600;
+  fs.writeFileSync(envFile, template, writeOptions);
+  const sampleCampaigns = path.join(__dirname, 'sponsors.example.json');
+  const userCampaigns = path.join(configDir, 'sponsors.json');
+  if (!fs.existsSync(userCampaigns) && fs.existsSync(sampleCampaigns)) {
+    fs.copyFileSync(sampleCampaigns, userCampaigns, fs.constants.COPYFILE_EXCL);
+  }
+  console.log(`Created OSIN config: ${envFile}`);
+  console.log('Edit the file and add your provider API key, then run `osin`.');
+}
+
+function showHelp() {
+  console.log(`OSIN ${packageInfo.version} — AI coding assistant for your terminal
+
+Usage:
+  osin           Start the interactive terminal workspace
+  osin init      Create your per-user configuration files
+  osin --help    Show this help
+  osin --version Show the installed version
+
+Configuration:
+  Windows: %APPDATA%\\OSIN\\.env
+  macOS/Linux: $XDG_CONFIG_HOME/osin/.env (default: ~/.config/osin/.env)
+
+Run osin init, add your provider key to the generated .env, and run osin.
+`);
+}
 
 async function showLogo() {
   let rows;
@@ -60,9 +101,36 @@ async function showLogo() {
       process.stdout.write(`${ESC}${rows.length}A`);
       render((i / frames) * Math.PI * 2);
     }
-  } finally {
-    process.stdout.write(`${ESC}?25h`);
-  }
+  } finally { process.stdout.write(`${ESC}?25h`); }
 }
 
-showLogo().then(() => startTui(configuration));
+async function main(argv = process.argv.slice(2)) {
+  if (argv.includes('--help') || argv.includes('-h')) return showHelp();
+  if (argv.includes('--version') || argv.includes('-v')) return console.log(packageInfo.version);
+  if (argv[0] === 'init') return initializeConfig();
+  if (argv.length) {
+    console.error(`Unknown command: ${argv[0]}\nRun osin --help for usage.`);
+    process.exitCode = 2;
+    return;
+  }
+
+  const configDir = loadConfigurationEnvironment();
+  const userSponsors = path.join(configDir, 'sponsors.json');
+  const configuration = {
+    model: process.env.GROQ_MODEL || process.env.OSIN_MODEL || 'llama-3.3-70b-versatile',
+    apiKey: process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY || '',
+    baseUrl: process.env.GROQ_BASE_URL || process.env.OSIN_BASE_URL || 'https://api.groq.com/openai/v1',
+    supportUrl: process.env.OSIN_SUPPORT_URL || '',
+    sponsorsFile: fs.existsSync(userSponsors) ? userSponsors : path.join(__dirname, 'sponsors.json'),
+    metricsFile: path.join(configDir, 'metrics.json'),
+  };
+  await showLogo();
+  startTui(configuration);
+}
+
+if (require.main === module) main().catch(error => {
+  console.error(`OSIN failed to start: ${error.message}`);
+  process.exitCode = 1;
+});
+
+module.exports = { main, loadConfigurationEnvironment, initializeConfig, showHelp };

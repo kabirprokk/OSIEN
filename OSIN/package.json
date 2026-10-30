@@ -1,0 +1,29 @@
+{
+  "name": "@kabirprokk/osin-cli",
+  "version": "1.0.0",
+  "description": "A terminal-based AI coding assistant with a clickable workspace",
+  "main": "osin.js",
+  "bin": {
+    "osin": "osin.js"
+  },
+  "files": [
+    "osin.js",
+    "tui.js",
+    "composer.js",
+    "config.js",
+    "sponsors.js",
+    "sponsors.json",
+    "sponsors.example.json",
+    "logo-dots.json",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

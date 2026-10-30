@@ -3,3 +3,5 @@ metrics.json.tmp
 sponsors.json
 .env
 .env.*
+node_modules/
+npm-debug.log*
