@@ -1,0 +1,66 @@
+import { createClient } from 'npm:@supabase/supabase-js@2.110.7'
+
+const allowedOrigins = (Deno.env.get('ALLOWED_ORIGINS') || 'https://storyteller-page-v1.vercel.app,https://storyteller-v1.netlify.app,http://localhost:8000,http://127.0.0.1:8000')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean)
+
+function corsHeaders(request: Request) {
+  const origin = request.headers.get('origin') || ''
+  const allowed = allowedOrigins.includes(origin) ? origin : ''
+  return {
+    ...(allowed ? { 'Access-Control-Allow-Origin': allowed } : {}),
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Vary': 'Origin',
+  }
+}
+
+async function sha256(value: string) {
+  const bytes = new TextEncoder().encode(value)
+  const digest = await crypto.subtle.digest('SHA-256', bytes)
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('')
+}
+
+Deno.serve(async (request) => {
+  const headers = corsHeaders(request)
+  if (request.method === 'OPTIONS') return new Response('ok', { headers })
+  if (request.method !== 'POST') return Response.json({ error: 'Method not allowed' }, { status: 405, headers })
+
+  const origin = request.headers.get('origin') || ''
+  if (origin && !allowedOrigins.includes(origin)) {
+    return Response.json({ error: 'Origin not allowed' }, { status: 403, headers })
+  }
+
+  try {
+    const { storyId } = await request.json()
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(storyId || '')) {
+      return Response.json({ error: 'Invalid story' }, { status: 400, headers })
+    }
+
+    const forwarded = request.headers.get('cf-connecting-ip')
+      || request.headers.get('x-real-ip')
+      || request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      || 'unknown'
+    const userAgent = request.headers.get('user-agent')?.slice(0, 180) || 'unknown-agent'
+    const language = request.headers.get('accept-language')?.split(',')[0]?.slice(0, 32) || 'unknown-language'
+    const salt = Deno.env.get('VIEW_COUNT_SALT')
+    if (!salt) throw new Error('VIEW_COUNT_SALT is not configured')
+    // Include coarse browser signals so different people on the same Wi-Fi/mobile network
+    // are not collapsed into one hourly view, while still storing only a salted hash.
+    const fingerprint = await sha256(`${forwarded}|${userAgent}|${language}|${salt}`)
+
+    const url = Deno.env.get('SUPABASE_URL')!
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const admin = createClient(url, serviceKey, { auth: { persistSession: false } })
+    const { data, error } = await admin.rpc('record_story_view', { target: storyId, fingerprint })
+    if (error) throw error
+
+    return Response.json({ counted: Boolean(data) }, {
+      headers: { ...headers, 'Cache-Control': 'no-store' },
+    })
+  } catch (error) {
+    console.error(error)
+    return Response.json({ error: 'Unable to record view' }, { status: 500, headers })
+  }
+})
