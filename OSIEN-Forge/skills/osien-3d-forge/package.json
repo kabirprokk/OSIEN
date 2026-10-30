@@ -1,0 +1,14 @@
+{
+  "name": "osien-3d-forge",
+  "version": "2.3.1",
+  "description": "BEST-MODELS-EVER procedural 3D generator \u2014 ultra quality core, 67 kits incl. perfect grass+bush+water, quality presets, zero deps",
+  "main": "index.js",
+  "bin": {
+    "osien-3d-forge": "cli.js"
+  },
+  "scripts": {
+    "gen": "node cli.js"
+  },
+  "license": "MIT",
+  "dependencies": {}
+}

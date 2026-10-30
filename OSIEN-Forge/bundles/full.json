@@ -1,0 +1,18 @@
+{
+  "edition": "full",
+  "name": "Full Edition — ALL use cases",
+  "for": "Anyone who wants absolutely everything in one download",
+  "download": "OsienForge-full-<os>.zip (~7 MB) from the latest Full release",
+  "install": "setup.sh (default)  — or  setup.sh --edition full",
+  "includes": {
+    "commands": "all 50 (/start /game /site /brand /doctor /bot /fanout /brain + 42 more)",
+    "mcp": "all 40 (25 work instantly, rest unlock with free API keys)",
+    "agents": 9,
+    "plugins": ["aimanager", "mega-tools", "webgame-tools", "meta-tools", "daily-tools"],
+    "game_templates": ["vanilla", "phaser", "three", "versus"],
+    "web_templates": ["all 11"],
+    "skills": ["ai-manager", "osien-3d-forge (1200+ recipes)"],
+    "note": "Want a smaller install later? Re-run setup with --edition everyday|creator|agency. Your settings are kept."
+  },
+  "try_first": ["/start", "/doctor", "/game flappy", "/site my shop landing"]
+}

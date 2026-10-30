@@ -1,0 +1,10 @@
+# Keep line endings perfect everywhere: scripts stay LF even on Windows clones.
+* text=auto
+*.sh text eol=lf
+*.command text eol=lf
+*.ps1 text eol=crlf
+Install-Windows.bat text eol=crlf
+*.py text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.html text eol=lf

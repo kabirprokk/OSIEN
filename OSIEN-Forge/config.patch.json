@@ -1,0 +1,803 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "everything": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-everything"
+      ],
+      "enabled": true
+    },
+    "time": {
+      "type": "local",
+      "command": [
+        "/home/osien/.local/bin/uvx",
+        "mcp-server-time"
+      ],
+      "enabled": true
+    },
+    "fetch": {
+      "type": "local",
+      "command": [
+        "/home/osien/.local/bin/uvx",
+        "mcp-server-fetch"
+      ],
+      "enabled": true
+    },
+    "git-mcp": {
+      "type": "local",
+      "command": [
+        "/home/osien/.local/bin/uvx",
+        "mcp-server-git",
+        "--repository",
+        "/home/osien/Documents/keepthestyle_v1"
+      ],
+      "enabled": true
+    },
+    "memory": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ],
+      "enabled": true,
+      "environment": {
+        "MEMORY_FILE_PATH": "/home/osien/.config/opencode/memory.jsonl"
+      }
+    },
+    "sequential-thinking": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "enabled": true
+    },
+    "filesystem": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/home/osien",
+        "/tmp"
+      ],
+      "enabled": true
+    },
+    "codebase-index": {
+      "type": "local",
+      "command": [
+        "/home/osien/.local/bin/uvx",
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--context",
+        "ide-assistant",
+        "--project",
+        "/home/osien"
+      ],
+      "enabled": true,
+      "timeout": 60000
+    },
+    "repomix": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "repomix",
+        "--mcp"
+      ],
+      "enabled": true
+    },
+    "context7-local": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "enabled": true,
+      "environment": {
+        "CONTEXT7_API_KEY": "{env:CONTEXT7_API_KEY}"
+      }
+    },
+    "playwright": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@playwright/mcp@latest"
+      ],
+      "enabled": true,
+      "timeout": 30000
+    },
+    "chrome-devtools": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--headless=true",
+        "--isolated=true"
+      ],
+      "enabled": true,
+      "timeout": 30000
+    },
+    "puppeteer": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-puppeteer"
+      ],
+      "enabled": true,
+      "timeout": 30000
+    },
+    "brave-search": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-brave-search"
+      ],
+      "enabled": true,
+      "environment": {
+        "BRAVE_API_KEY": "{env:BRAVE_API_KEY}"
+      }
+    },
+    "exa-local": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "exa-mcp-server"
+      ],
+      "enabled": true,
+      "environment": {
+        "EXA_API_KEY": "{env:EXA_API_KEY}"
+      }
+    },
+    "tavily": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "tavily-mcp@latest"
+      ],
+      "enabled": true,
+      "environment": {
+        "TAVILY_API_KEY": "{env:TAVILY_API_KEY}"
+      }
+    },
+    "firecrawl": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "firecrawl-mcp"
+      ],
+      "enabled": true,
+      "environment": {
+        "FIRECRAWL_API_KEY": "{env:FIRECRAWL_API_KEY}"
+      },
+      "timeout": 30000
+    },
+    "sqlite": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "mcp-server-sqlite",
+        "--db",
+        "/home/osien/.config/opencode/app.db"
+      ],
+      "enabled": true
+    },
+    "postgres": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "{env:DATABASE_URL}"
+      ],
+      "enabled": true
+    },
+    "supabase-local": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--project-ref",
+        "{env:SUPABASE_PROJECT_REF}"
+      ],
+      "enabled": true,
+      "environment": {
+        "SUPABASE_ACCESS_TOKEN": "{env:SUPABASE_ACCESS_TOKEN}"
+      }
+    },
+    "mongodb": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "mongodb-mcp-server"
+      ],
+      "enabled": true,
+      "environment": {
+        "MDB_MCP_CONNECTION_STRING": "{env:MONGODB_URI}"
+      }
+    },
+    "github": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "enabled": true,
+      "environment": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GITHUB_PERSONAL_ACCESS_TOKEN}"
+      }
+    },
+    "gitlab": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-gitlab"
+      ],
+      "enabled": true,
+      "environment": {
+        "GITLAB_PERSONAL_ACCESS_TOKEN": "{env:GITLAB_PERSONAL_ACCESS_TOKEN}",
+        "GITLAB_API_URL": "{env:GITLAB_API_URL}"
+      }
+    },
+    "railway": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@railway/mcp-server"
+      ],
+      "enabled": true,
+      "environment": {
+        "RAILWAY_API_TOKEN": "{env:RAILWAY_API_TOKEN}"
+      }
+    },
+    "docker": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "docker-mcp-server"
+      ],
+      "enabled": true,
+      "timeout": 30000
+    },
+    "kubernetes": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "mcp-server-kubernetes"
+      ],
+      "enabled": true,
+      "environment": {
+        "KUBECONFIG": "{env:KUBECONFIG}"
+      }
+    },
+    "sentry": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@sentry/mcp-server@latest"
+      ],
+      "enabled": true,
+      "environment": {
+        "SENTRY_ACCESS_TOKEN": "{env:SENTRY_ACCESS_TOKEN}",
+        "SENTRY_ORG": "{env:SENTRY_ORG}"
+      }
+    },
+    "slack": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-slack"
+      ],
+      "enabled": true,
+      "environment": {
+        "SLACK_BOT_TOKEN": "{env:SLACK_BOT_TOKEN}",
+        "SLACK_TEAM_ID": "{env:SLACK_TEAM_ID}"
+      }
+    },
+    "notion": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@notionhq/notion-mcp-server"
+      ],
+      "enabled": true,
+      "environment": {
+        "NOTION_TOKEN": "{env:NOTION_TOKEN}"
+      }
+    },
+    "linear": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "linear-mcp-server"
+      ],
+      "enabled": true,
+      "environment": {
+        "LINEAR_API_KEY": "{env:LINEAR_API_KEY}"
+      }
+    },
+    "blender": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "blender-mcp"
+      ],
+      "enabled": true,
+      "timeout": 30000
+    },
+    "arxiv": {
+      "type": "local",
+      "command": [
+        "/home/osien/.local/share/arxiv-mcp/bin/python",
+        "-m",
+        "arxiv_mcp_server.server"
+      ],
+      "enabled": true,
+      "environment": {
+        "PYTHONPATH": "/home/osien/.local/share/arxiv-mcp-src"
+      }
+    },
+    "figma": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "figma-developer-mcp"
+      ],
+      "enabled": true,
+      "environment": {
+        "FIGMA_API_KEY": "{env:FIGMA_API_KEY}"
+      }
+    },
+    "stripe": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "stripe-mcp-server"
+      ],
+      "enabled": true,
+      "environment": {
+        "STRIPE_SECRET_KEY": "{env:STRIPE_SECRET_KEY}"
+      }
+    },
+    "posthog": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "posthog-mcp"
+      ],
+      "enabled": true,
+      "environment": {
+        "POSTHOG_API_KEY": "{env:POSTHOG_API_KEY}",
+        "POSTHOG_HOST": "{env:POSTHOG_HOST}"
+      }
+    },
+    "fal-ai": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "fal-ai-mcp-server"
+      ],
+      "enabled": true,
+      "environment": {
+        "FAL_KEY": "{env:FAL_KEY}"
+      }
+    },
+    "context7-remote": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "enabled": true
+    },
+    "deepwiki": {
+      "type": "remote",
+      "url": "https://mcp.deepwiki.com/mcp",
+      "enabled": true
+    },
+    "exa-remote": {
+      "type": "remote",
+      "url": "https://mcp.exa.ai/mcp",
+      "enabled": true,
+      "headers": {
+        "x-api-key": "{env:EXA_API_KEY}"
+      }
+    },
+    "supabase-remote": {
+      "type": "remote",
+      "url": "https://mcp.supabase.com/mcp",
+      "enabled": true,
+      "headers": {
+        "Authorization": "Bearer {env:SUPABASE_ACCESS_TOKEN}"
+      }
+    }
+  },
+  "agent": {
+    "ai-manager": {
+      "description": "Orchestrates all project AI agents, manages context rotation, and monitors usage limits",
+      "mode": "primary",
+      "model": "opencode/muse-spark-1.3-contributor-free",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow"
+      }
+    },
+    "git-pusher": {
+      "description": "Handles all Git operations, commits, PRs, and branch management",
+      "mode": "all",
+      "model": "opencode/ling-3.0-flash-fin-free",
+      "permission": {
+        "edit": "deny",
+        "bash": "allow"
+      }
+    },
+    "model-creator": {
+      "description": "Handles 3D model creation, mesh generation, texturing, and asset optimization",
+      "mode": "all",
+      "model": "opencode/union-alpha",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow"
+      }
+    },
+    "physics-engine": {
+      "description": "Handles physics simulation, collision detection, dynamics, and game mechanics",
+      "mode": "all",
+      "model": "opencode/nemotron-3.5-lightning-free",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow"
+      }
+    },
+    "monitor": {
+      "description": "Watches all agents, tracks progress, generates next prompts, and flags issues",
+      "mode": "subagent",
+      "model": "opencode/mimo-v2.5-free",
+      "permission": {
+        "edit": "deny",
+        "bash": "allow"
+      }
+    },
+    "researcher": {
+      "description": "Fast web research: docs lookup via context7, web search via exa/tavily/brave, scrape via firecrawl, deep repo docs via deepwiki. Use for any research, docs, or debugging unknowns.",
+      "mode": "all",
+      "model": "opencode/muse-spark-1.3-contributor-free",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "webfetch": "allow",
+        "websearch": "allow"
+      }
+    },
+    "devops": {
+      "description": "Docker, kubernetes, railway, supabase, sentry, stripe, posthog, CI/CD. Use for deploys, infra, env, monitoring, payments.",
+      "mode": "all",
+      "model": "opencode/ling-3.0-flash-fin-free",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow"
+      }
+    },
+    "data-wrangler": {
+      "description": "SQLite, postgres, supabase, mongodb, notion, slack, linear. Use for DB queries, migrations, schema inspection, tickets, docs.",
+      "mode": "all",
+      "model": "opencode/ling-3.0-flash-fin-free",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow"
+      }
+    },
+    "game-builder": {
+      "description": "Ultra-fast perfect website games: scaffold, features, audit, playtest, publish. Use for any web/HTML5 game.",
+      "mode": "all",
+      "model": "opencode/muse-spark-1.3-contributor-free",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "webfetch": "allow"
+      }
+    }
+  },
+  "command": {
+    "delegate": {
+      "template": "Delegate this task to the appropriate AI agent. Parse the arguments to determine which agent to use (git-pusher, model-creator, physics-engine, monitor, researcher, devops, data-wrangler, game-builder) and what task to assign. Output the agent name, task description, priority level, and required context.",
+      "description": "Delegate work to a specific AI agent",
+      "agent": "ai-manager"
+    },
+    "context": {
+      "template": "Generate a comprehensive overview of the current project state. Read CONTEXT_SUMMARY.md if it exists. Check git status. Check for any pending model/physics work. Report usage level. Show what each agent has accomplished. Output a structured summary of everything needed to continue the project.",
+      "description": "Show current project context and all agent statuses",
+      "agent": "ai-manager"
+    },
+    "rotate": {
+      "template": "Force a context rotation. Gather all current state from each agent. Generate CONTEXT_SUMMARY.md with: current code state, model progress, physics state, known issues, next steps, what each agent accomplished. Output the summary so it can be pasted into a new session. Say 'Run /new in a fresh session and paste the context summary to continue'.",
+      "description": "Force context rotation - generate summary for new session",
+      "agent": "ai-manager"
+    },
+    "status": {
+      "template": "Report the current status of the project. List all agents and their last activity. Estimate current usage level (0-100%). Warn if approaching 80% limit. Show pending tasks. Show any flagged issues from the monitor agent.",
+      "description": "Show all agent statuses and current usage level",
+      "agent": "ai-manager"
+    },
+    "ide": {
+      "template": "Launch the AI Manager IDE DOVA v2.0.0: Start-Process 'F:\\osien\\desktop\\dist\\OSIEN 2.2.4.exe' (portable, no install) or run the installer at dist\\OSIEN Setup 2.2.4.exe. Dev mode: cd F:\\osien\\desktop & npm start. One window: resizable worker panes, KIN pilot, voices, team talk, in-app supervisor.",
+      "description": "Launch the AI Manager IDE desktop app",
+      "agent": "ai-manager"
+    },
+    "ship": {
+      "template": "Fast-lane ship: verify, commit, push, open PR for the given scope. Run checks first, then delegate git steps to git-pusher. Output one compact summary, never stall asking questions.",
+      "description": "Verify, commit, push and open a PR in one fast lane",
+      "agent": "ai-manager"
+    },
+    "fix": {
+      "template": "Diagnose-fix-verify loop for the reported symptom. Reproduce first, apply the smallest safe patch, re-verify. Max 3 attempts, then report findings instead of guessing further.",
+      "description": "Diagnose, patch and verify a bug in a tight loop",
+      "agent": "ai-manager"
+    },
+    "plan": {
+      "template": "Break the goal into an ordered execution plan with agent assignments. Each step names its agent, inputs, done-criteria and context. Output the plan only, then wait for approval.",
+      "description": "Break a goal into agent-assigned executable steps",
+      "agent": "ai-manager"
+    },
+    "standup": {
+      "template": "One-line status per agent plus blockers and next action. Fast scan, no deep dives: what moved, what is stuck, what is next.",
+      "description": "One-line status per agent, blockers, next action",
+      "agent": "ai-manager"
+    },
+    "handoff": {
+      "template": "Write CONTEXT_SUMMARY.md capturing everything needed to continue, estimate usage, and print the exact resume instruction for a fresh session.",
+      "description": "Save full context and print the resume instruction",
+      "agent": "ai-manager"
+    },
+    "commit": {
+      "template": "Create one smart conventional commit right now. Check git status, stage the scoped changes, write a message that explains WHY plus what, then commit. No push.",
+      "description": "Smart conventional commit of current changes, no push",
+      "agent": "git-pusher"
+    },
+    "sync": {
+      "template": "Sync with remote fast: pull with rebase, resolve only trivial conflicts, push, report. Stop on real conflicts with exact files and hunks.",
+      "description": "Pull-rebase, resolve trivialities, push, report",
+      "agent": "git-pusher"
+    },
+    "pr": {
+      "template": "Push the branch and open a pull request with a generated title, summary, test plan and risk section. Report the PR URL.",
+      "description": "Push and open a PR with generated body",
+      "agent": "git-pusher"
+    },
+    "undo": {
+      "template": "Safely undo the last LOCAL commit, keeping all work in the tree. Refuse if the commit is already pushed or if the request is ambiguous.",
+      "description": "Soft-undo last local commit, keep the work",
+      "agent": "git-pusher"
+    },
+    "gen": {
+      "template": "Generate a procedural 3D model from the description: mesh plus material, clearly named asset, organized placement, and a poly/material report.",
+      "description": "Generate a procedural 3D model from a description",
+      "agent": "model-creator"
+    },
+    "opt": {
+      "template": "Optimize the given 3D asset: cut polygons, add LOD chain, keep silhouette. Report before/after numbers, never destroy the source.",
+      "description": "Optimize a 3D asset with LODs and poly report",
+      "agent": "model-creator"
+    },
+    "tex": {
+      "template": "Texture the given asset: generate or assign albedo/roughness/metalness/normal maps, wire the material, report resolution and texel density.",
+      "description": "Texture an asset end to end with material setup",
+      "agent": "model-creator"
+    },
+    "sim": {
+      "template": "Sanity-run the physics simulation for the given scene and report tunneling, jitter, instability and frame cost. No gameplay changes.",
+      "description": "Sanity-run physics and report stability issues",
+      "agent": "physics-engine"
+    },
+    "collide": {
+      "template": "Audit every collider and collision layer/group in scope. List overlaps, misconfigured triggers, missing layers, and give the exact fix per item.",
+      "description": "Audit colliders, layers and groups with fixes",
+      "agent": "physics-engine"
+    },
+    "tune": {
+      "template": "Change exactly one physics constant to the given value, re-test the affected behavior, report the delta. One variable at a time, always revertable.",
+      "description": "Change one physics constant and report the effect",
+      "agent": "physics-engine"
+    },
+    "health": {
+      "template": "Full team health check: sessions alive, last activity per agent, usage estimate, error patterns, and the single most important next action.",
+      "description": "Team health, usage and next action in one scan",
+      "agent": "monitor"
+    },
+    "hire": {
+      "template": "Forge a complete new crew member from a name and role description: analyze the role, pick the best model, write a full personality file, register it in both configs, inject live project context, verify it loads, and sync it to the desktop app roster.",
+      "description": "Forge a complete new AI crew member from name + role",
+      "agent": "ai-manager"
+    },
+    "get": {
+      "template": "Find the best free resource for the stated need using the crew library (RESOURCES.md): match, verify license and format, download and vendor it into the project, log source and license.",
+      "description": "Find, verify and vendor the best free asset for a need",
+      "agent": "ai-manager"
+    },
+    "web": {
+      "template": "Fast web task for $ARGUMENTS: search with exa/tavily/brave, scrape with firecrawl/fetch, verify in browser with playwright if needed. Return answer + sources, no fluff.",
+      "description": "Search + scrape the web fast with sources",
+      "agent": "researcher"
+    },
+    "docs": {
+      "template": "Docs lookup for $ARGUMENTS: use context7 for library docs, deepwiki for GitHub repo docs, then summarize with version, API snippet, and gotchas. Prefer current docs over memory.",
+      "description": "Up-to-date library and repo docs lookup",
+      "agent": "researcher"
+    },
+    "browser": {
+      "template": "Browser-verify $ARGUMENTS with playwright/chrome-devtools: open page, screenshot, check console errors, report selectors and fixes. Headless by default.",
+      "description": "Open, screenshot and verify in a real browser",
+      "agent": "researcher"
+    },
+    "db": {
+      "template": "DB task for $ARGUMENTS: inspect schema via sqlite/postgres/supabase/mongodb MCP, run read-only query first, then propose migration. Never drop without explicit confirm.",
+      "description": "Inspect schema and query DB safely",
+      "agent": "data-wrangler"
+    },
+    "fast": {
+      "template": "Do $ARGUMENTS in the fastest safe way: parallelize reads, use repomix/codebase-index for big repos, sequential-thinking for plan, memory to persist decisions. Output result + next step only.",
+      "description": "Fastest safe execution with parallel tools",
+      "agent": "ai-manager"
+    },
+    "deep": {
+      "template": "Deep research on $ARGUMENTS: sequential-thinking plan, multi-source search (exa, tavily, firecrawl, deepwiki, arxiv), cross-check, save findings to memory. Return ranked findings with confidence.",
+      "description": "Multi-source deep research with ranked findings",
+      "agent": "researcher"
+    },
+    "visual": {
+      "template": "Visual task for $ARGUMENTS: use figma MCP for designs, playwright screenshot for verification, fal-ai for generated media if needed. Return assets + links.",
+      "description": "Design, screenshot and media generation",
+      "agent": "model-creator"
+    },
+    "game": {
+      "template": "Build a perfect website game ULTRA FAST for $ARGUMENTS: 1) game_scaffold vanilla (phaser only if physics-heavy, three only if 3D asked), 2) add features via game_add, 3) game_audit until 100, 4) game_playtest. Single index.html, 60fps, touch+keyboard, sound, score+best, pause, R restart. Output path + score + play URL.",
+      "description": "Scaffold a perfect website game ultra fast",
+      "agent": "game-builder"
+    },
+    "play": {
+      "template": "Playtest $ARGUMENTS: serve folder, screenshot with playwright/chrome-devtools, check console errors, 60fps feel, resize + mobile touch, report PASS/FAIL per item with exact fixes.",
+      "description": "Playtest a web game in a real browser",
+      "agent": "game-builder"
+    },
+    "sprite": {
+      "template": "Create game art for $ARGUMENTS: crisp canvas/SVG sprites via model-creator (player, enemy, tiles, particles), tiny files, no external assets unless asked. Output files + sizes.",
+      "description": "Generate crisp game sprites fast",
+      "agent": "model-creator"
+    },
+    "level": {
+      "template": "Add a level/feature to the game for $ARGUMENTS: new platforms/enemies/score curve via game_add snippets, keep 60fps + mobile working, re-run game_audit. Output what changed + new score.",
+      "description": "Add a level or feature to a web game",
+      "agent": "game-builder"
+    },
+    "perfect": {
+      "template": "Make $ARGUMENTS VERY PERFECT: run game_audit, fix every FAIL (dt clamp, DPR resize, touch, sound, pause, score/best, R restart, <200KB), re-audit to 100, then playtest. Output before/after scores.",
+      "description": "Audit + fix a web game to 100 perfect",
+      "agent": "game-builder"
+    },
+    "publish": {
+      "template": "Publish $ARGUMENTS: game_audit must be 100 first, then game_publish zip + itch.io checklist + git commit via git-pusher. Output zip path, size, upload steps.",
+      "description": "Zip + ship a web game to itch.io",
+      "agent": "game-builder"
+    },
+    "music": {
+      "template": "Make game music for $ARGUMENTS: use music_maker (mood adventure|boss|chill|arcade + bpm), paste snippet, start on first input. Output code + how it sounds.",
+      "description": "Generate chiptune music loop, zero assets",
+      "agent": "game-builder"
+    },
+    "deploy": {
+      "template": "Deploy the game in $ARGUMENTS: use game_deploy for gh-pages (free hosting URL) or itch.io upload. Run the exact commands, verify the live URL with browser screenshot.",
+      "description": "Deploy a game to GitHub Pages or itch.io",
+      "agent": "game-builder"
+    },
+    "doctor": {
+      "template": "Self-heal the toolset for $ARGUMENTS: run doctor_check, report BROKEN vs SLEEPING vs OK, apply doctor_fix for verified renames, brain_save the lesson. Output before/after counts + restart reminder.",
+      "description": "Diagnose + self-fix broken MCP tools",
+      "agent": "ai-manager"
+    },
+    "bot": {
+      "template": "Bot-playtest $ARGUMENTS with game_bot: real keyboard play for 20s+, HUD score sampling, console errors, screenshot, stuck verdict. If verdict is not PLAYABLE, fix and re-run.",
+      "description": "Bot actually plays the game, reports verdict",
+      "agent": "game-builder"
+    },
+    "site": {
+      "template": "Build a perfect website ultra fast for $ARGUMENTS: web_scaffold kind (landing/blog/dashboard/portfolio/api/resume/menu/invite/links/invoice/proposal), fill real content, web_audit to 100, game_deploy gh-pages for free URL. Output path + score + URL.",
+      "description": "Scaffold a perfect website ultra fast",
+      "agent": "game-builder"
+    },
+    "brand": {
+      "template": "Create a brand kit for $ARGUMENTS: brand_kit (name + style modern|playful|luxury|eco|retro) writes brand.css + logo.svg, then show palette + usage. Output files + preview.",
+      "description": "Logo + colors + fonts kit in 1 call",
+      "agent": "model-creator"
+    },
+    "start": {
+      "template": "Show a clickable menu using the question tool with these options: Make a game (/game), Business website (/site), Logo + brand (/brand), Invoice that prints to PDF, Menu for food business, Party invite, My resume, Put something online (/deploy), Fix something (/doctor). After they pick, run that flow end to end. Plain words only, never mention files or terminals unless asked.",
+      "description": "Clickable guided menu, zero knowledge needed",
+      "agent": "ai-manager"
+    },
+    "bakery": {
+      "template": "Full bakery pack for $ARGUMENTS: 1) if no business name given, ask with the question tool. 2) brand_kit (playful). 3) web_scaffold menu site with real dishes/prices. 4) web_scaffold invoice. 5) web_audit each to 100. Output: logo files, site path + score, invoice path. Plain words, no jargon.",
+      "description": "Bakery pack: logo + menu site + invoice",
+      "agent": "game-builder"
+    },
+    "restaurant": {
+      "template": "Full restaurant pack for $ARGUMENTS: 1) ask business name if missing. 2) brand_kit (luxury). 3) web_scaffold menu site with dishes/prices/hours/phone. 4) web_scaffold proposal with 3 packages. 5) web_audit each to 100. Output everything with paths. Plain words.",
+      "description": "Restaurant pack: brand + menu + proposal",
+      "agent": "game-builder"
+    },
+    "salon": {
+      "template": "Full salon pack for $ARGUMENTS: 1) ask business name if missing. 2) brand_kit (modern). 3) web_scaffold landing with services/prices/booking phone + WhatsApp. 4) web_scaffold proposal. 5) web_audit each to 100. Plain words, output paths.",
+      "description": "Salon pack: brand + landing + proposal",
+      "agent": "game-builder"
+    },
+    "shop": {
+      "template": "Full online-shop starter for $ARGUMENTS: 1) ask shop name if missing. 2) brand_kit (modern). 3) web_scaffold landing with products/prices/order button. 4) web_scaffold invoice. 5) web_audit each to 100. Plain words, output paths.",
+      "description": "Shop starter: brand + landing + invoice",
+      "agent": "game-builder"
+    },
+    "freelancer": {
+      "template": "Full freelancer pack for $ARGUMENTS: 1) ask name + skill if missing. 2) brand_kit (modern). 3) web_scaffold portfolio with 3 projects. 4) web_scaffold resume. 5) web_scaffold proposal. 6) web_audit each to 100. Plain words, output paths.",
+      "description": "Freelancer pack: brand + portfolio + resume + proposal",
+      "agent": "game-builder"
+    },
+    "brain": {
+      "template": "Brain recall for $ARGUMENTS: brain_recall first, apply matching lessons, then do the task, then brain_save what you learned. Never solve twice what the brain already knows.",
+      "description": "Recall lessons before work, save after",
+      "agent": "ai-manager"
+    },
+    "fanout": {
+      "template": "High-stakes question $ARGUMENTS: use fanout to ask 3 models in parallel and judge the winner. Output winner + why + full answer.",
+      "description": "Ask 3 models, judge picks the best",
+      "agent": "ai-manager"
+    }
+  },
+  "plugin": [
+    "./plugin/aimanager.ts",
+    "./plugin/mega-tools.ts",
+    "./plugin/webgame-tools.ts",
+    "./plugin/meta-tools.ts",
+    "./plugin/daily-tools.ts"
+  ],
+  "skills": {
+    "paths": [
+      ".opencode/skills"
+    ]
+  },
+  "formatter": true,
+  "lsp": true,
+  "experimental": {
+    "mcp_timeout": 30000
+  },
+  "tool_output": {
+    "max_lines": 2000,
+    "max_bytes": 51200
+  }
+}

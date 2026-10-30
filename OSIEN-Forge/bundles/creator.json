@@ -1,0 +1,14 @@
+{
+  "edition": "creator",
+  "name": "Creator Edition",
+  "for": "Game makers, YouTubers, kids learning code, indie hackers",
+  "download": "OsienForge-creator-<os>.zip (~7 MB, includes 3D skill)",
+  "install": "setup.sh --edition creator",
+  "includes": {
+    "commands": ["everyday(10)", "game", "play", "bot", "sprite", "level", "perfect", "publish", "music", "deploy", "visual", "gen", "opt", "tex", "sim", "collide", "tune"],
+    "mcp": 25,
+    "game_templates": ["vanilla", "phaser", "three", "versus"],
+    "tools": ["everything in Everyday", "game_bot (plays your game!)", "music_maker", "sfx_pack", "sprite_maker", "3D forge (1200+ model recipes)"]
+  },
+  "try_first": ["/game snake", "/bot", "/music", "/gen red dragon"]
+}

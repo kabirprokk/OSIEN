@@ -1,0 +1,14 @@
+{
+  "edition": "agency",
+  "name": "Agency Edition",
+  "for": "Web/design/marketing agencies and freelancers serving clients",
+  "download": "Use the Full release + install with --edition agency (or grab Full, it contains this)",
+  "install": "setup.sh --edition agency",
+  "includes": {
+    "commands": ["everyday(10)", "web", "docs", "browser", "db", "deep", "get", "hire", "ship", "fix", "plan", "standup", "commit", "sync", "bakery", "restaurant", "salon", "shop", "freelancer"],
+    "mcp": 27,
+    "web_templates": ["all 11 (adds dashboard, portfolio, api, proposal)"],
+    "tools": ["everything in Everyday", "brand_kit (5 styles)", "proposal + invoice starters", "web_audit SEO score", "client deploy to free URLs"]
+  },
+  "try_first": ["/bakery", "/brand Acme luxury", "/site client proposal", "/deploy"]
+}

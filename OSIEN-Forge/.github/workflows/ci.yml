@@ -1,0 +1,36 @@
+name: forge-ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  install-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python (for merge + audits)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install (bash)
+        if: runner.os != 'Windows'
+        run: bash scripts/setup.sh
+
+      - name: Install (Windows)
+        if: runner.os == 'Windows'
+        run: powershell -ExecutionPolicy Bypass -File scripts/setup.ps1
+
+      - name: Validate merged config
+        run: python -c "import json,os; json.load(open(os.path.expanduser('~/.config/opencode/opencode.json'))); print('config valid')"
+
+      - name: Template audits (all must score 100)
+        run: python scripts/audit-all.py
+
+      - name: Health check
+        run: bash scripts/check.sh
+        if: runner.os != 'Windows'

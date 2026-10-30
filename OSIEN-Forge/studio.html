@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Osien Forge Studio — click, paste, done</title>
+<meta name="description" content="Osien Forge Studio: zero-terminal hub. Click what you want, paste one command, get a perfect result.">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0b1020;color:#fff;font:16px/1.5 system-ui}
+header{text-align:center;padding:36px 20px 8px}
+header p{color:#9aa3c7;max-width:560px;margin:8px auto}
+main{max-width:900px;margin:auto;padding:20px}
+h2{color:#2dd4bf;font-size:1rem;letter-spacing:1px;text-transform:uppercase;margin:28px 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.tile{background:#141b33;border-radius:14px;padding:16px}
+.tile h3{margin:0 0 4px;font-size:1.05rem}
+.tile p{color:#9aa3c7;font-size:.85rem;margin:0 0 10px;min-height:40px}
+.cmd{background:#0a0f24;border-radius:8px;padding:8px 10px;font-family:monospace;color:#7cf7ff;font-size:.9rem;word-break:break-all}
+button{margin-top:8px;width:100%;padding:10px;border:0;border-radius:10px;background:#2dd4bf;color:#04211d;font-weight:700;font-size:.95rem;cursor:pointer}
+button:hover{filter:brightness(1.1)}
+footer{text-align:center;color:#9aa3c7;padding:30px;font-size:.85rem}
+.how{background:#141b33;border-radius:14px;padding:18px;margin-top:8px}
+.how ol{margin:8px 0;padding-left:22px}.how li{margin:6px 0}
+</style>
+</head>
+<body>
+<header><h1>🔥 Osien Forge Studio</h1><p>No terminal. No coding. Click what you want → press copy → paste it in the chat → done.</p></header>
+<main>
+<div class="how"><b>How it works (3 steps, always the same):</b><ol><li>Click <b>Copy</b> on any tile below.</li><li>Paste it into your AI chat and press Enter.</li><li>Answer its questions in plain words. It builds everything.</li></ol></div>
+
+<h2>🏪 I run a business</h2>
+<div class="grid">
+<div class="tile"><h3>🥖 Bakery / Food</h3><p>Logo + menu website + invoice. Complete pack.</p><div class="cmd">/bakery</div><button onclick="copy(this)">Copy</button></div>
+<div class="tile"><h3>🍽️ Restaurant</h3><p>Brand + menu site + client proposal.</p><div class="cmd">/restaurant</div><button onclick="copy(this)">Copy</button></div>
+<div class="tile"><h3>💇 Salon / Barbershop</h3><p>Brand + booking-style landing + proposal.</p><div class="cmd">/salon</div><button onclick="copy(this)">Copy</button></div>
+<div class="tile"><h3>🛍️ Online shop</h3><p>Brand + shop landing + invoice.</p><div class="cmd">/shop</div><button onclick="copy(this)">Copy</button></div>
+<div class="tile"><h3>💼 Freelancer</h3><p>Brand + portfolio + resume + proposal.</p><div class="cmd">/freelancer</div><button onclick="copy(this)">Copy</button></div>
+</div>
+
+<h2>🎨 Single things</h2>
+<div class="grid">
+<div class="tile"><h3>Logo + colors</h3><p>Brand kit in 10 seconds.</p><div class="cmd">/brand</div><button onclick="copy(this)">Copy</button></div>
+<div class="tile"><h3>Invoice</h3><p>Edit in browser, print to PDF, get paid.</p><div class="cmd">/site my work invoice</div><button onclick="copy(this)">Copy</button></div>
+<div class="tile"><h3>Resume</h3><p>Edit, print to PDF, apply.</p><div class="cmd">/site my name resume</div><button onclick="copy(this)">Copy</button></div>
+<div class="tile"><h3>Party invite</h3><p>With live countdown + RSVP buttons.</p><div class="cmd">/site my party invite</div><button onclick="copy(this)">Copy</button></div>
+<div class="tile"><h3>Link page</h3><p>All your links, one page, WhatsApp button.</p><div class="cmd">/site my name links</div><button onclick="copy(this)">Copy</button></div>
+<div class="tile"><h3>Website</h3><p>Any business, perfect + mobile-ready.</p><div class="cmd">/site</div><button onclick="copy(this)">Copy</button></div>
+</div>
+
+<h2>🎮 Fun</h2>
+<div class="grid">
+<div class="tile"><h3>Video game</h3><p>Your own playable game + music.</p><div class="cmd">/game</div><button onclick="copy(this)">Copy</button></div>
+<div class="tile"><h3>Game music</h3><p>Chiptune loop, zero files.</p><div class="cmd">/music</div><button onclick="copy(this)">Copy</button></div>
+</div>
+
+<h2>🆘 Help</h2>
+<div class="grid">
+<div class="tile"><h3>Guided menu</h3><p>Don't know where to start? Click this.</p><div class="cmd">/start</div><button onclick="copy(this)">Copy</button></div>
+<div class="tile"><h3>Fix-it robot</h3><p>Something broken? It heals itself.</p><div class="cmd">/doctor</div><button onclick="copy(this)">Copy</button></div>
+<div class="tile"><h3>Put it online</h3><p>Free website address for your page.</p><div class="cmd">/deploy</div><button onclick="copy(this)">Copy</button></div>
+</div>
+</main>
+<footer>Osien Forge · free &amp; open-source (MIT) · works offline · <span id="msg"></span></footer>
+<script>
+function copy(btn){
+  const cmd=btn.parentElement.querySelector('.cmd').textContent;
+  const done=()=>{const m=document.getElementById('msg');m.textContent='Copied '+cmd+' — paste it in the chat!';btn.textContent='Copied ✓';setTimeout(()=>btn.textContent='Copy',2000);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(cmd).then(done).catch(()=>fallback());}else fallback();
+  function fallback(){const t=document.createElement('textarea');t.value=cmd;document.body.appendChild(t);t.select();try{document.execCommand('copy');done();}catch(e){}document.body.removeChild(t);}
+}
+</script>
+</body>
+</html>

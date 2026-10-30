@@ -1,0 +1,14 @@
+{
+  "edition": "everyday",
+  "name": "Everyday Edition",
+  "for": "Normal people: shops, families, students, anyone with zero coding",
+  "download": "OsienForge-everyday-<os>.zip (~1 MB)",
+  "install": "setup.sh --edition everyday",
+  "includes": {
+    "commands": ["start", "site", "brand", "brain", "doctor", "fast", "context", "status", "handoff", "delegate"],
+    "mcp": 12,
+    "web_templates": ["landing", "blog", "resume", "menu", "invite", "links", "invoice"],
+    "tools": ["calc", "unit_convert", "countdown", "split_bill", "vcard", "wifi_share", "business_name", "color_palette", "readability", "page_pdf", "screenshot", "brain_save/recall", "doctor"]
+  },
+  "try_first": ["/start", "/site my bakery menu", "/brand my shop cozy", "/site my work invoice"]
+}
