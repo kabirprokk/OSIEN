@@ -1,0 +1,865 @@
+// Brand memory: local-first, zero-LLM-token brand resolver + per-brand pack.
+// Goal: NEVER send all 41 brands to the LLM. Resolve locally, inject ONE brand (~200 tokens).
+// Brand memory: local-first store. ALL data lives here on disk.
+// - brands.full.json  = every number, address, footer, fact, example (168KB on disk, never sent whole)
+// - brands.compact.json = tiny resolver index (names/aliases only)
+// - memory.json = learned overrides (owner corrections win over everything)
+// Per request we resolve locally (0 tokens) and inject ONE brand's FULL record
+// (~800 tokens). That is the storage place the prompt is built from.
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const here = path.dirname(fileURLToPath(import.meta.url));
+const COMPACT_PATH = path.join(here, 'brands.compact.json');
+const FULL_PATH = path.join(here, 'brands.full.json');
+const PORTABLE_DATASET_PATH = path.join(here, 'source-data', 'Famebros_Brand_Caption_Dataset.json');
+const MEMORY_PATH = path.join(here, 'memory.json');
+const CUSTOM_PATH = path.join(here, 'brands.custom.json');
+const MAX_AUTO = 50;
+
+let cache = null;
+function loadCustom() {
+  try {
+    const d = JSON.parse(fs.readFileSync(CUSTOM_PATH, 'utf8'));
+    return Array.isArray(d.brands) ? d.brands : [];
+  } catch {
+    return [];
+  }
+}
+function saveCustom(brands) {
+  const raw = JSON.stringify({ version: 1, brands: brands.slice(0, MAX_AUTO) });
+  if (raw.length < 30000) fs.writeFileSync(CUSTOM_PATH, raw);
+}
+export function loadBrands() {
+  if (!cache) cache = JSON.parse(fs.readFileSync(COMPACT_PATH, 'utf8'));
+  // Custom/auto-onboarded brands merge in — matcher sees them like natives.
+  // Reloaded per call would cost disk IO; refresh when custom file changes.
+  try {
+    const st = fs.statSync(CUSTOM_PATH);
+    if (!cache._customMtime || cache._customMtime < st.mtimeMs) {
+      cache = { brands: [...JSON.parse(fs.readFileSync(COMPACT_PATH, 'utf8')).brands, ...loadCustom()], _customMtime: st.mtimeMs };
+    }
+  } catch {}
+  return cache.brands;
+}
+
+let fullCache = null;
+let fullCacheMtime = 0;
+let portableDatasetCache = null;
+let portableDatasetMtime = 0;
+
+// The source archive is committed with the server. Read the portable dataset
+// once, then reload it after an owner updates the file without requiring a
+// process restart. Callers receive only the exact selected brand record.
+export function getPortableDatasetBrand(brandId) {
+  try {
+    const mtime = fs.statSync(PORTABLE_DATASET_PATH).mtimeMs;
+    if (!portableDatasetCache || portableDatasetMtime < mtime) {
+      portableDatasetCache = JSON.parse(fs.readFileSync(PORTABLE_DATASET_PATH, 'utf8'));
+      portableDatasetMtime = mtime;
+    }
+    return portableDatasetCache.brands?.find((b) => b.brand_id === brandId) || null;
+  } catch {
+    return null;
+  }
+}
+
+function loadFull() {
+  // Owner edits to brands.full.json show up without a restart (mtime check).
+  try {
+    const m = fs.statSync(FULL_PATH).mtimeMs;
+    if (!fullCache || fullCacheMtime < m) {
+      fullCache = JSON.parse(fs.readFileSync(FULL_PATH, 'utf8'));
+      fullCacheMtime = m;
+    }
+    return fullCache;
+  } catch {
+    if (fullCache) return fullCache;
+    fullCache = JSON.parse(fs.readFileSync(FULL_PATH, 'utf8'));
+    return fullCache;
+  }
+}
+
+export function getFullBrand(brandId) {
+  try {
+    return loadFull().brands.find((b) => b.brand_id === brandId) || null;
+  } catch {
+    return null;
+  }
+}
+
+export function getBrandById(brandId) {
+  const id = String(brandId || '').trim();
+  if (!id) return null;
+  return loadBrands().find((brand) => brand.id === id) || null;
+}
+
+// Full per-brand record: every phone, address, footer, fact, CTA, keyword,
+// genre rule and example. This is what the AI reads before writing.
+export function fullPack(brand) {
+  // Deep per-brand file (Specific-brands format) wins when present —
+  // it carries master instruction, playbook, hooks, CTA/hashtag banks.
+  const deep = brand?.id ? getDeepForCompact(brand) || getDeepBrand(brand.id) : null;
+  if (deep) return deepPack(deep, brand);
+  const full = brand?.id ? getFullBrand(brand.id) : null;
+  if (!full) return brandPack(brand);
+  const mem = loadMemory().brands?.[brand.id];
+  const cd = full.caption_direction || {};
+  const approvedFacts = (full.approved_facts || []).map((fact) => {
+    if (typeof fact === 'string') return fact;
+    if (!fact || typeof fact !== 'object') return '';
+    return [fact.text, fact.status && fact.status !== 'confirmed' ? `(${fact.status})` : '']
+      .filter(Boolean).join(' ');
+  }).filter(Boolean);
+  const sources = (Array.isArray(full.sources) ? full.sources : [])
+    .map((source) => typeof source === 'string' ? source : source?.title || source?.name || '')
+    .filter(Boolean);
+  const lines = [
+    `BRAND: ${full.name} (${full.category || 'local brand'}${full.location ? `, ${full.location}` : ''})`,
+    full.content_genres?.length ? `Genres: ${full.content_genres.join(', ')}` : null,
+    cd.tone ? `Tone: ${cd.tone}` : null,
+    cd.language ? `Language: ${cd.language}` : null,
+    cd.focus?.length ? `Focus: ${cd.focus.join('; ')}` : null,
+    cd.avoid?.length ? `Never: ${cd.avoid.join('; ')}` : null,
+    approvedFacts.length ? `APPROVED FACTS (use only when the post makes them relevant): ${approvedFacts.join('; ')}` : null,
+    (cd.cta_options || brand.cta || []).length ? `CTA pick one (reword, don't copy): ${(cd.cta_options || brand.cta).join(' / ')}` : null,
+    full.mandatory_copy?.length ? `Must include word-for-word: ${full.mandatory_copy.join('; ')}` : null,
+    full.contacts?.phone?.length ? `Phone: ${full.contacts.phone.join(' / ')}` : null,
+    full.contacts?.address ? `Address: ${full.contacts.address}` : null,
+    full.contacts?.website ? `Website: ${full.contacts.website}` : null,
+    full.contacts?.email ? `Email: ${full.contacts.email}` : null,
+    full.footer_lines?.length ? `Footer (append exactly):\n${full.footer_lines.join('\n')}` : 'Footer: 💫 Managed by: @famebrosstudio',
+    full.keyword_bank?.length ? `SEO keywords: ${full.keyword_bank.join(', ')}` : null,
+    full.example?.body ? `Style example (match this energy, never copy facts):\n${String(full.example.body).slice(0, 500)}` : (brand.ex ? `Style example: ${brand.ex}` : null),
+    full.instagram?.handle ? `IG handle: ${full.instagram.handle}` : null,
+    full.instagram?.status ? `IG handle status: ${full.instagram.status} (never present an unverified handle as official)` : null,
+    full.readiness === 'needs_brand_identity' ? 'Identity incomplete: if the brief lacks product/subject, ask ONE short question instead of inventing.' : null,
+    sources.length ? `SOURCE PROVENANCE (internal context; do not repeat): ${sources.join('; ')}` : null,
+    !isBlank(full.missing_details) ? `STILL UNKNOWN (never invent): ${cap(fmt(full.missing_details), 700)}` : null,
+    !isBlank(full.always_exclude_from_captions) ? `ALWAYS EXCLUDE:\n${cap(fmt(full.always_exclude_from_captions, true), 600)}` : null,
+    typeof full.footer_policy === 'string' ? `Footer policy: ${full.footer_policy}` : null,
+    typeof full.sources?.source_rule === 'string' ? `SOURCING: ${full.sources.source_rule}` : null,
+    mem?.notes ? `Owner correction (wins over all above): ${String(mem.notes).slice(0, 300)}` : null,
+    mem?.recent?.length ? `Approved voice — same energy, new words, never copy exactly: ${mem.recent.slice(-3).join(' | ').slice(0, 200)}` : null,
+  ].filter(Boolean);
+  // Old-schema brands get the same shared floor as researched ones. Their
+  // caption_direction is only a tone/language line, far thinner than the new
+  // schema's writing_direction, so it does not count as covering the craft
+  // and voice sections.
+  return `${lines.join('\n')}\n\n${houseStyleFor(null)}`;
+}
+
+ const DEEP_DIR = path.join(here, 'brands');
+let deepCache = null;
+let deepCacheFiles = {};
+function loadDeepAll() {
+  // Per-file mtimes: edited, added AND deleted deep files are all picked up
+  // without a restart (a directory mtime alone misses in-place edits).
+  let files = [];
+  try {
+    files = fs.readdirSync(DEEP_DIR).filter((f) => f.endsWith('.json'));
+  } catch {
+    return deepCache || {};
+  }
+  let dirty = !deepCache || Object.keys(deepCacheFiles).length !== files.length;
+  const seen = {};
+  if (!dirty) {
+    for (const f of files) {
+      let m = 0;
+      try {
+        m = fs.statSync(path.join(DEEP_DIR, f)).mtimeMs;
+      } catch {}
+      seen[f] = m;
+      if (deepCacheFiles[f] !== m) { dirty = true; break; }
+    }
+  }
+  if (!dirty) return deepCache;
+  deepCache = {};
+  deepCacheFiles = {};
+  for (const f of files) {
+    try {
+      deepCacheFiles[f] = fs.statSync(path.join(DEEP_DIR, f)).mtimeMs;
+      const d = JSON.parse(fs.readFileSync(path.join(DEEP_DIR, f), 'utf8'));
+      const id = d.brand_id || f.replace(/\.json$/, '');
+      deepCache[id] = d;
+      // Alias keys: file brand_ids don't always match the compact index
+      // (reshine_skin_clinic vs reshine_clinic), so also file by name slug.
+      if (d.brand_name) deepCache[`name:${slugify(d.brand_name)}`] = d;
+      // Explicit aliases are safe lookup keys too. Keep these separate from
+      // the fuzzy fallback so an abbreviated compact name can point at its
+      // one confirmed detailed profile (for example SK Furniture -> SK
+      // Furniture Market) without matching another business by category.
+      for (const alias of d.aliases || []) {
+        const key = `name:${slugify(alias)}`;
+        if (!deepCache[key]) deepCache[key] = d;
+      }
+    } catch {}
+  }
+  return deepCache;
+}
+
+export function getDeepBrand(brandId) {
+  const all = loadDeepAll();
+  return all[brandId] || all[`name:${slugify(brandId)}`] || null;
+}
+
+// Resolve a deep file for a compact index brand (handles id mismatches).
+export function getDeepForCompact(compactBrand) {
+  if (!compactBrand) return null;
+  const all = loadDeepAll();
+  if (all[compactBrand.id]) return all[compactBrand.id];
+  const nameSlug = slugify(compactBrand.name);
+  if (all[nameSlug] || all[`name:${nameSlug}`]) return all[nameSlug] || all[`name:${nameSlug}`];
+  for (const b of loadBrands()) {
+    if (b.id === compactBrand.id) {
+      for (const a of [b.name, ...(b.aliases || [])]) {
+        const hit = all[slugify(a)] || all[`name:${slugify(a)}`];
+        if (hit) return hit;
+      }
+    }
+  }
+  // Fallback matching, used when the compact id and the file id differ.
+  // The only accepted shape is COVERAGE: every word of the queried name must
+  // appear in the candidate, allowing a longer qualifier or a plural
+  // ("SK Furniture" -> "SK Furniture Market", "Jolly Tailor" ->
+  // "Jolly Honest Tailor", "Qash Makeover" -> "Qash Makeovers").
+  //
+  // Partial overlap is rejected on purpose. A shared category word is not
+  // evidence of the same business: matching "Furniture" once let "Anand
+  // Furniture" inherit SK Furniture's phone and footer, and "studio" once let
+  // "Luxxe Nail Studio" inherit Qash Makeovers'. A wrong match publishes
+  // another real business's contact details into a real caption, so when in
+  // doubt it is safer to return null and write from the brief alone.
+  const allDeep = Object.keys(all).filter((k) => !k.startsWith('name:'));
+  const words = (names) => [...new Set(
+    names.flatMap((s) => norm(s).split(' ')).filter((t) => t.length >= 3)
+  )];
+
+  const mine = words([compactBrand.name, ...(compactBrand.aliases || [])]);
+  // One surviving word is almost always a category (Furniture, Salon,
+  // Hospital) or an abbreviation dropped by the >=3-character filter. It
+  // cannot uniquely identify a business, so never use it for fuzzy profile
+  // selection.
+  if (mine.length < 2) return null;
+  let best = null;
+  let bestScore = 0;
+  for (const k of allDeep) {
+    const d = all[k];
+    const theirs = new Set(words([d.brand_name, ...(d.aliases || [])]));
+    // A queried word is accounted for when the candidate has it, or has a
+    // word that starts with it (makeover -> makeovers).
+    const covered = mine.filter((t) => [...theirs].some((u) => u === t || (t.length >= 4 && u.startsWith(t))));
+    if (covered.length !== mine.length) continue;
+    const score = covered.reduce((s, t) => s + t.length, 0);
+    if (score > bestScore) { bestScore = score; best = d; }
+  }
+  return best;
+}
+
+export function deepBrandIds() {
+  return Object.keys(loadDeepAll());
+}
+
+// Footer/phone/address readers that tolerate every file variant seen so far:
+// fixed_footer.lines | .full_lines | .<branch>_only_lines (never group_*),
+// .compact_designation_line + social/agency (public figures),
+// .*general*lines (multi-footer brands: brand-wide default),
+// footer_policy.confirmed_footer_lines; contact.phone_display |
+// .primary_phone_display | .customer_care_display.
+export function deepFooter(deep) {
+  const ff = deep?.fixed_footer;
+  let lines = [];
+  if (ff) {
+    if (ff.prefer_group_footer && ff.group_footer_lines?.length) lines = ff.group_footer_lines;
+    else if (ff.lines?.length) lines = ff.lines;
+    else if (ff.full_lines?.length) lines = ff.full_lines;
+    else if (ff.standard_lines?.length) lines = ff.standard_lines;
+    else {
+      const only = Object.keys(ff).filter((k) => k.endsWith('_only_lines') && Array.isArray(ff[k]) && ff[k].length);
+      if (only.length) lines = ff[only[0]];
+    }
+    // Public-figure format: compact designation + social + agency (routine captions).
+    if (!lines.length && typeof ff.compact_designation_line === 'string' && ff.compact_designation_line.trim()) {
+      lines = [ff.compact_designation_line.trim(), ff.social_line, ff.agency_line].filter((l) => typeof l === 'string' && l.trim());
+    }
+    // Multi-footer brands: the *general* footer is the brand-wide default
+    // (campaign/showroom footers apply only to those posts).
+    if (!lines.length) {
+      const general = Object.keys(ff).find((k) => /general/i.test(k) && k.endsWith('_lines') && Array.isArray(ff[k]) && ff[k].length);
+      if (general) lines = ff[general];
+    }
+  }
+  if (!lines.length && deep?.footer_policy?.confirmed_footer_lines?.length) lines = deep.footer_policy.confirmed_footer_lines;
+  // Last resort: first *_lines array present (never usage/rules strings).
+  if (!lines.length && ff) {
+    const any = Object.keys(ff).find((k) => k.endsWith('_lines') && Array.isArray(ff[k]) && ff[k].length);
+    if (any) lines = ff[any];
+  }
+  // Draft/temporary footer text is not publishable just because it lives in a
+  // field named `fixed_footer`. Keep only an explicit agency credit in that
+  // case; the post-specific CTA belongs in the generated body.
+  if (/\b(?:temporary|provisional|draft|placeholder)\b|replace .* after confirmation/i.test(String(ff?.status || ''))) {
+    const agency = String(deep?.social_media?.agency_credit_default || '').trim().toLowerCase();
+    return lines.filter((line) => {
+      const value = String(line || '').trim().toLowerCase();
+      return value && (value === agency || /managed\s+by\s*:?\s*@famebrosstudio\b/i.test(value));
+    });
+  }
+  return lines;
+}
+
+export function deepPhone(deep) {
+  return deep?.contact?.phone_display || deep?.contact?.primary_phone_display || deep?.contact?.customer_care_display || '';
+}
+
+export function deepAddress(deep) {
+  return deep?.contact?.full_address || '';
+}
+// --- shared house style ----------------------------------------------------
+// The floor that applies to every brand, so output quality does not depend on
+// how much research a brand happens to have. A brand's own master instruction
+// and writing direction always win; this only fills the gaps, so a brand that
+// already defines a section is not sent a duplicate of it.
+//
+// Deliberately narrow: platform mechanics, emoji counts and the IG/FB/X/YT
+// shapes already live in ai.js (HOUSE_RULES, PLATFORM_SPECS). What was missing
+// is the accuracy floor and the craft standard, which is what separates a thin
+// record from no record at all.
+const HOUSE_ACCURACY = `HOUSE ACCURACY FLOOR (applies even if a brand record says nothing):
+- Write only from the current brief and this brand's confirmed record. Everything else is unknown.
+- Never state or imply a price, discount, offer, stock level, delivery time, guarantee, award, ranking, review score or certification that is not confirmed above. Omit the claim instead of softening it.
+- Never invent a phone number, address, landmark, timing or "limited period". If a contact detail is not in the record, leave it out.
+- Do not claim a product benefit, material, technique, result or outcome that was not supplied or is not visible in the asset.
+- One short factual claim per sentence beats three stacked adjectives.`;
+
+const HOUSE_CRAFT = `HOUSE CRAFT STANDARD:
+- Be concrete before being clever. Name the visible thing, the real detail, the actual benefit.
+- Open on the viewer's situation or the product's strongest single point, never on a greeting or a question the caption then ignores.
+- Vary sentence length. Short line for the hook, then plain full sentences.
+- No em dashes. No stacked hype ("best", "No.1", "premium", "luxury") unless the record confirms it.
+- No fake urgency, no fake personal experience, no invented customer quotes.
+- One clear next step, phrased as an action the reader can actually take.`;
+
+const HOUSE_STRUCTURE = `HOUSE STRUCTURE (when the record gives no format of its own):
+- 2 to 4 sentence body: hook line, then supporting detail, then one concrete call to action.
+- Blank line before the footer, then the footer exactly as given, then up to 3 relevant hashtags (brand + current-topic tags only), then one [square bracket] of 5 to 8 topic-supported comma-separated search phrases when available.`;
+
+const HOUSE_VOICE = `HOUSE VOICE (when the record gives no voice of its own):
+- Warm and human, like a good store owner recommending something, not a press release.
+- Confident and specific. Never flat, never robotic, never overhyped.`;
+
+const HOUSE_MISSING = `WHEN KEY FACTS ARE MISSING: write the strongest honest caption from what is supplied, drop any claim that would need the missing fact, and never fill the gap with a plausible guess. Do not stall the whole caption to ask.`;
+
+// Only the parts this brand has not already defined for itself.
+function houseStyleFor(deep) {
+  const out = [HOUSE_ACCURACY];
+  if (!deep || typeof deep !== 'object') {
+    out.push(HOUSE_CRAFT, HOUSE_STRUCTURE, HOUSE_VOICE, HOUSE_MISSING);
+    return `${out.join('\n\n')}\n\n(A brand's own record overrides every line above.)`;
+  }
+  if (isBlank(deep.writing_direction)) out.push(HOUSE_CRAFT, HOUSE_VOICE);
+  if (isBlank(deep.caption_format)) out.push(HOUSE_STRUCTURE);
+  out.push(HOUSE_MISSING);
+  return `${out.join('\n\n')}\n\n(A brand's own master instruction overrides every line above.)`;
+}
+// The per-brand files are researched by hand and keep growing (31 of 32 now
+// carry caption_format, visual_and_asset_guidance, per_post_input and sources).
+// Hand-listing every field meant most of that research never reached the model,
+// so this renders the record generically: anything present is included, in
+// priority order, inside a fixed character budget. New research now needs no
+// code change to become visible.
+
+const isBlank = (v) => v === null || v === undefined || v === ''
+  || (Array.isArray(v) && !v.some((x) => !isBlank(x)))
+  || (typeof v === 'object' && !Array.isArray(v) && !Object.values(v).some((x) => !isBlank(x)));
+
+// Human label for a snake_case key: `words_to_use_only_when_confirmed` reads
+// as prose instead of leaking a schema name into the prompt.
+const human = (k) => k.replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
+
+// Agency-side operations and account/payment details do not belong in the
+// caption model's context. They add noise and could accidentally be copied
+// into public-facing copy, so omit them by field name at every nesting level.
+const PRIVATE_PROMPT_FIELD = /(?:^|_)(?:billing|fee|invoice|accounting|accounts_note|amount_due|balance|budget|internal|private|payment|monthly_service_scope|service_scope|deliverables?|ad_management|shoot_plan|production_plan|staff_logistics|onboarding)(?:_|$)/i;
+
+// Bound one rendered block. Several records restate the master instruction
+// inside business/established_content_knowledge, so an unbounded render wastes
+// the budget on duplicates. Cut on a line or sentence edge so the model never
+// receives half a rule.
+const cap = (text, n) => {
+  const t = String(text || '').trim();
+  if (t.length <= n) return t || null;
+  const slice = t.slice(0, n);
+  const edge = Math.max(slice.lastIndexOf('\n'), slice.lastIndexOf('. '), slice.lastIndexOf('; '));
+  return `${(edge > n * 0.5 ? slice.slice(0, edge) : slice).trim()} …`;
+};
+
+// Any JSON value -> prompt text, or null when it carries no signal (the deep
+// files are mostly null placeholders, and nulls must never reach the model).
+function fmt(v, top = false) {
+  if (isBlank(v)) return null;
+  if (Array.isArray(v)) {
+    const parts = v.map((x) => fmt(x)).filter(Boolean);
+    if (!parts.length) return null;
+    return parts.some((p) => p.length > 70) ? parts.map((p) => `- ${p}`).join('\n') : parts.join('; ');
+  }
+  if (typeof v === 'object') {
+    const parts = [];
+    for (const [k, val] of Object.entries(v)) {
+      if (PRIVATE_PROMPT_FIELD.test(k)) continue;
+      const f = fmt(val);
+      if (!f) continue;
+      parts.push(top ? `${human(k)}: ${f}` : `${human(k)}: ${f}`);
+    }
+    return parts.length ? parts.join('\n') : null;
+  }
+  return String(v).trim() || null;
+}
+
+// Keys rendered with dedicated handling below; skipped by the generic sweep.
+const HANDLED = new Set([
+  'master_brand_instruction', 'accuracy_rules', 'contact', 'social_media', 'business',
+  'cta_bank', 'suggested_hashtag_bank', 'seo_keyword_bank', 'suggested_hooks', 'sources',
+  'fixed_footer', 'sample_caption', 'sample_captions', 'per_post_input', 'missing_information',
+  'visual_and_asset_guidance', 'knowledge_scope', 'schema_version', 'brand_id', 'brand_name', 'brand_number',
+]);
+
+  // per_post_input is a field template: nearly every key is a null placeholder,
+  // and a few are request metadata rather than instructions.
+  const PPI_SKIP = new Set([
+    'brand_id', 'mode', 'platform', 'post_format', 'language_override', 'goal',
+    'hashtag_count', 'content_genre', 'agency_credit_required', 'input_handling_rule',
+  ]);
+  // `*_inputs` lists are intake checklists for other formats (EMI copy, course
+  // ads, wholesale sheets). Useful to a human, dead weight in a caption prompt.
+  const isIntake = (k) => /_inputs\$|_inputs$/.test(k) || k.endsWith('_inputs');
+
+// Visual guidance is mostly art direction, which a caption model cannot act on.
+// Only the rules that stop it describing things the photo does not show are kept.
+const VISUAL_KEEP = /rule|integrity|fidelity|accessib|restriction|prohibit|forbidden|^focus$|overall_direction|^style$|layout|palette|colours?$/i;
+
+// Pack the selected Specific-brands profile in priority order. The team flow
+// passes the exact selected brand ID, so its research is available to captions
+// instead of trying to infer a client from a social account's page name.
+// Precedence: owner correction > master instruction > safety > identity >
+// writing > content > facts > CTAs > inputs > examples.
+export function deepPack(deep, brand) {
+  const mem = loadMemory().brands?.[deep.brand_id];
+  // CTA bank keys vary per file (booking/enquiry/visit/call/shop/...):
+  // collect every array, skip the selection_rule note.
+  const cta = deep.cta_bank
+    ? Object.entries(deep.cta_bank)
+        .filter(([k, v]) => k !== 'selection_rule' && Array.isArray(v))
+        .flatMap(([, v]) => v)
+        .filter((s) => typeof s === 'string' && s.trim())
+        .filter((v, i, a) => a.indexOf(v) === i)
+        .slice(0, 6)
+    : [];
+  // Hashtag buckets vary too (brand/category/occasion/location/personal/...):
+  // collect every array except meta keys; campaign-only tags stay out of the
+  // default bank and are surfaced as a conditional note instead.
+  const SKIP_TAG_KEYS = new Set(['rule', 'conditional', 'campaign_only_when_active']);
+  const tags = deep.suggested_hashtag_bank
+    ? Object.entries(deep.suggested_hashtag_bank)
+        .filter(([k, v]) => !SKIP_TAG_KEYS.has(k) && Array.isArray(v))
+        .flatMap(([, v]) => v)
+        .filter((s) => typeof s === 'string' && s.trim())
+        .filter((v, i, a) => a.indexOf(v) === i)
+        .slice(0, 8)
+    : [];
+  const campaignTags = Array.isArray(deep.suggested_hashtag_bank?.campaign_only_when_active)
+    ? deep.suggested_hashtag_bank.campaign_only_when_active.filter((s) => typeof s === 'string' && s.trim())
+    : [];
+
+  // Anything the research added that the named sections below do not cover:
+  // per-category frameworks, compliance rules, campaign knowledge, facilities.
+  const extras = [];
+  for (const [k, v] of Object.entries(deep)) {
+    if (HANDLED.has(k) || PRIVATE_PROMPT_FIELD.test(k)) continue;
+    const f = fmt(v, true);
+    if (f) extras.push(`${human(k)}:\n${f}`);
+  }
+  // Social URLs are long and a caption model never needs them; handles,
+  // page names and their verification status are what change the wording.
+  const social = Object.entries(deep.social_media || {})
+    .filter(([k, v]) => !/url|href|link/i.test(k) && !isBlank(v))
+    .map(([k, v]) => `${human(k)}: ${fmt(v)}`)
+    .join('\n');
+  // Confirmed facts the record already stores (jewellery purity, amenities...).
+  const ppiRows = Object.entries(deep.per_post_input || {})
+    .filter(([k, v]) => !PPI_SKIP.has(k) && !PRIVATE_PROMPT_FIELD.test(k) && !isBlank(v))
+    .map(([k, v]) => [k, `${human(k)}: ${fmt(v)}`])
+    .filter(([, s]) => s);
+  const ppi = ppiRows.filter(([k]) => !isIntake(k)).slice(0, 12).map(([, s]) => s);
+  const ppiIntake = ppiRows.filter(([k]) => isIntake(k)).slice(0, 6).map(([, s]) => s);
+  const samples = [
+    deep.sample_caption?.text ? fmt(deep.sample_caption, true) : null,
+    deep.sample_captions ? fmt(deep.sample_captions, true) : null,
+  ].filter(Boolean);
+  const rules = deep.sources?.source_usage_rules;
+  const unconfirmed = /not owner-confirmed|observed/i.test(String(deep.knowledge_scope || ''));
+  // Only the copy-relevant slice of the art direction.
+  const visual = Object.entries(deep.visual_and_asset_guidance || {})
+    .filter(([k, v]) => VISUAL_KEEP.test(k) && !isBlank(v))
+    .slice(0, 4)
+    .map(([k, v]) => `${human(k)}: ${fmt(v)}`)
+    .filter((s) => !s.endsWith(': null'))
+    .join('\n');
+
+  // Priority tiers. Tier 0 is mandatory and is never dropped: without the
+  // footer a caption is unusable, and the accuracy rules are the whole point
+  // of the memory. Everything else competes for what is left.
+  const T = (p, text) => (text && String(text).trim() ? [{ p, text: String(text).trim() }] : []);
+  const sections = [
+    ...T(0, mem?.notes ? `OWNER CORRECTION (beats every other rule): ${String(mem.notes).slice(0, 300)}` : null),
+    ...T(0, deep.master_brand_instruction ? `MASTER: ${deep.master_brand_instruction}` : null),
+    ...T(0, !isBlank(deep.accuracy_rules) ? `NEVER:\n${cap(fmt(deep.accuracy_rules, true), 1500)}` : null),
+    ...T(0, deepFooter(deep).length ? `Footer (append exactly):\n${deepFooter(deep).join('\n')}` : null),
+    ...T(0, cap(fmt(deep.business, true), 700)),
+    ...T(0, deepPhone(deep) ? `Phone: ${deepPhone(deep)}` : null),
+    ...T(0, deepAddress(deep) ? `Address: ${deepAddress(deep)}` : null),
+
+    ...T(1, unconfirmed ? `TRUST: ${deep.knowledge_scope} Treat unconfirmed items as unknown, never as fact.` : null),
+    ...T(1, typeof deep.sources?.source_rule === 'string' ? `SOURCING: ${deep.sources.source_rule}` : null),
+    ...T(1, (Array.isArray(rules) ? rules : []).length ? `SOURCING:\n${rules.slice(0, 4).map((r) => `- ${r}`).join('\n')}` : null),
+    ...T(1, cap(fmt(deep.writing_direction, true), 1700)),
+    ...T(1, cap(fmt(deep.caption_format, true), 1300)),
+    ...T(1, !isBlank(deep.missing_information) ? `STILL UNKNOWN (never invent): ${cap(fmt(deep.missing_information), 800)}` : null),
+    ...T(1, ppi.length ? `NEEDED INPUTS (omit any claim that depends on what is missing):\n${cap(ppi.join('\n'), 1100)}` : null),
+    ...T(1, houseStyleFor(deep)),
+
+    ...T(2, cap(fmt(deep.established_content_knowledge, true), 1500)),
+    ...T(2, cta.length ? `CTAs (pick one, reword): ${cta.join(' / ')}` : null),
+    ...T(2, (deep.suggested_hooks || []).length ? `Hook angles (vary, don't repeat): ${deep.suggested_hooks.slice(0, 5).join(' / ')}` : null),
+    ...T(2, tags.length ? `Hashtag bank (pick only tags that fit the current brief; no unrelated filler): ${tags.join(' ')}` : null),
+    ...T(2, deep.suggested_hashtag_bank?.conditional ? `Tag conditions: ${Object.entries(deep.suggested_hashtag_bank.conditional).map(([t, r]) => `${t} ${r}`).join('; ')}` : null),
+    ...T(2, campaignTags.length ? `Campaign-only tags (use ONLY when that offer/campaign is active): ${campaignTags.join(' ')}` : null),
+    ...T(2, typeof deep.suggested_hashtag_bank?.rule === 'string' ? `Tag rule: ${deep.suggested_hashtag_bank.rule}` : null),
+    ...T(2, (deep.seo_keyword_bank || []).length ? `SEO keywords: ${deep.seo_keyword_bank.slice(0, 9).join(', ')}` : null),
+    ...T(2, samples.length ? `STYLE EXAMPLES (match the energy, never copy facts):\n${cap(samples.join('\n'), 1400)}` : null),
+    // Per-category description frameworks are the newest research, so they must
+    // not be the first thing the budget discards.
+    ...extras.map((e) => ({ p: 2, text: cap(e, 900) })),
+
+    // Art direction, other platforms and the reel system barely change a
+    // caption, so they yield first when the pack runs long.
+    ...T(3, visual ? `VISUAL:\n${visual}` : null),
+    ...T(3, deep.content_playbook ? `PLAYBOOK:\n${fmt(deep.content_playbook, true)}` : null),
+    ...T(3, deep.carousel_and_reel_system ? `CAROUSEL AND REEL SYSTEM:\n${fmt(deep.carousel_and_reel_system, true)}` : null),
+    ...T(3, deep.other_output_modes ? `OTHER OUTPUT MODES:\n${fmt(deep.other_output_modes, true)}` : null),
+    ...T(3, ppiIntake.length ? `INTAKE CHECKLISTS (not caption copy):\n${cap(ppiIntake.join('\n'), 500)}` : null),
+    ...T(3, social ? `CHANNELS:\n${cap(social, 500)}` : null),
+    ...T(3, mem?.recent?.length ? `Approved voice — same energy, new words, never copy exactly: ${mem.recent.slice(-3).join(' | ').slice(0, 200)}` : null),
+  ];
+
+  // Caption prompts can support a substantially larger researched profile.
+  // Retain far more brand-specific evidence before dropping lower-priority
+  // sections; otherwise detailed records were truncated at roughly 14 KB.
+  const LIMIT = 48000;
+  let total = 0;
+  const kept = [];
+  let dropped = 0;
+  for (const tier of [0, 1, 2, 3]) {
+    for (const s of sections.filter((x) => x.p === tier)) {
+      if (total + s.text.length > LIMIT) { dropped++; continue; }
+      kept.push(s.text);
+      total += s.text.length;
+    }
+  }
+  if (dropped) kept.push(`(${dropped} lower-priority research section(s) omitted for length — ask the owner if something is missing.)`);
+  return kept.join('\n');
+}
+
+export function loadMemory() {
+  try {
+    return JSON.parse(fs.readFileSync(MEMORY_PATH, 'utf8'));
+  } catch {
+    return { version: 1, brands: {} };
+  }
+}
+
+const norm = (s) =>
+  String(s || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+// Score a query against one brand. Cheap local fuzzy match — costs 0 tokens.
+function scoreBrand(b, q) {
+  const query = norm(q);
+  if (!query) return 0;
+  const names = [b.name, b.id.replace(/_/g, ' '), ...(b.aliases || []), b.ig || ''].map(norm);
+  for (const n of names) {
+    if (!n) continue;
+    if (query === n) return 1000;
+    if (query.includes(n) && n.length > 3) return 500 + n.length;
+    if (n.includes(query) && query.length > 3) return 400 + query.length;
+  }
+  // token overlap fallback
+  const qt = new Set(query.split(' ').filter((t) => t.length > 2));
+  let hit = 0;
+  for (const n of names) for (const t of n.split(' ')) if (qt.has(t) && t.length > 3) hit += t.length >= 6 ? 30 : 10;
+  return hit;
+}
+
+// Find brand from free text (prompt, picked brand label, file name). Returns {brand, score} or null.
+// minScore is strictness: explicit brand picks use 20, but bare-brief
+// matches need 50+ — a weak token overlap must never inject another
+// brand's phone/footer into a published caption.
+export function resolveBrand(query, minScore = 20) {
+  const q = String(query || '').trim();
+  if (q.length < 2) return null;
+  let best = null;
+  let bestScore = 0;
+  let tied = false;
+  for (const b of loadBrands()) {
+    const s = scoreBrand(b, q);
+    if (s > bestScore) {
+      bestScore = s;
+      best = b;
+      tied = false;
+    } else if (s > 0 && s === bestScore) {
+      tied = true;
+    }
+  }
+  // threshold 20 avoids false positives on generic words like "salon"
+  // A generic category can score equally for several businesses. Returning
+  // the first one would silently attach the wrong voice and contact details.
+  if (!best || bestScore < minScore || tied) return null;
+  return { brand: best, score: bestScore };
+}
+
+export function searchBrands(q, limit = 8) {
+  const query = String(q || '').trim();
+  const all = loadBrands();
+  if (!query) return all.slice(0, limit).map((b) => ({ id: b.id, name: b.name }));
+  return all
+    .map((b) => ({ b, s: scoreBrand(b, query) }))
+    .filter((x) => x.s > 0)
+    .sort((a, b2) => b2.s - a.s)
+    .slice(0, limit)
+    .map((x) => ({ id: x.b.id, name: x.b.name, loc: x.b.loc }));
+}
+
+// Tiny per-brand pack injected into the LLM prompt (~200 tokens, not 40k).
+export function brandPack(brand) {
+  if (!brand) return '';
+  const mem = loadMemory().brands?.[brand.id];
+  const lines = [
+    `BRAND: ${brand.name} (${brand.cat || 'local brand'}${brand.loc ? `, ${brand.loc}` : ''})`,
+    brand.genres?.length ? `Genres: ${brand.genres.join(', ')}` : null,
+    brand.tone ? `Tone: ${brand.tone}` : null,
+    brand.lang ? `Language: ${brand.lang}` : null,
+    brand.cta?.length ? `CTA pick one: ${brand.cta.join(' / ')}` : null,
+    brand.avoid?.length ? `Never: ${brand.avoid.join('; ')}` : null,
+    brand.footer?.length ? `Footer (append exactly):\n${brand.footer.join('\n')}` : 'Footer: 💫 Managed by: @famebrosstudio',
+    brand.kw?.length ? `Hashtags: 3 only (1 brand + 2 topic). Keywords: [${brand.kw.slice(0, 6).join(', ')}]` : null,
+    brand.mandatory?.length ? `Must include: ${brand.mandatory.join('; ')}` : null,
+    brand.web ? `Website: ${brand.web}` : null,
+    brand.ready === 'needs_brand_identity' ? 'Identity incomplete: if the brief lacks product/subject, ask ONE short question instead of inventing.' : null,
+    brand.ex ? `Style example: ${brand.ex}` : null,
+    mem?.notes ? `Learned: ${String(mem.notes).slice(0, 200)}` : null,
+    mem?.recent?.length ? `Approved voice — same energy, new words, never copy exactly: ${mem.recent.slice(-3).join(' | ').slice(0, 200)}` : null,
+  ].filter(Boolean);
+  // A thin index record still gets the shared floor, so an unresearched brand
+  // is held to the same accuracy and craft standard as a fully researched one.
+  return `${lines.join('\n')}\n\n${houseStyleFor(null)}`;
+}
+
+// --- Brief breakdown: GOOD PROMPT = GOOD CAPTION, BAD PROMPT = plain answer.
+// Parses any brief into | BRAND | MOTIVE | WHEN | TYPE |, all locally, free.
+// Rich briefs get a structured breakdown the writer must honor; thin/nonsense
+// briefs are flagged WEAK so the model answers directly instead of forcing
+// structure onto garbage.
+const OFFER_RE = /(\d+\s*%|\boff\b|offer|discount|deal|free|gold|gift|first\s+\d+|only\s+\d+|launch|opening|new\s+(shop|store|branch|collection)|sale|combo|valid|expire|hurry|limited)/i;
+const WHEN_RE = /(before\s+\d+[a-z]*|after\s+\d+[a-z]*|till\s+[a-z0-9 ]+|valid[^.,;]*|first\s+\d+[^.,;]*|only\s+\d+[^.,;]*|ends[^.,;]*|today|tomorrow|this\s+week|this\s+month|\d+\s*(am|pm))/i;
+const FUNNY_RE = /(funny|comedy|comic|meme|skit|prank|bloopers|laugh|relatable|sarcasm)/i;
+const REVIEW_RE = /(review|feedback|testimonial|rating|customer\s+said|client\s+said|google\s+review)/i;
+const INFO_RE = /(tips?|guide|how\s+to|benefits?|why\s+|explained|awareness|myths?|facts?|did\s+you\s+know)/i;
+const SHOW_RE = /(transformation|makeover|reveal|before\s*(and|\/|-) *after|new\s+look|result|showcase|walkthrough|tour|photoshoot)/i;
+
+export function parseBrief(brief, brand) {
+  const b = String(brief || '');
+  const words = b.toLowerCase().split(/[^a-z]+/).filter((w) => w.length > 2);
+  const weak = b.trim().length < 15 || words.length < 3;
+  let motive = 'general post';
+  let type = 'standard: warm hook + detail + concrete CTA';
+  if (OFFER_RE.test(b)) {
+    const all = b.match(new RegExp(OFFER_RE.source, 'gi')) || [];
+    const best = all.find((x) => /\d/.test(x)) || all[0];
+    motive = `OFFER — ${best.trim()}`;
+    type = 'HYPE/OFFER: bold excited hook, exact terms, urgency, tag-a-friend CTA';
+  } else if (FUNNY_RE.test(b)) {
+    motive = 'entertainment';
+    type = 'FUNNY: one punchline from the reel, tag/share CTA, never insult';
+  } else if (REVIEW_RE.test(b)) {
+    motive = 'social proof';
+    type = 'REVIEW: use only the actual feedback given, faithful paraphrase';
+  } else if (INFO_RE.test(b)) {
+    motive = 'education';
+    type = 'INFORMATIONAL: one clear takeaway + save/enquiry CTA';
+  } else if (SHOW_RE.test(b)) {
+    motive = 'showcase';
+    type = 'SHOWCASE: describe the visible result with sensory words';
+  }
+  const when = (b.match(WHEN_RE)?.[0] || '').trim();
+  return {
+    brand: brand?.name || 'unknown',
+    motive,
+    when: when || 'no time limit stated',
+    type,
+    weak,
+  };
+}
+
+export function breakdownBlock(parsed) {
+  if (parsed.weak) {
+    return `\nBRIEF STATUS: WEAK — the prompt is thin or nonsense. Answer directly and briefly from exactly what was asked. Do not force hype, footer theater, or invented details. GOOD PROMPT = GOOD CAPTION, BAD PROMPT = plain direct output.`;
+  }
+  return `\nBRIEF BREAKDOWN (honor every slot):\n| BRAND = ${parsed.brand} | MOTIVE = ${parsed.motive} | WHEN/CONDITIONS = ${parsed.when} | TYPE = ${parsed.type} |`;
+}
+export function globalBrandRules() {
+  return [
+    'Write a specific hook and one useful detail when available. Use at most one fitting CTA. Follow user-selected length, tone and emoji settings. No em dash.',
+    'Use only the selected brand profile for brand-specific rules, facts, language and restrictions. Never apply another client\'s mandatory copy, phone number, claims, tone or campaign rule.',
+    'The server appends approved brand footers and formats Instagram hashtags/search phrases. Keep footer and metadata text out of the caption body. Celebrate an offer only when the current brief confirms it; never invent offer terms.',
+    'Never invent phone/address/price/offers/results/quotes. Omit unknown optionals; ask only if essential.',
+  ].join('\n');
+}
+
+// Save / upgrade memory WITHOUT any LLM call (file append, capped sizes).
+export function learnBrand(brandId, { assetHint, finalCaption, correction } = {}) {
+  const mem = loadMemory();
+  mem.brands = mem.brands || {};
+  const e = mem.brands[brandId] || { count: 0, recent: [] };
+  e.count += 1;
+  e.updatedAt = new Date().toISOString();
+  if (assetHint && !e.hints?.includes(assetHint)) {
+    e.hints = [...(e.hints || []), String(assetHint).slice(0, 120)].slice(-5);
+  }
+  if (finalCaption) {
+    const hook = String(finalCaption).split('\n')[0].slice(0, 120);
+    e.recent = [...(e.recent || []), hook].slice(-5);
+  }
+  if (correction) e.notes = String(correction).slice(0, 300);
+  // hard cap: keep file < ~20KB forever
+  mem.brands[brandId] = e;
+  const raw = JSON.stringify(mem);
+  if (raw.length < 25000) fs.writeFileSync(MEMORY_PATH, JSON.stringify(mem, null, 1));
+  return e;
+}
+
+// --- Auto-onboarding: unknown brands get stored + upgraded, zero LLM tokens.
+// Trigger: explicit brand label (picked/typed) that matches nothing. Topics,
+// creator names and one-off post briefs never create persistent brand records.
+const BIZ_WORDS = /(salon|lounge|studio|clinic|jewellers|jewels|clothing|apparel|boutique|furniture|interior|resort|hotel|motors|garage|hospital|dental|school|classes|footwear|sneakers|saree|tailor|dryfruits|bakery|cafe|restaurant|fitness|gym|spa|nails|tattoo|photography|decor|mart|store|bakers|cakes)/i;
+
+export function slugify(name) {
+  return String(name || '').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 48) || 'brand';
+}
+
+function extractPhones(text) {
+  const out = new Set();
+  const re = /(?:\+91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}/g;
+  let m;
+  while ((m = re.exec(String(text || '')))) {
+    const digits = m[0].replace(/\D/g, '').slice(-10);
+    if (digits.length === 10) out.add(`+91 ${digits.slice(0, 5)} ${digits.slice(5)}`);
+    if (out.size >= 2) break;
+  }
+  return [...out];
+}
+
+function candidateFromBrief(brief) {
+  const m = String(brief || '').match(/\b([A-Z][A-Za-z&'’]{1,24}(?:\s+[A-Z][A-Za-z&'’]{1,24}){0,3})\b/);
+  if (!m) return '';
+  const name = m[1].trim();
+  if (name.length < 4 || name.length > 48) return '';
+  if (!BIZ_WORDS.test(name)) return '';
+  return name;
+}
+
+// Main entry: returns {brand, isNew} or null when nothing brand-like found.
+// Creates brands/auto-<slug>.json deep file + custom index entry on first sight,
+// then upgrades topics/phones/hints on every later sighting. All local, free.
+export function ensureAutoBrand({ brandParam, brief, assetHint }) {
+  let name = String(brandParam || '').trim().slice(0, 60);
+  // Defense in depth: never create a persistent profile from a post topic.
+  if (!name) return null;
+  let via = 'label';
+  if (!name) {
+    name = candidateFromBrief(brief);
+    via = 'brief';
+  }
+  if (!name || name.length < 3) return null;
+  if (/^(instagram|facebook|youtube|post|reel|photo|video|offer|diwali|test|testing|demo|sample|example|trial|hello|abc|xyz|qwerty|asdf)$/i.test(name)) return null;
+  if (!/[a-zA-Z]{3,}/.test(name)) return null;
+
+  const custom = loadCustom();
+  const slug = slugify(name);
+  let entry = custom.find((c) => c.id === slug || norm(c.name) === norm(name));
+  const phones = extractPhones(`${brandParam} ${brief}`);
+  const topic = String(brief || '').split('\n')[0].slice(0, 120);
+
+  if (!entry) {
+    if (custom.length >= MAX_AUTO) return null;
+    entry = {
+      id: slug, name, aliases: [], cat: 'local brand', loc: '',
+      genres: [], tone: 'Warm, vivid, human', lang: '', cta: [],
+      avoid: [], kw: [name], footer: ['💫 Managed by: @famebrosstudio'],
+      mandatory: [], ex: '', ig: null, ready: '', auto: true, via,
+      count: 0, topics: [],
+    };
+    custom.push(entry);
+    try { saveCustom(custom); } catch {}
+    cache = null; // force matcher to see the newcomer immediately
+  }
+  entry.count = (entry.count || 0) + 1;
+  if (topic && !entry.topics?.includes(topic)) entry.topics = [...(entry.topics || []), topic].slice(-5);
+  try { saveCustom(custom); } catch {}
+
+  // Auto deep file: full detail shelf for this brand, upgraded each sighting.
+  const autoPath = path.join(DEEP_DIR, `auto-${slug}.json`);
+  let auto = null;
+  try { auto = JSON.parse(fs.readFileSync(autoPath, 'utf8')); } catch {}
+  if (!auto) {
+    auto = {
+      schema_version: 'auto-1', brand_id: slug, brand_name: name,
+      knowledge_scope: 'Auto-onboarded from live prompts. Facts below are observed, not owner-confirmed.',
+      business: { category: entry.cat, location_area: '' },
+      contact: { phone_display: null, full_address: null },
+      social_media: {},
+      master_brand_instruction: `Write as ${name}. Warm, vivid, human voice. Hook + supporting detail + concrete CTA, 2+ sentences. Append the agency footer, up to 3 relevant hashtags, one SEO bracket only when supported by the current topic. Never invent phone, address, prices or offers.`,
+      fixed_footer: { lines: ['💫 Managed by: @famebrosstudio'] },
+      seo_keyword_bank: [name],
+      cta_bank: { booking: [], save: ['Save this for later.'] },
+      suggested_hooks: [], suggested_hashtag_bank: { brand: [], location: [], topic: [] },
+      sample_caption: null, accuracy_rules: [], observed_briefs: [], confirmed: false,
+    };
+  }
+  if (phones.length && !auto.contact.phone_display) {
+    auto.contact.phone_display = phones[0]; // observed, unconfirmed until owner says so
+  }
+  if (topic && !(auto.observed_briefs || []).includes(topic)) {
+    auto.observed_briefs = [...(auto.observed_briefs || []), topic].slice(-8);
+    const words = topic.toLowerCase().split(/[^a-z]+/).filter((w) => w.length > 4 && !/^(with|from|that|this|your|hair|shop|store)$/.test(w)).slice(0, 3);
+    for (const w of words) {
+      const phrase = `${w} ${entry.cat === 'local brand' ? '' : ''}`.trim();
+      if (phrase && !auto.seo_keyword_bank.includes(phrase) && auto.seo_keyword_bank.length < 9) auto.seo_keyword_bank.push(phrase);
+    }
+    if (!auto.seo_keyword_bank.includes(name)) auto.seo_keyword_bank.unshift(name);
+  }
+  if (assetHint && !(auto.observed_assets || []).includes(assetHint)) {
+    auto.observed_assets = [...(auto.observed_assets || []), String(assetHint).slice(0, 120)].slice(-5);
+  }
+  try {
+    const raw = JSON.stringify(auto);
+    if (raw.length < 12000) fs.writeFileSync(autoPath, JSON.stringify(auto, null, 1));
+  } catch {}
+  deepCache = null; // new/changed shelf file must be visible immediately
+  // learning memory counts it too
+  try { learnBrand(slug, { assetHint: assetHint || topic }); } catch {}
+  return { brand: { ...entry, kw: auto.seo_keyword_bank?.length ? auto.seo_keyword_bank : entry.kw }, isNew: entry.count <= 1, auto };
+}

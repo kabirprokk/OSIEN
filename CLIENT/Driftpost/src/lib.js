@@ -1,0 +1,742 @@
+import { getSupabase, pokeSession } from './session.js';
+import { buildScheduleForm } from './scheduleForm.js';
+import { AI_ACCESS_HEADER, readAiGrantForAccessToken } from './ai-access.js';
+
+const apiUrlRaw = import.meta.env.VITE_API_URL;
+export const apiUrl = apiUrlRaw?.replace(/\/$/, '') || '';
+const useVercelApiProxy = typeof window !== 'undefined' && /(^|\.)vercel\.app$/i.test(window.location.hostname);
+let publishApiWarmPromise = null;
+let publishApiWarmUntil = 0;
+let publishApiWarmBlockedUntil = 0;
+export function apiRequestUrl(path) {
+  // The API has an explicit CORS allowlist for the deployed Vercel origin.
+  // Call it directly so Vercel's rewrite/gateway cannot add a second failure
+  // or rate-limit layer in front of Render. Keep same-origin fallback only
+  // when VITE_API_URL was not configured at build time.
+  if (apiUrl) return `${apiUrl}${path}`;
+  return useVercelApiProxy ? `${window.location.origin}${path}` : path;
+}
+
+// Optional server-backed brand list with safe fallback.
+// Keeps current behaviour identical when the API is unreachable.
+let brandsCache = null;
+let brandsCacheTime = 0;
+const BRAND_CACHE_MS = 5 * 60 * 1000;
+
+export async function fetchBrands(token) {
+  try {
+    const now = Date.now();
+    if (brandsCache && (now - brandsCacheTime) < BRAND_CACHE_MS) return brandsCache;
+    if (!apiUrl || !token) return ACTIVE_BRANDS;
+    const res = await fetch(apiRequestUrl('/api/ai/brands'), {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data.brands) && data.brands.length) {
+        brandsCache = data.brands;
+        brandsCacheTime = now;
+        return brandsCache;
+      }
+    }
+  } catch {}
+  return ACTIVE_BRANDS;
+}
+
+export function invalidateBrandsCache() {
+  brandsCache = null;
+  brandsCacheTime = 0;
+}
+
+export const PLATFORMS = [
+  { id: 'youtube', name: 'YouTube', hint: 'Video + title required' },
+  { id: 'instagram', name: 'Instagram', hint: 'Photo(s) or reel + caption' },
+  { id: 'facebook', name: 'Facebook', hint: 'Text, photo(s) or video' },
+  { id: 'x', name: 'X', hint: '280 characters max' },
+];
+
+// One-tap trio: the 3 jeweller brands that always post together.
+// Matched by substring so "(Kurla)/(Chembur)/(Ghatla)" suffixes still hit.
+export const TRIO_BRANDS = [
+  'Shree Mahalaxmi Jewellers',
+  'Kanchanmala Jewellers',
+  'Mahalaxmi Jewellers',
+];
+
+export function findTrioBrands(brands) {
+  const norm = (s) => String(s || '').toLowerCase();
+  // Longest names first so "Shree Mahalaxmi" wins over plain "Mahalaxmi".
+  const sorted = [...TRIO_BRANDS].sort((a, b) => b.length - a.length);
+  const out = [];
+  const taken = new Set();
+  for (const name of sorted) {
+    const hit = (brands || []).find((b) => !taken.has(b.key) && norm(b.label).includes(norm(name)));
+    if (hit) { out.push({ name, brand: hit }); taken.add(hit.key); }
+  }
+  return out;
+}
+
+// Active client brands. Connections matching these get an "Active" badge;
+// everything else can be hidden so inactive accounts stay out of the way.
+export const ACTIVE_BRANDS = [
+  'Hair Match Salon', 'Velvet Salon', 'UNS Creation', 'Reshine Clinic', 'AK Factor',
+  'Vivid Resort', 'Cocos Inn Resort', 'SK Furniture', 'Shree Mahalaxmi Jewellers (Kurla)',
+  'Kanchanmala Jewellers (Chembur)', 'Mahalaxmi Jewellers (Ghatla)', 'Synergic Interior',
+  'Ali Salon', 'Jolly Tailor', 'Pardesi Sneakers', 'VJ Jewels', 'Charan Singh Sapra',
+  'Roopali Saree', 'MAP Clothing', 'Luxxe Nail Studio', 'Bhanu Designer', 'Smietz Beauty Hub',
+  'Carrara Trouser Manufacturer', 'Rajlaxmi Jewellers (Sangli)', 'Devi & Company (Kanpur)',
+  'Hazel Dryfruits', 'The Creamy Layer', 'Zam Zam Motors', 'Avnikk Collection',
+  'Laxya Lel Fitness', 'Qash Makeover', 'Asma Women Clothing', 'Paak Pehnawa Mens',
+  'Pixi Grow', 'Sarang Hospital', 'GS Shetty School Bhandup', 'Seven Cube Footwear',
+  'Sarama Furniture', 'OLVKIIXK', 'Anand Furniture',
+];
+
+export const normalizeSearchText = (s) => String(s || '')
+  .normalize('NFKD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .toLowerCase()
+  .replace(/[^a-z0-9]+/g, ' ')
+  .replace(/\s+/g, ' ')
+  .trim();
+
+// Shared forgiving search for names, handles, and platform labels. Every
+// query word may appear in any order, and punctuation such as @ and . is
+// treated the same in both the query and the connected-account value.
+export function matchesSearchText(query, ...values) {
+  const needle = normalizeSearchText(query);
+  if (!needle) return true;
+  const entries = values.flat(Infinity).map(normalizeSearchText).filter(Boolean);
+  const terms = needle.split(' ').filter(Boolean);
+  if (terms.every((term) => entries.some((entry) => entry.includes(term)))) return true;
+  const compactNeedle = needle.replace(/\s/g, '');
+  return !!compactNeedle && entries.some((entry) => entry.replace(/\s/g, '').includes(compactNeedle));
+}
+const norm = normalizeSearchText;
+
+export function isActiveBrand(accountName) {
+  const a = norm(accountName);
+  if (!a) return false;
+  return ACTIVE_BRANDS.some((b) => {
+    const n = norm(b);
+    return a.includes(n) || n.includes(a);
+  });
+}
+
+const STOP = new Set(['for', 'the', 'and', 'of']);
+const TOKENS = (s) => norm(s).split(' ').filter((t) => t.length >= 3 && !STOP.has(t));
+
+// Edit distance for typo tolerance ("reshinee" vs "reshine",
+// missing dots/underscores). Only used on long handles.
+function lev(a, b) {
+  if (a === b) return 0;
+  const m = a.length, n = b.length;
+  if (!m) return n;
+  if (!n) return m;
+  let prev = new Array(n + 1);
+  let cur = new Array(n + 1);
+  for (let j = 0; j <= n; j++) prev[j] = j;
+  for (let i = 1; i <= m; i++) {
+    cur[0] = i;
+    const ca = a[i - 1];
+    for (let j = 1; j <= n; j++) {
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (ca === b[j - 1] ? 0 : 1));
+    }
+    const tmp = prev; prev = cur; cur = tmp;
+  }
+  return prev[n];
+}
+
+// Similarity between two account names across platforms (page name vs IG handle etc).
+// Exact / substring / handle matches run FIRST so short-word brands
+// ("MAP for men" vs "@map_for_men") never fall through the token guard.
+// `rare` = tokens used by few accounts: sharing one is strong evidence
+// ("map"), sharing a common one ("salon") is weak — scored accordingly.
+export function brandScore(a, b, rare = null) {
+  const na = norm(a);
+  const nb = norm(b);
+  if (!na || !nb) return 0;
+  if (na.includes(nb) && nb.length > 4) return 100;
+  if (nb.includes(na) && na.length > 4) return 100;
+  // Spaceless comparison: "@famebrosstudio" must equal "Famebros Studio".
+  const fa = na.replace(/ /g, '');
+  const fb = nb.replace(/ /g, '');
+  if (fa === fb && fa.length > 3) return 100;
+  if (fa.includes(fb) && fb.length > 5) return 90;
+  if (fb.includes(fa) && fa.length > 5) return 90;
+  // Near-identical long handles: typos, missing dots ("reshinee" vs
+  // "reshine"). Scores 80 — below exact tiers, above fuzzy word scores.
+  if (fa.length >= 8 && fb.length >= 8 && Math.abs(fa.length - fb.length) <= 2) {
+    const allow = Math.max(1, Math.min(2, Math.floor(Math.min(fa.length, fb.length) * 0.12)));
+    if (lev(fa, fb) <= allow) return 80;
+  }
+  const ta = TOKENS(a);
+  const tb = TOKENS(b);
+  if (!ta.length || !tb.length) return 0;
+  let score = 0;
+  let bonusUsed = false;
+  const seen = new Set();
+  for (const t of ta) {
+    if (seen.has(t) || !tb.includes(t)) continue;
+    seen.add(t);
+    score += 10;
+    if (!bonusUsed && rare && rare.has(t)) { score += 20; bonusUsed = true; }
+  }
+  return score;
+}
+
+// Group connections into brands. Anchors in priority order: a Facebook page
+// first (agency thinks in pages), then leftover Instagram accounts, then
+// leftover YouTube ones. X never anchors — it only joins. So IG+X (or YT+X)
+// of one business form ONE brand instead of lonely single-platform rows,
+// while page-first matching is preserved whenever a page exists.
+export function groupBrands(connections) {
+  const byPlat = {};
+  connections.forEach((c) => { (byPlat[c.platform] = byPlat[c.platform] || []).push(c); });
+  // Rare-word set: tokens used by few accounts ("map") prove sameness;
+  // tokens everywhere ("salon") prove nothing. Recomputed per grouping.
+  const df = new Map();
+  connections.forEach((c) => {
+    new Set(TOKENS(c.account_name)).forEach((t) => df.set(t, (df.get(t) || 0) + 1));
+  });
+  const rareLimit = Math.max(2, Math.ceil(connections.length * 0.1));
+  const rare = new Set([...df].filter(([, d]) => d <= rareLimit).map(([t]) => t));
+  const used = new Set();
+  const brands = [];
+  const anchorOrder = ['facebook', 'instagram', 'youtube'];
+  const joinable = {
+    facebook: ['instagram', 'youtube', 'x'],
+    instagram: ['youtube', 'x'],
+    youtube: ['x'],
+  };
+  for (const a of anchorOrder) {
+    for (const anchor of byPlat[a] || []) {
+      if (brands.some((b) => b.map[a] === anchor.id)) continue;
+      brands.push({ key: `${a}:${anchor.id}`, label: anchor.account_name, map: { [a]: anchor.id } });
+    }
+  }
+  const claimedBy = new Map();
+  // Two passes so a sure match always beats a fuzzy one: an exact handle
+  // can never be stolen by another account that only vaguely resembles it.
+  // FB-seeded brands pick first (seed order), preserving page priority.
+  const tryMatch = (min) => {
+    for (const brand of brands) {
+      const anchorPlat = Object.keys(brand.map)[0];
+      for (const p of joinable[anchorPlat] || []) {
+        if (brand.map[p]) continue;
+        let best = null;
+        let bestScore = 0;
+        // Meta's OAuth gives us the definitive Page ↔ Instagram relationship.
+        // Prefer that over name similarity so different handles/Page labels
+        // still appear as one business account group.
+        if (anchorPlat === 'facebook' && p === 'instagram') {
+          const page = connections.find((c) => c.id === brand.map.facebook);
+          best = (byPlat.instagram || []).find((c) => !used.has(c.id)
+            && String(c.linked_page_id || '') === String(page?.platform_account_id || '')) || null;
+          if (best) bestScore = 100;
+        }
+        for (const c of byPlat[p] || []) {
+          if (best) break;
+          if (used.has(c.id)) continue;
+          const s = brandScore(brand.label, c.account_name, rare);
+          if (s > bestScore) { bestScore = s; best = c; }
+        }
+        // Threshold 30: exact/substring/handle matches (90–100) always pass;
+        // fuzzy word matches need a rare shared word (10 + 20 bonus).
+        // Generic single words ("salon") score 10 and never merge businesses.
+        if (best && bestScore >= min) { brand.map[p] = best.id; used.add(best.id); claimedBy.set(best.id, brand); }
+      }
+    }
+  };
+  tryMatch(90);
+  tryMatch(30);
+  // Dissolve hollow seeds: an anchor claimed by a stronger brand leaves
+  // behind an empty single-account row — drop it so the account shows once,
+  // under its real brand, with all linked platforms.
+  const alive = brands.filter((b) => {
+    const ids = Object.values(b.map);
+    if (ids.length > 1) return true;
+    const by = claimedBy.get(ids[0]);
+    return !by || by === b;
+  });
+  for (const c of byPlat.x || []) {
+    if (!used.has(c.id)) alive.push({ key: `x:${c.id}`, label: c.account_name, map: { x: c.id } });
+  }
+  alive.sort((a, b) => a.label.localeCompare(b.label));
+  return alive;
+}
+
+// Queue a post for the server to publish later. Media rides along as
+// multipart so the worker can rebuild the exact upload at fire time.
+export async function schedulePost(token, options) {
+  const form = buildScheduleForm(options);
+  const res = await fetch(apiRequestUrl('/api/schedule', 'POST'), {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    body: form,
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(friendlyErrorMessage(data.error || 'Could not schedule the post', { status: res.status, action: 'schedule this post' }));
+  return data.schedule;
+}
+
+export async function submitCampaign(token, { targets, caption, title = '', name = '', when = '', publishNow = false }) {
+  const form = new FormData();
+  const shapedTargets = targets.map(({ connection, files }, index) => {
+    const mediaField = `media_${index}`;
+    for (const file of files || []) form.append(mediaField, file, file.name);
+    return { connection_id: connection.id, platform: connection.platform, media_field: mediaField };
+  });
+  form.append('targets', JSON.stringify(shapedTargets));
+  form.append('caption', caption);
+  form.append('title', title);
+  form.append('campaign_name', name);
+  if (publishNow) form.append('mode', 'now');
+  else if (when) form.append('scheduled_at', new Date(when).toISOString());
+  const path = '/api/schedules/campaign';
+  const { res, data } = await fetchWithAuth(apiRequestUrl(path, 'POST'), token, { method: 'POST', body: form });
+  if (!res.ok) throw new Error(friendlyErrorMessage(data.error || 'Could not submit campaign', { status: res.status, action: 'submit this campaign' }));
+  return data;
+}
+
+// Resolve an Instagram account by username through Meta, so the collaborator
+// picker can offer accounts that are not connected to Driftpost. Meta matches
+// an exact handle only — `query` is the handle as typed, not a prefix. An
+// empty list is a normal answer (unknown, personal or age-gated account).
+export const searchInstagramCollaborators = (token, { connectionId = '', query = '' } = {}) => {
+  const handles = [...new Set(String(query || '')
+    .split(/[\s,;]+/)
+    .map((name) => name.trim().replace(/^@+/, ''))
+    .filter(Boolean))].slice(0, 5);
+  if (!handles.length) return Promise.resolve([]);
+  const params = new URLSearchParams({ q: handles.join(',') });
+  if (connectionId) params.set('connection_id', connectionId);
+  return api(`/api/instagram/collaborators?${params}`, token).then((d) => d.results || (d.accounts || []).map((account) => ({ username: account.username, account, reason: 'ok' })));
+};
+
+export const listSchedules = (token, range = {}) => {
+  const params = new URLSearchParams();
+  if (range.from) params.set('from', range.from);
+  if (range.to) params.set('to', range.to);
+  if (range.history) params.set('history', '1');
+  const query = params.toString();
+  return api(`/api/schedules${query ? `?${query}` : ''}`, token).then((d) => d.schedules || []);
+};
+export const cancelSchedule = (token, id) => api(`/api/schedules/${id}`, token, { method: 'DELETE' });
+export const moveSchedule = (token, id, when) => api(`/api/schedules/${id}`, token, { method: 'PATCH', body: JSON.stringify({ scheduled_at: when }) });
+
+// Fresh start after posting: wipes the finished post's content (media,
+// prompt, outputs, per-card review/account choices, done flags) and returns
+// to Stage 1. Account setup, groups, style prefs and the user-scoped cross-post choice
+// AI answer cache survive. Only the given user's media vault entry is
+// dropped — never the whole vault (shared browsers hold several users).
+export async function resetPostState(userId) {
+  const DROP = ['driftpost-stage2-done', 'driftpost-stage1-done', 'driftpost-stage1-brand-accounts'];
+  const DROP_USER = ['driftpost-stage2-brief', 'driftpost-stage2-outputs', 'driftpost-stage2-tone', 'driftpost-stage2-emoji', 'driftpost-stage2-length', 'driftpost-stage2-analysis', 'driftpost-stage3-cfg', 'driftpost-stage3-reviewed', 'driftpost-stage3-accounts'].map((key) => `${key}:${userId}`);
+  try {
+    const rm = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && (DROP.includes(k) || DROP_USER.includes(k))) rm.push(k);
+    }
+    rm.forEach((k) => localStorage.removeItem(k));
+    localStorage.setItem('driftpost-stage', '1');
+  } catch {}
+  if (!userId) return;
+  try { localStorage.removeItem(`driftpost-media-uploads:${userId}`); } catch {}
+  try {
+    const db = await new Promise((res, rej) => {
+      const r = indexedDB.open('driftpost-stage2', 1);
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    });
+    await new Promise((res) => {
+      try {
+        const tx = db.transaction('media', 'readwrite');
+        tx.objectStore('media').delete(`driftpost-stage2-media:${userId}`);
+        tx.oncomplete = res; tx.onerror = res;
+      } catch { res(); }
+    });
+    db.close();
+  } catch {}
+}
+
+// A dead server answers nothing at all (the browser reports it as a CORS
+// or network failure) — say what it actually means instead of passing the
+// cryptic text through.
+const DOWN_MSG = 'Server is unreachable — it may be waking up. Wait a minute and retry.';
+const isNetworkFail = (e) => e?.name === 'TypeError'
+  || /Failed to fetch|Network request failed|NetworkError|Load failed/i.test(String(e?.message || ''));
+
+// Keep raw provider/parser details out of the UI while preserving Driftpost's
+// useful field-validation messages.
+export function friendlyErrorMessage(message, { status = 0, action = 'complete this request' } = {}) {
+  const text = String(message || '').trim();
+  const lower = text.toLowerCase();
+  // Platform OAuth tokens are separate from the Driftpost login session.
+  // Reconnecting the social account is the fix; signing in again won't help.
+  if (/token has been expired or revoked|error validating access token|oauthexception|invalid oauth access token|access token.*expired|session has expired.*facebook|session has expired.*instagram/.test(lower)) {
+    return 'This social account’s connection has expired. Open Accounts, reconnect the affected Facebook or Instagram account, then retry the post.';
+  }
+  if (/badformat|failed to decode audio|unsupported.*audio|audio.*format/.test(lower)) {
+    return 'Speech analysis could not read this video’s audio format. Your captions were still generated from the prompt and video frames. Use a video with a supported audio track, or turn off speech analysis.';
+  }
+  if (/failed to parse the request body as json|unexpected end of hex escape/.test(lower)) {
+    return 'The caption service could not read part of the selected text or media. Re-select the media and try again.';
+  }
+  if (/^this prompt names .+, but the selected account is .+\./i.test(text)) {
+    return `Your prompt mentions a different brand than the selected account. ${text}`;
+  }
+  const captionQualityIssue = /^caption quality check:\s*(instagram|facebook|youtube|x) (has no useful caption body|mentions another brand|title is missing or too long|exceeds 280 characters)/i.exec(text);
+  if (captionQualityIssue?.[2].toLowerCase().startsWith('mentions another brand')) {
+    return `Generation stopped because the ${captionQualityIssue[1]} draft included another business name. Keep the prompt focused on the selected business, then generate again.`;
+  }
+  if (captionQualityIssue) {
+    if (/title is missing|exceeds 280/i.test(captionQualityIssue[2])) {
+      return `The ${captionQualityIssue[1]} draft did not meet its platform limits. Try generating again with a shorter, clearer brief.`;
+    }
+    return `The AI returned an incomplete ${captionQualityIssue[1]} draft. Simplify the prompt or switch Media Analyzer to Fast captions, then try again.`;
+  }
+  if (/^ai key rejected\b/i.test(text)) {
+    return 'Caption generation is not configured correctly on the server. Please contact support and include the time of the error.';
+  }
+  if (/^ai out of credits\b/i.test(text)) {
+    return 'Caption generation is temporarily unavailable because the AI provider account has no credits. Please contact the Driftpost administrator.';
+  }
+  if (/^ai failed:\s*\w+ error 400\b/i.test(text)) {
+    return 'The AI provider rejected this caption request. If you attached a video or photos, switch Media Analyzer to Fast and retry; if it continues, the server AI model configuration needs checking.';
+  }
+  if (status === 401 || /session expired|invalid jwt|token expired/i.test(lower)) {
+    return 'Your session has expired. Sign in again, then retry.';
+  }
+  if (status === 413 || /entity too large|payload too large/.test(lower)) {
+    return 'This upload is too large for the selected action. Choose a smaller file and try again.';
+  }
+  if (status === 429 || /too many requests|rate limit/.test(lower)) {
+    return 'Driftpost is receiving too many requests right now. Wait a moment and try again.';
+  }
+  if (status >= 500 || /^server error$|internal server error|stack trace|uncaught exception|\bat [\w./\\:-]+:\d+:\d+/.test(text)) {
+    return `Driftpost couldn’t ${action}. Please try again; if it continues, contact support.`;
+  }
+  return text || `Driftpost couldn’t ${action}. Please try again.`;
+}
+
+// One shared refresh flight: ten 401s at once trigger exactly one token
+// refresh, and every waiter replays with the same fresh token.
+let refreshInflight = null;
+async function settleWithin(promise, ms, fallback = null) {
+  let timer;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise((resolve) => { timer = setTimeout(() => resolve(fallback), ms); }),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+async function freshToken() {
+  try {
+    if (!refreshInflight) {
+      refreshInflight = (async () => {
+        const client = await getSupabase();
+        if (!client) return null;
+        const { data, error } = await client.auth.refreshSession();
+        if (error || !data?.session?.access_token) return null;
+        try { pokeSession(); } catch {}
+        return data.session.access_token;
+      })().finally(() => { refreshInflight = null; });
+    }
+    return await refreshInflight;
+  } catch {
+    return null;
+  }
+}
+
+// Last-resort diagnosis when even a fresh token is rejected: ask the login
+// provider directly whether this browser's login is valid.
+// Provider says YES + server says 401 = the server's login keys don't match
+// the app (re-login can never fix that — server env needs fixing).
+// Provider says NO = the login is genuinely dead (re-login fixes it).
+async function terminalAuthError() {
+  try {
+    const client = await getSupabase();
+    if (client) {
+      const result = await settleWithin(client.auth.getUser(), 4000, null);
+      const { data, error } = result || {};
+      if (!error && data?.user) {
+        return new Error('Server is rejecting a valid login — the server login keys need fixing. Tell support and keep this screenshot.');
+      }
+    }
+  } catch {}
+  return new Error('Session expired — sign out and sign in again.');
+}
+
+// Seconds until this JWT expires (0 = unreadable — don't guess).
+const expOf = (t) => {
+  try {
+    const p = JSON.parse(atob(String(t || '').split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+    return Number(p.exp) || 0;
+  } catch { return 0; }
+};
+// Pre-flight: a token dying within 60s (or already dead) is swapped BEFORE
+// the request — a 400MB upload can outlive the token it started with, and
+// every poll after that would 401 one by one.
+async function ensureFresh(token) {
+  if (!token) return token;
+  const exp = expOf(token);
+  if (!exp || exp * 1000 > Date.now() + 60000) return token;
+  try {
+    // A stalled Supabase refresh must not keep account screens on their
+    // loading state before the API request's own timeout can begin.
+    const f = await settleWithin(freshToken(), 5000, null);
+    return f || token;
+  } catch { return token; }
+}
+
+export async function api(path, token, options = {}) {
+  // Every request carries a timeout so a cold/sleeping server can never hang
+  // a button forever. Safe GETs get one transparent retry (no side effects);
+  // writes fail fast with a plain message instead of hanging.
+  // A 401 replays exactly once with a freshly-refreshed login token first —
+  // the rejected attempt never reached any route, so replays are safe.
+  const method = String(options.method || 'GET').toUpperCase();
+  const call = async (t, timeoutMs) => {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+    try {
+      const requestUrl = apiRequestUrl(path, method);
+      const res = await fetch(requestUrl, {
+        ...options,
+        signal: ctrl.signal,
+        headers: {
+          ...(options.headers || {}),
+          Authorization: `Bearer ${t}`,
+          ...(path.startsWith('/api/ai/') && readAiGrantForAccessToken(t)
+            ? { [AI_ACCESS_HEADER]: readAiGrantForAccessToken(t) }
+            : {}),
+          ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
+        },
+      });
+      const ct = res.headers.get('content-type') || '';
+      if ([502, 503, 504].includes(res.status)) {
+        // Our API returns structured errors for upstream integrations (music,
+        // Meta, etc.). Preserve those instead of mislabeling every 502 as a
+        // Render cold start. Render gateway pages are HTML and keep the wakeup
+        // guidance below.
+        const payload = ct.includes('json') ? await res.json().catch(() => ({})) : {};
+        const err = new Error(payload.error || 'Server is waking up — retrying shortly.');
+        err.status = res.status;
+        throw err;
+      }
+      // A same-origin index.html fallback (wrong API URL) is HTML, not JSON
+      // — say so plainly instead of dying downstream with no message.
+      if (!ct.includes('json')) throw new Error('API unreachable — check your connection and try again.');
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 401) {
+        const err = new Error(friendlyErrorMessage(data.error || 'Session expired', { status: res.status, action: 'continue' }));
+        err.status = 401;
+        throw err;
+      }
+      if (!res.ok) {
+        const action = path === '/api/ai/captions' ? 'generate captions' : path.startsWith('/api/publish') ? 'publish this post' : path.startsWith('/api/schedule') ? 'schedule this post' : 'complete this request';
+        const err = new Error(friendlyErrorMessage(data.error || 'Request failed', { status: res.status, action }));
+        err.status = res.status;
+        if (res.status >= 500 && data.errorId) {
+          err.message = `${err.message} Reference: ${String(data.errorId).slice(0, 16)}.`;
+        }
+        const retryAfter = Number(res.headers.get('retry-after') || res.headers.get('ratelimit-reset'));
+        if (retryAfter > 0) err.retryAfterMs = Math.min(60000, retryAfter * 1000);
+        throw err;
+      }
+      return data;
+    } catch (e) {
+      if (e?.status === 401) throw e;
+      if (e?.name === 'AbortError') throw new Error(path === '/api/ai/captions' ? 'Caption analysis timed out. Retry once; long videos can take more time to transcribe.' : 'Server is waking up — try again in a few seconds.');
+      if (isNetworkFail(e)) throw new Error(DOWN_MSG);
+      throw e;
+    } finally {
+      clearTimeout(timer);
+    }
+  };
+  const invoke = async (t) => {
+    try {
+      return await call(t, path === '/api/ai/captions' ? 30 * 60 * 1000 : 25000);
+    } catch (e) {
+      if (e?.status === 401) throw e;
+      const isJobPoll = path.startsWith('/api/jobs/');
+      const retryable = method === 'GET' && !isJobPoll && /waking up/i.test(e.message || '');
+      if (!retryable) throw e;
+      await new Promise((r) => setTimeout(r, 1500));
+      return call(t, 30000);
+    }
+  };
+  try {
+    return await invoke(await ensureFresh(token));
+  } catch (e) {
+    if (e?.status !== 401 || !token) throw e;
+    const fresh = await settleWithin(freshToken(), 5000, null);
+    if (!fresh || fresh === token) throw await terminalAuthError();
+    try {
+      return await invoke(fresh);
+    } catch (e2) {
+      if (e2?.status === 401) throw await terminalAuthError();
+      throw e2;
+    }
+  }
+}
+
+// Raw fetch with the same auth resilience (for FormData posts that need the
+// raw response). Returns { res, data, refreshedToken? }.
+// The timeout scales with the upload size — a 400MB video can never make a
+// 30s budget on a normal connection, so the budget is ~0.5MB/s + 30s
+// headroom, capped at 15 minutes. Slow uploads fail as "too slow", never as
+// a misleading "waking up".
+export async function fetchWithAuth(url, token, init = {}) {
+  const { onUploadProgress, ...rest } = init;
+  const bodyBytes = (() => {
+    try {
+      let n = 0;
+      const b = rest.body;
+      if (b && typeof b.entries === 'function') {
+        for (const [, v] of b.entries()) if (v && typeof v.size === 'number') n += v.size;
+      }
+      return n;
+    } catch { return 0; }
+  })();
+  const budget = Math.min(900000, 30000 + Math.round((bodyBytes / (512 * 1024)) * 1000));
+  // Use the configured API directly for all requests. This avoids Vercel's
+  // proxy limits and gives the browser the Render API's real status/headers.
+  const parsedUrl = new URL(url, window.location.href);
+  const requestPath = `${parsedUrl.pathname}${parsedUrl.search}`;
+  const requestUrl = apiUrl ? url : apiRequestUrl(requestPath);
+  // Only direct large uploads need a warm-up (proxy requests already avoid
+  // browser CORS). Share the probe across grouped account posts, contact
+  // Render directly, and stop immediately on 429 so a failed warm-up cannot
+  // create a request storm through the frontend proxy.
+  const warmApi = async () => {
+    if (Date.now() < publishApiWarmUntil) return;
+    if (publishApiWarmPromise) return publishApiWarmPromise;
+    if (Date.now() < publishApiWarmBlockedUntil) {
+      throw new Error('Publishing server is temporarily unavailable or rate-limiting requests. Wait a minute, then retry.');
+    }
+    publishApiWarmPromise = (async () => {
+      const healthUrl = new URL('/health', url).toString();
+      for (let attempt = 0; attempt < 4; attempt++) {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 12000);
+        try {
+          const res = await fetch(healthUrl, { method: 'GET', cache: 'no-store', signal: ctrl.signal });
+          if (res.status === 429) {
+            const retryAfter = Math.max(1, Number(res.headers.get('retry-after') || 30));
+            publishApiWarmBlockedUntil = Date.now() + Math.min(60000, retryAfter * 1000);
+            throw new Error('Publishing server is rate-limiting requests. Wait before retrying; your post was not sent.');
+          }
+          const contentType = res.headers.get('content-type') || '';
+          if (res.ok && contentType.includes('json')) {
+            const health = await res.json().catch(() => null);
+            if (health?.ok) {
+              publishApiWarmUntil = Date.now() + 60000;
+              publishApiWarmBlockedUntil = 0;
+              return;
+            }
+          } else if (![502, 503, 504].includes(res.status)) {
+            throw new Error(`Publishing server health check failed (${res.status}).`);
+          }
+        } catch (error) {
+          if (/rate-limiting|health check failed/i.test(error?.message || '')) throw error;
+        } finally {
+          clearTimeout(timer);
+        }
+        if (attempt < 3) await new Promise((resolve) => setTimeout(resolve, 5000 * (attempt + 1)));
+      }
+      publishApiWarmBlockedUntil = Date.now() + 15000;
+      throw new Error('Publishing server is unavailable. Wait a minute and retry; your post was not sent.');
+    })();
+    try {
+      return await publishApiWarmPromise;
+    } finally {
+      publishApiWarmPromise = null;
+    }
+  };
+  // Upload phase progress needs XHR (fetch exposes download progress only).
+  // The browser fires upload events as bytes leave — mapped to the first 15%.
+  const xhrPost = (t) => new Promise((resolve, reject) => {
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', requestUrl);
+      xhr.setRequestHeader('Authorization', `Bearer ${t}`);
+      if (xhr.upload && onUploadProgress) {
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable && e.total > 0) {
+            onUploadProgress(Math.max(0, Math.min(1, e.loaded / e.total)));
+          }
+        };
+      }
+      xhr.onload = () => {
+        const ct = xhr.getResponseHeader('content-type') || '';
+        let data = {};
+        try { data = ct.includes('json') ? JSON.parse(xhr.responseText || '{}') : {}; } catch {}
+        if (xhr.status === 401) {
+          const err = new Error(data.error || 'Session expired');
+          err.status = 401;
+          reject(err);
+          return;
+        }
+        resolve({ res: { ok: xhr.status >= 200 && xhr.status < 300, status: xhr.status }, data });
+      };
+      xhr.onerror = () => reject(new Error(DOWN_MSG));
+      xhr.send(rest.body || null);
+    } catch (e) { reject(e); }
+  });
+  const doPost = async (t, timeoutMs) => {
+    if (onUploadProgress) {
+      if (requestUrl === url) await warmApi();
+      return xhrPost(t);
+    }
+    const ctrl = new AbortController();
+    // File uploads are never aborted — a big video takes what it takes.
+    // Plain JSON posts keep the timeout so a dead server can't hang a button.
+    const timer = bodyBytes > 0 ? null : setTimeout(() => ctrl.abort(), timeoutMs);
+    try {
+      const res = await fetch(requestUrl, {
+        ...rest,
+        signal: ctrl.signal,
+        headers: { ...(rest.headers || {}), Authorization: `Bearer ${t}` },
+      });
+      const ct = res.headers.get('content-type') || '';
+      const data = ct.includes('json') ? await res.json().catch(() => ({})) : {};
+      if (res.status === 401) {
+        const err = new Error(data.error || 'Session expired');
+        err.status = 401;
+        throw err;
+      }
+      return { res, data };
+    } catch (e) {
+      if (e?.status === 401) throw e;
+      if (e?.name === 'AbortError') {
+        throw new Error(timeoutMs > 60000
+          ? 'Upload timed out — the file is too big for this connection. Try a smaller file or faster network.'
+          : 'Server is waking up — try again in a few seconds.');
+      }
+      if (isNetworkFail(e)) throw new Error(DOWN_MSG);
+      throw e;
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  };
+  try {
+    return await doPost(await ensureFresh(token), budget);
+  } catch (e) {
+    if (e?.status !== 401 || !token) throw e;
+    const fresh = await settleWithin(freshToken(), 5000, null);
+    if (!fresh || fresh === token) throw await terminalAuthError();
+    try {
+      const out = await doPost(fresh, budget);
+      out.refreshedToken = fresh;
+      return out;
+    } catch (e2) {
+      if (e2?.status === 401) throw await terminalAuthError();
+      throw e2;
+    }
+  }
+}

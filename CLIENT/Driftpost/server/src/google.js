@@ -1,0 +1,78 @@
+const AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
+const TOKEN_URL = 'https://oauth2.googleapis.com/token';
+
+export function youtubeAuthorizationUrl(state) {
+  const params = new URLSearchParams({
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+    response_type: 'code',
+    access_type: 'offline',
+    prompt: 'consent',
+    include_granted_scopes: 'true',
+    scope: [
+      'https://www.googleapis.com/auth/youtube.upload',
+      'https://www.googleapis.com/auth/youtube.readonly',
+      'https://www.googleapis.com/auth/youtube.force-ssl',
+    ].join(' '),
+    state,
+  });
+  return `${AUTH_URL}?${params}`;
+}
+
+export function driveIntakeAuthorizationUrl(state) {
+  const params = new URLSearchParams({
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+    response_type: 'code',
+    access_type: 'offline',
+    prompt: 'consent',
+    include_granted_scopes: 'true',
+    scope: [
+      'openid',
+      'email',
+      'https://www.googleapis.com/auth/drive.readonly',
+    ].join(' '),
+    state,
+  });
+  return `${AUTH_URL}?${params}`;
+}
+
+export async function getGoogleIdentity(accessToken) {
+  const res = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+    signal: AbortSignal.timeout(15000),
+  });
+  const data = await res.json();
+  if (!res.ok || !data.email) throw new Error(data.error?.message || 'Could not verify the Google account.');
+  return { email: String(data.email).trim().toLowerCase(), verified: data.verified_email === true };
+}
+
+export async function exchangeGoogleCode(code) {
+  const res = await fetch(TOKEN_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      code,
+      client_id: process.env.GOOGLE_CLIENT_ID,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET,
+      redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+      grant_type: 'authorization_code',
+    }),
+    signal: AbortSignal.timeout(30000),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error_description || data.error || 'Google token exchange failed');
+  return data;
+}
+
+export async function getYouTubeChannel(accessToken) {
+  const res = await fetch('https://www.googleapis.com/youtube/v3/channels?part=id,snippet&mine=true', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+    signal: AbortSignal.timeout(20000),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error?.message || 'Unable to read YouTube channel');
+  const ch = data.items?.[0];
+  if (!ch) throw new Error('No YouTube channel found for this Google account');
+  return { id: ch.id, name: ch.snippet?.title || 'YouTube channel', avatar_url: ch.snippet?.thumbnails?.default?.url || null };
+}

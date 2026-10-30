@@ -1,0 +1,443 @@
+{
+  "schema_version": "3.0",
+  "brand_number": 32,
+  "brand_id": "pixi_grow",
+  "brand_name": "Pixigrow Media",
+  "aliases": [
+    "Pixigrow Media",
+    "PixiGrow Media",
+    "Pixi Grow",
+    "@pixigrowmedia"
+  ],
+  "knowledge_scope": "The user confirms @pixigrowmedia as the official Pixigrow Media account. Public campaign credits indicate media/campaign work, and a same-name LinkedIn profile lists Rajkot. Exact legal entity/account relationship, address, contact and full service catalogue remain unverified.",
+  "business": {
+    "category": "Media and campaign content; exact services unconfirmed",
+    "industry": "Media, digital content and campaign marketing",
+    "business_model": null,
+    "location": "Rajkot association (public profile); exact business address unverified",
+    "country": null,
+    "currency": null,
+    "core_positioning": "Media/campaign content brand; define specific positioning only from an approved brief.",
+    "primary_audience": null,
+    "onboarding_or_billing_note": "The first day of an unspecified month appeared in the user-provided brand list. This is not a founding date.",
+    "dataset_date": "2026-09-26",
+    "identity_confidence": "Official account confirmed by user; service and legal identity details remain incomplete.",
+    "commercial_accuracy_rule": "Do not invent exact services, clients, campaign results, audience, contact, address, prices or performance metrics."
+  },
+  "contact": {
+    "phone": null,
+    "whatsapp": null,
+    "email": null,
+    "website": null,
+    "address": null,
+    "google_maps_url": null,
+    "contact_status": "No confirmed contact details.",
+    "contact_rule": "Do not use contact details from a similar Pixi, Pixigrow or agriculture product."
+  },
+  "social_media": {
+    "instagram_handle": "@pixigrowmedia",
+    "instagram_url": "https://www.instagram.com/pixigrowmedia/",
+    "instagram_status": "Official handle supplied by user. Public campaign credits and a same-name Rajkot profile support media/campaign work, but the account-to-legal-entity connection is not independently verified.",
+    "public_candidates_not_confirmed": [
+      {
+        "identity": "PIXIGROW design studio",
+        "website": "https://pixigrow.com/",
+        "reason_not_adopted": "This may be an unrelated international design studio."
+      },
+      {
+        "identity": "PIXI GROW agricultural product",
+        "reason_not_adopted": "This is a product listing and must not be treated as the client brand."
+      }
+    ],
+    "managing_agency": "Famebros Studio",
+    "agency_instagram_handle": "@famebrosstudio",
+    "agency_instagram_url": "https://www.instagram.com/famebrosstudio/",
+    "agency_credit_default": "💫 Managed by: @famebrosstudio",
+    "reference_rule": "Use the user-confirmed account as the identity anchor. Do not merge pixigrow.com or the agriculture product; verify profile claims before using them.",
+    "instagram_identity_status": "User confirmed official handle on 2026-10-03."
+  },
+  "established_content_knowledge": {
+    "confirmed_facts": [
+      "The user identifies @pixigrowmedia as the official account.",
+      "Public campaign credits associate @pixigrowmedia with campaign work.",
+      "A same-name public profile lists Rajkot; exact operating location is unverified."
+    ],
+    "confirmed_content_genres": [
+      "Media and campaign content, broad category only"
+    ],
+    "content_status": "The account identity is user-confirmed; exact services and claims still need approved briefs.",
+    "safe_content_pillars": [
+      "Logo or identity reveal using supplied assets",
+      "Founder statement using supplied copy",
+      "Coming-soon announcement without category claims",
+      "Exact product or service brief",
+      "Behind-the-scenes footage with approved context"
+    ],
+    "prohibited_assumptions": [
+      "Specific service list beyond observed campaign credits",
+      "Client outcomes or performance claims",
+      "Exact location or contact details",
+      "Prices, audience or guarantees",
+      "Pixigrow.com design studio and Pixi Grow fertilizer are separate unconfirmed namesakes."
+    ],
+    "data_confidence": {
+      "name": "Confirmed by user account mapping",
+      "category": "Broad media/campaign evidence only",
+      "social": "Confirmed by user",
+      "location": "Rajkot association only; address unknown",
+      "contacts": "Unknown",
+      "offer": "Unknown"
+    },
+    "content_priority": "Use the supplied account identity and media/campaign context; require an approved brief for each service, client or result claim.",
+    "public_campaign_credit_observations": [
+      {
+        "observation": "Third-party indexed public post credits @pixigrowmedia with campaign work for Praveg Beach Resort Diu.",
+        "source": "https://pictame.com/en/discover/hashtag/praveg-beach-resort-diu",
+        "checked_on": "2026-10-04",
+        "status": "Past campaign-credit evidence only; does not establish current client relationship, contract, exact service list, results or authorization to imply endorsement."
+      },
+      {
+        "observation": "Third-party indexed public posts associate @pixigrowmedia with @our_rajkot media content/campaigns.",
+        "source": "https://pictame.com/en/discover/hashtag/famous-places-to-visit-in-mumbai",
+        "checked_on": "2026-10-04",
+        "status": "Historical campaign-credit evidence only; no performance metrics or current relationship verified."
+      }
+    ]
+  },
+  "writing_direction": {
+    "brand_voice": [
+      "Neutral until identity is confirmed",
+      "Clear",
+      "Minimal",
+      "Non-speculative"
+    ],
+    "primary_language": "Match the supplied brief.",
+    "focus": [
+      "Exact supplied name",
+      "Actual approved asset",
+      "Explicit brief",
+      "One safe CTA"
+    ],
+    "avoid": [
+      "Guessing category",
+      "Guessing audience",
+      "Using another Pixi brand's language",
+      "Invented results",
+      "Invented city",
+      "Invented contact",
+      "Generic growth promises"
+    ],
+    "punctuation_style": "Short readable sentences and no em dashes."
+  },
+  "content_playbook": {
+    "identity_reveal": {
+      "required_inputs": [
+        "Official logo",
+        "Exact display name",
+        "One-line category",
+        "Audience",
+        "Launch date",
+        "CTA"
+      ],
+      "rule": "Do not publish until category and official account are confirmed."
+    },
+    "asset_led_post": {
+      "objective": "Describe only the approved asset and supplied facts.",
+      "rule": "Do not infer the business from visuals alone."
+    },
+    "service_or_product_post": {
+      "required_inputs": [
+        "Exact offering",
+        "Features",
+        "Audience",
+        "Price",
+        "Availability",
+        "Proof",
+        "CTA"
+      ],
+      "rule": "Build the voice from approved facts, not the brand name."
+    },
+    "founder_post": {
+      "required_inputs": [
+        "Founder name",
+        "Role",
+        "Approved quote",
+        "Business purpose",
+        "Consent"
+      ],
+      "rule": "Do not invent a founder story."
+    },
+    "coming_soon_post": {
+      "safe_direction": "Use curiosity without promising a category, date or offer that has not been supplied."
+    }
+  },
+  "unknown_brand_identity_and_brief_framework": {
+    "identity_gate": [
+      "Official Instagram or website",
+      "Exact category",
+      "Location",
+      "Owner or authorized contact",
+      "Offer",
+      "Audience"
+    ],
+    "post_gate": [
+      "Output format",
+      "Objective",
+      "Approved facts",
+      "Asset",
+      "CTA",
+      "Publication date"
+    ],
+    "safe_rule": "If identity is missing, produce a labelled concept draft only. Do not create sales-ready facts.",
+    "candidate_rule": "Candidates are research leads, not approved brand data.",
+    "readiness": "Needs brand identity."
+  },
+  "caption_format": {
+    "default_use": "Instagram and Facebook feed posts and reels.",
+    "body_length": "Usually 25 to 70 words excluding footer, hashtags and SEO block.",
+    "body_structure": [
+      "One specific hook connected to the real asset or topic.",
+      "One to three useful lines using verified information.",
+      "One visit, enquiry, admissions, booking, save, share or shop CTA."
+    ],
+    "format_order": [
+      "Caption body",
+      "Blank line",
+      "Exactly three hashtags",
+      "Blank line",
+      "Approved CTA, location and contact lines",
+      "Agency credit when required",
+      "Blank line",
+      "Exactly one square-bracket SEO block"
+    ],
+    "hashtag_rule": "Exactly three hashtags unless the user requests another count.",
+    "seo_rule": "Use five to eight natural search phrases inside one pair of square brackets.",
+    "story_rule": "For story copy, use a short headline, one support line and one CTA. Omit feed hashtags and SEO unless requested.",
+    "reel_overlay_rule": "Keep each overlay short, readable and supported by the footage.",
+    "final_checks": [
+      "Use only verified facts from the current brief and this knowledge file.",
+      "Use exactly three relevant hashtags.",
+      "Use one square-bracket SEO block with five to eight comma-separated phrases.",
+      "Use one clear CTA.",
+      "Remove every em dash before delivery.",
+      "Confirm the official account and category before publication.",
+      "Do not add category-specific SEO."
+    ]
+  },
+  "fixed_footer": {
+    "standard_lines": [
+      "💫 Managed by: @famebrosstudio"
+    ],
+    "status": "Agency credit only. No brand contact is established.",
+    "usage": "Use only on an approved Famebros draft.",
+    "exceptions": [
+      "Story overlays",
+      "Comments",
+      "If agency credit is not required"
+    ]
+  },
+  "suggested_hashtag_bank": [
+    "#PixiGrow",
+    "#BrandIntroduction",
+    "#ComingSoon",
+    "#NewBrand",
+    "#BrandReveal"
+  ],
+  "seo_keyword_bank": [
+    "Pixi Grow",
+    "PixiGrow official",
+    "Pixi Grow brand",
+    "Pixi Grow launch",
+    "Pixi Grow information"
+  ],
+  "cta_bank": [
+    "Follow the official page once confirmed.",
+    "Watch this space for verified details.",
+    "Use the action specified in the approved brief."
+  ],
+  "suggested_hooks": [
+    "Something new is taking shape.",
+    "Meet Pixi Grow.",
+    "The first look starts here.",
+    "More details are coming soon."
+  ],
+  "visual_and_asset_guidance": {
+    "feed_size": "1080 x 1440 pixels",
+    "story_and_reel_size": "1080 x 1920 pixels",
+    "style": [
+      "Minimal",
+      "Identity-led",
+      "High contrast",
+      "Flexible until brand kit is supplied"
+    ],
+    "fidelity_rules": [
+      "Use only the supplied logo and assets.",
+      "Do not invent colours, fonts, products or services.",
+      "Do not use candidate-business imagery."
+    ],
+    "thumbnail_rule": "Use the exact name and one neutral hook only."
+  },
+  "carousel_and_reel_system": {
+    "identity_carousel": [
+      "Slide 1: Exact name",
+      "Slide 2: Approved one-line category",
+      "Slide 3: Approved purpose",
+      "Slide 4: Approved offering",
+      "Slide 5: Official CTA"
+    ],
+    "neutral_reel": [
+      "0 to 3 seconds: Name reveal",
+      "3 to 8 seconds: Approved visual",
+      "8 to 12 seconds: One verified line",
+      "12 to 15 seconds: CTA"
+    ],
+    "rule": "Do not use until required identity fields are supplied."
+  },
+  "other_output_modes": {
+    "story": "Neutral teaser with no category claim.",
+    "bio": "Blocked until category, location and official offer are confirmed.",
+    "website_copy": "Blocked until official ownership and services are confirmed.",
+    "comment_reply": "Do not answer category, price or contact questions from assumptions."
+  },
+  "sample_caption": {
+    "status": "Concept-only sample. Not publication-ready until the official account and category are confirmed.",
+    "scenario": "Neutral identity teaser",
+    "caption_body": "Something new is taking shape. Meet Pixi Grow. Watch this space for verified details from the official brand.",
+    "footer": [
+      "💫 Managed by: @famebrosstudio"
+    ],
+    "hashtags": [
+      "#PixiGrow",
+      "#BrandIntroduction",
+      "#ComingSoon"
+    ],
+    "seo_keywords": [
+      "Pixi Grow",
+      "PixiGrow official",
+      "Pixi Grow brand",
+      "Pixi Grow launch",
+      "Pixi Grow information"
+    ],
+    "full_caption": "Something new is taking shape. Meet Pixi Grow. Watch this space for verified details from the official brand.\n\n💫 Managed by: @famebrosstudio\n\n#PixiGrow #BrandIntroduction #ComingSoon\n\n[Pixi Grow, PixiGrow official, Pixi Grow brand, Pixi Grow launch, Pixi Grow information]",
+    "validation": {
+      "hashtags": 3,
+      "seo_phrases": 5,
+      "verified_fields_only": true,
+      "publication_ready": false
+    }
+  },
+  "accuracy_rules": [
+    "Use @pixigrowmedia as the user-confirmed official account.",
+    "Do not merge pixigrow.com or agricultural product namesakes.",
+    "Do not invent specific services, clients, performance, audience, prices, address or contacts.",
+    "Describe only campaign/media work supported by the supplied brief or reviewed assets.",
+    "Keep Rajkot as an unverified city-level association, not a branch address.",
+    "Remove every em dash.",
+    "Historical indexed campaign credits may be mentioned as past campaign examples only when the post brief calls for portfolio content; never imply a current client relationship, endorsement, campaign results or an unverified service offering."
+  ],
+  "per_post_input": {
+    "required_identity": [
+      "Official Instagram",
+      "Website",
+      "Category",
+      "Audience",
+      "Location",
+      "Owner or contact",
+      "Logo"
+    ],
+    "required_post": [
+      "Output mode",
+      "Objective",
+      "Approved facts",
+      "Asset",
+      "CTA",
+      "Publication date"
+    ],
+    "input_rule": "Do not create category-specific copy until the identity gate is complete."
+  },
+  "master_brand_instruction": "Create content for Pixigrow Media, using the user-confirmed @pixigrowmedia account. Public campaign credits support a broad media/campaign-content context; exact services, clients, results, address, contacts, audience and prices remain unverified. Do not merge the unrelated pixigrow.com studio or agricultural product. Use only supplied assets and approved brief facts. Standard captions use exactly three relevant hashtags and one SEO bracket with five to eight phrases. Remove all em dashes.",
+  "missing_information": {
+    "identity": [
+      "Legal entity and account relationship",
+      "Owner or founder",
+      "Exact service categories",
+      "Target audience"
+    ],
+    "contact": [
+      "Phone",
+      "Email",
+      "Website",
+      "Address"
+    ],
+    "offer": [
+      "Approved service list",
+      "Prices",
+      "Availability",
+      "USPs and substantiated results",
+      "Client/campaign permissions"
+    ],
+    "brand_system": [
+      "Logo",
+      "Colours",
+      "Fonts",
+      "Visual references",
+      "Tone"
+    ],
+    "priority": "Confirm legal identity, exact service menu, owner, contact and approved result claims before commercial copy."
+  },
+  "sources": {
+    "user_facts": [
+      "Official Instagram handle @pixigrowmedia supplied by user on 2026-10-03.",
+      "Pixigrow Media display-name mapping supplied by the user."
+    ],
+    "public_sources": [
+      {
+        "url": "https://in.linkedin.com/in/pixigrow-media-994378421",
+        "checked_on": "2026-10-03",
+        "used_for": "Same-name profile gives a Rajkot location signal; account/legal relationship and exact address unverified."
+      },
+      {
+        "url": "https://pictame.com/en/discover/hashtag/praveg-beach-resort-diu",
+        "checked_on": "2026-10-03",
+        "used_for": "Indexed third-party post credits a Diu resort campaign to @pixigrowmedia; supports broad campaign work, not service claims or ownership."
+      },
+      {
+        "url": "https://www.planetexim.net/indian-company/pixigrow-media-private-limited/cin/U73100GJ2026PTC179519.html",
+        "checked_on": "2026-10-03",
+        "used_for": "Third-party company-record lead only; incorporation listed 2026-06-21, not independently verified against the Instagram account."
+      },
+      {
+        "url": "https://pictame.com/en/discover/hashtag/famous-places-to-visit-in-mumbai",
+        "checked_on": "2026-10-04",
+        "used_for": "Indexed post credits Pixigrow media for Our Rajkot content; historical campaign-credit evidence only, not current client status or performance."
+      }
+    ],
+    "internal_dataset": "Famebros_Brand_Caption_Dataset.json record pixi_grow.",
+    "source_rule": "Direct user or owner confirmation is required before adopting any public candidate.",
+    "public_search_note": "The user confirmed the official handle. Public references corroborate campaign activity and a same-name Rajkot profile; legal entity, contact and service details remain unresolved."
+  },
+  "research_update": {
+    "checked_on": "2026-10-04",
+    "official_account": {
+      "platform": "Instagram",
+      "handle": "@pixigrowmedia",
+      "url": "https://www.instagram.com/pixigrowmedia/",
+      "identity_authority": "User supplied as official"
+    },
+    "source_urls": [
+      "https://in.linkedin.com/in/pixigrow-media-994378421",
+      "https://pictame.com/en/discover/hashtag/praveg-beach-resort-diu",
+      "https://www.planetexim.net/indian-company/pixigrow-media-private-limited/cin/U73100GJ2026PTC179519.html"
+    ],
+    "observations": [
+      "User supplied this official handle.",
+      "Indexed third-party campaign credit supports campaign/media context.",
+      "Same-name profile indicates Rajkot association; exact location and legal-account relationship remain unverified.",
+      "A third-party registry lists PIXIGROW MEDIA PRIVATE LIMITED incorporated 2026-06-21; verify directly before formal legal or history claims."
+    ],
+    "rule": "Directory, creator and indexed-post facts are leads; reconfirm current contacts, offers and commercial details before public use.",
+    "additional_observations": [
+      "Search-indexed media posts credit @pixigrowmedia for content/campaign work related to Praveg Beach Resort Diu and Our Rajkot. These support campaign-credit history only; exact services, current client status and outcomes are unverified."
+    ]
+  }
+}
