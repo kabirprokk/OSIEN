@@ -1,0 +1,25 @@
+﻿# OSEVA Game Studio - keep source + release, skip regenerable CMake scratch
+build/*/CMakeFiles/
+build/*/Testing/
+build/*/CMakeCache.txt
+build/*/cmake_install.cmake
+build/*/Makefile
+build/*/CTestTestfile.cmake
+build/*/DartConfiguration.tcl
+*.obj
+*.o
+# Duplicate copied intro videos (original lives in OGS Logos/, copies regenerate via CMake configure_file)
+build/*/assets/branding/ogs_intro.mp4
+build/*/assets/branding/ogs_logo_primary.png
+build/*/assets/player/grid_soul_01.png
+dist/*/assets/branding/ogs_intro.mp4
+dist/*/assets/branding/ogs_logo_primary.png
+dist/*/assets/player/grid_soul_01.png
+# My temp MinGW build dir (synced back to windows-msys + dist/)
+build/windows-fix/
+# OS + editor junk
+Thumbs.db
+Desktop.ini
+.vs/
+*.user
+

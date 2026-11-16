@@ -1,0 +1,105 @@
+{
+  "name": "osien-probe",
+  "private": true,
+  "version": "1.0.1",
+  "description": "Local static analysis, multi-language AST bug finder, and AI-assisted finding reviewer.",
+  "author": "OSIEN <hello@osien.dev>",
+  "license": "MIT",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "bin": {
+    "osien-probe": "./bin/osien-probe.cjs",
+    "osien-probe-mcp": "./bin/osien-probe-mcp.cjs"
+  },
+  "scripts": {
+    "dev": "concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && cross-env VITE_DEV_SERVER_URL=http://127.0.0.1:5173 electron .\"",
+    "web": "vite",
+    "build": "tsc -b && vite build",
+    "test": "node --test tests/*.test.cjs",
+    "audit": "node scripts/audit.cjs",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "mcp:setup": "shadcn mcp init --client opencode",
+    "dist": "npm run build && electron-builder --win nsis --publish never",
+    "dist:win": "npm run build && electron-builder --win nsis --publish never",
+    "dist:linux": "npm run build && electron-builder --linux AppImage deb --publish never",
+    "dist:mac": "npm run build && electron-builder --mac dmg zip --publish never"
+  },
+  "dependencies": {
+    "@ast-grep/lang-bash": "^0.0.8",
+    "@ast-grep/lang-cpp": "^0.0.6",
+    "@ast-grep/lang-csharp": "^0.0.6",
+    "@ast-grep/lang-go": "^0.0.6",
+    "@ast-grep/lang-java": "^0.0.7",
+    "@ast-grep/lang-kotlin": "^0.0.7",
+    "@ast-grep/lang-php": "^0.0.7",
+    "@ast-grep/lang-python": "^0.0.6",
+    "@ast-grep/lang-ruby": "^0.0.7",
+    "@ast-grep/lang-rust": "^0.0.7",
+    "@ast-grep/lang-swift": "^0.0.8",
+    "@ast-grep/napi": "^0.51.2",
+    "@babel/parser": "^7.29.14",
+    "@gsap/react": "^2.1.2",
+    "gsap": "^3.15.1",
+    "lucide-react": "^1.71.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "concurrently": "^10.0.7",
+    "cross-env": "^10.1.0",
+    "electron": "^45.2.3",
+    "electron-builder": "^26.18.0",
+    "oxlint": "^1.90.0",
+    "shadcn": "^4.23.0",
+    "typescript": "~7.0.2",
+    "vite": "^8.3.6",
+    "wait-on": "^9.5.1"
+  },
+  "build": {
+    "appId": "dev.osien.probe",
+    "productName": "OSIEN Probe",
+    "compression": "normal",
+    "directories": {
+      "output": "release"
+    },
+    "asarUnpack": [
+      "node_modules/@ast-grep/lang-*/prebuilds/**/parser.so",
+      "node_modules/@ast-grep/napi/*.node"
+    ],
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "bin/**/*",
+      "build/**/*",
+      "skills/**/*"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        "nsis"
+      ]
+    },
+    "mac": {
+      "icon": "build/icon.png",
+      "category": "public.app-category.developer-tools",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    },
+    "linux": {
+      "icon": "build/icon.png",
+      "category": "Development",
+      "target": [
+        "AppImage",
+        "deb",
+        "tar.gz"
+      ]
+    }
+  }
+}

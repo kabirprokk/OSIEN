@@ -1,0 +1,21 @@
+{
+  "objective": "Broaden DeepCheck detection, add sanitizer-aware taint tracking, SARIF/Markdown exports, interactive code context, and allow confirmed individual test-file execution.",
+  "hypothesis": "Expanded 11-language AST checks, destructuring/sanitizer taint analysis, fast-fail local AI review, and rich triage/export tools improve accuracy and developer workflow without executing project code during scans.",
+  "files": [
+    "electron/scanner.cjs",
+    "electron/polyglot.cjs",
+    "electron/rules.cjs",
+    "electron/ai-review.cjs",
+    "electron/main.cjs",
+    "electron/preload.cjs",
+    "scripts/audit.cjs",
+    "src/App.tsx",
+    "src/UIOverrides.css",
+    "tests/scanner.test.cjs",
+    "tests/polyglot.test.cjs",
+    "tests/ai-review.test.cjs",
+    "README.md"
+  ],
+  "status": "done: 400+ tests, 0 lint warnings, build, and self-audit pass",
+  "updated": "2026-11-16T09:25:00.000Z"
+}

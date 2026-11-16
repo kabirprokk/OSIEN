@@ -1,0 +1,2 @@
+// OGS Engine | version 0.2.1 | Embedded Windows application icon
+IDI_OGS_ICON ICON "../../assets/branding/ogs_logo_primary.ico"
